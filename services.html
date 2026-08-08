@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics. - Exclusive Offers & Announcements</title>
+    
+</head>
+<body class="services-page">
+
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="order.html">Add to Cart</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li id="auth-status"><a href="login.html">Log In</a></li>
+            <li><a href="services.html" class="active">Services</a></li>
+            <li><a href="about.html">About</a></li>        
+        </ul>
+    </nav>
+
+    <div class="services-container">
+        
+        <div class="page-header">
+            <h1>Announcement / Offers</h1>
+            <p>Catch up on our latest video logs, active point sales, spin promos, and official announcements.</p>
+        </div>
+
+        <div class="admin-controls-panel" id="admin-panel">
+            <p> Staff Dashboard Activated. Control point promos, post video features, or publish updates instantly.</p>
+            <button class="admin-btn-primary" id="open-modal-btn">Upload (For admins)</button>
+        </div>
+
+        <div class="exclusive-showcase" id="showcase-target">
+            <p class="isx-71" >Loading active showcases...</p>
+        </div>
+
+        <div class="features-section">
+            <div class="features-title">Why Choose KeePics?</div>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon"></div>
+                    <h4>Premium Quality</h4>
+                    <p>Every keychain is good quality, and designed to look premium indefinitely.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"></div>
+                    <h4>Fully Custom Tailored</h4>
+                    <p>Simply supply your graphic asset or picture, and our tools print them in stellar pixel fidelity.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"></div>
+                    <h4>Interactive Community</h4>
+                    <p>Connect with other collectors on our Chat boards or evaluate real thoughts on the Rating Wall.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="deal-modal-overlay">
+        <div class="deal-modal">
+            <h3 id="modal-heading-title">Post New Announcement Block</h3>
+            <input type="hidden" id="edit-target-id" value="">
+            
+            <div class="form-group">
+                <label for="deal-type">Entry Archetype Type</label>
+                <select id="deal-type">
+                    <option value="promo">Promo Card (Spin, Point Trades, Direct link)</option>
+                    <option value="update">Official Announcement Update (Full Width Text / Cover)</option>
+                    <option value="youtube">YouTube Interactive Video Embed</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label id="label-title" for="deal-title">Offer or Header Title</label>
+                <input type="text" id="deal-title" placeholder="e.g., Flash Points Discount!">
+            </div>
+
+            <div class="form-group">
+                <label id="label-desc" for="deal-desc">Description Content Text</label>
+                <textarea id="deal-desc" placeholder="Provide relevant details or message updates details here..."></textarea>
+            </div>
+
+            <div id="promo-fields-group">
+                <div class="form-group">
+                    <label for="deal-count">Badge Label / Items Metric Count</label>
+                    <input type="text" id="deal-count" placeholder="e.g., 15 Items Left or NEW">
+                </div>
+                <div class="form-group">
+                    <label for="deal-action-type">Button CTA Action Configuration</label>
+                    <select id="deal-action-type">
+                        <option value="spin">Redirect to Spin Wheel (game.html)</option>
+                        <option value="order">Link to Shopping Cart Order (order.html)</option>
+                        <option value="points">Points Wallet Trade Buy</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="deal-price-tag">Footer Pricing Label Subtext</label>
+                    <input type="text" id="deal-price-tag" placeholder="e.g., Exclusive, 50 Pts, $4.99">
+                </div>
+            </div>
+
+            <div id="youtube-fields-group" style="display: none;">
+                <div class="form-group">
+                    <label for="deal-youtube-id">YouTube iframe snippet, full URL, or 11-char ID</label>
+                    <input type="text" id="deal-youtube-id" placeholder="Paste full <iframe> snippet or watch link here...">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="deal-accent-color">Custom Layout Accent Border Color Theme</label>
+                <input type="color" id="deal-accent-color" value="#3b82f6">
+            </div>
+
+            <div class="form-group" id="image-upload-wrapper">
+                <label for="deal-file">Upload Banner / Graphic Thumbnail Image Asset</label>
+                <input type="file" id="deal-file" accept="image/*">
+                <div class="isx-72" id="file-upload-status" ></div>
+            </div>
+
+            <div class="modal-footer-btns">
+                <button class="cancel-btn" id="close-modal-btn">Cancel</button>
+                <button class="submit-deal-btn" id="submit-deal-btn">Save Entry</button>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+        import { handleNavbarAuth, auth, db } from './assets/database/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        handleNavbarAuth('auth-status');
+
+        const ADMIN_UID = 'nf6DyVHXpbTMxbtpDS9YicgGIYu1';
+        const DEV_UID = '4dyuS34hliSLb0Ew0wGytuSviTG2';
+
+        const adminPanel = document.getElementById('admin-panel');
+        const showcaseTarget = document.getElementById('showcase-target');
+        const modalOverlay = document.getElementById('deal-modal-overlay');
+        
+        const typeSelect = document.getElementById('deal-type');
+        const promoFields = document.getElementById('promo-fields-group');
+        const youtubeFields = document.getElementById('youtube-fields-group');
+        const imageUploadWrapper = document.getElementById('image-upload-wrapper');
+        const titleLabel = document.getElementById('label-title');
+        const descLabel = document.getElementById('label-desc');
+
+        let isStaff = false;
+        let loadedDealsCache = {};
+        let currentUploadedBase64 = "";
+
+        typeSelect.addEventListener('change', () => {
+            adjustModalFieldsVisibility(typeSelect.value);
+        });
+
+        function adjustModalFieldsVisibility(type) {
+            if (type === 'promo') {
+                promoFields.style.display = 'block';
+                youtubeFields.style.display = 'none';
+                imageUploadWrapper.style.display = 'block';
+                titleLabel.textContent = "Offer Product Title";
+                descLabel.textContent = "Offer Description Content";
+            } else if (type === 'update') {
+                promoFields.style.display = 'none';
+                youtubeFields.style.display = 'none';
+                imageUploadWrapper.style.display = 'block';
+                titleLabel.textContent = "Announcement Header Title";
+                descLabel.textContent = "Official Update Main Body Text";
+            } else if (type === 'youtube') {
+                promoFields.style.display = 'none';
+                youtubeFields.style.display = 'block';
+                imageUploadWrapper.style.display = 'none';
+                titleLabel.textContent = "Video Container Title Display";
+                descLabel.textContent = "Short Video Caption Summary Context";
+            }
+        }
+
+        document.getElementById('deal-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const statusDiv = document.getElementById('file-upload-status');
+            if (!file) return;
+
+            if (file.size > 800 * 1024) { 
+                alert("Image file is too large! Please choose an asset smaller than 800KB.");
+                this.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            statusDiv.textContent = "Processing layout graphic...";
+            reader.onloadend = function() {
+                currentUploadedBase64 = reader.result;
+                statusDiv.textContent = " Image asset attached successfully!";
+            };
+            reader.readAsDataURL(file);
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user && (user.uid === ADMIN_UID || user.uid === DEV_UID)) {
+                adminPanel.style.display = 'block';
+                isStaff = true;
+            } else {
+                adminPanel.style.display = 'none';
+                isStaff = false;
+            }
+            syncRealtimeDeals();
+        });
+
+        function extractYouTubeId(urlOrId) {
+            if (!urlOrId) return '';
+            
+            let cleaned = urlOrId.trim();
+
+            // If they accidentally pasted a full iframe embed code snippet, pull out the src link
+            if (cleaned.startsWith('<iframe')) {
+                const srcMatch = cleaned.match(/src=["'](.*?)["']/i);
+                if (srcMatch) cleaned = srcMatch[1];
+            }
+
+            // Comprehensive YouTube URL Matching Regular Expression
+            const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|shorts\/|user\/[^\/]+\/|embed\/|watch\?(?:.*&)?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            const match = cleaned.match(regExp);
+            
+            // Return the matched 11-char ID, or fallback to the trimmed input if it's already just the raw ID
+            return match ? match[1] : (cleaned.length === 11 ? cleaned : '');
+        }
+
+        function syncRealtimeDeals() {
+            onValue(ref(db, 'announcements'), (snapshot) => {
+                showcaseTarget.innerHTML = "";
+                const data = snapshot.val() || {};
+                loadedDealsCache = data;
+                
+                const keys = Object.keys(data);
+                if (keys.length === 0) {
+                    showcaseTarget.innerHTML = `<p style="color: #64748b; text-align: center; grid-column: 1/-1;">There's no announcement posted for now.</p>`;
+                    return;
+                }
+
+                keys.reverse().forEach((key) => {
+                    try {
+                        const item = data[key];
+                        const type = item.type || 'promo';
+                        const accentColor = item.accentColor || '#3b82f6';
+                        
+                        let cardHTML = "";
+                        let inlineStyle = `style="border-top: 4px solid ${accentColor};"`;
+
+                        const adminActionsMenu = `
+                            <div class="card-options-container" style="display: ${isStaff ? 'block' : 'none'};">
+                                <div class="three-dots-trigger" data-id="${key}">···</div>
+                                <div class="card-dropdown-menu" id="dropdown-${key}">
+                                    <button class="edit-option" data-id="${key}">Modify Setup</button>
+                                    <button class="delete-option" data-id="${key}">Evict Block</button>
+                                </div>
+                            </div>
+                        `;
+
+                        if (type === 'promo') {
+                            let imageDOM = `<div class="image-placeholder"> [Insert Showcase Image]</div>`;
+                            if (item.picture) {
+                                imageDOM = `<img src="${item.picture}" alt="Promo Banner">`;
+                            }
+
+                            let targetHref = "game.html";
+                            let actionLabel = "Spin Wheel";
+                            if(item.actionType === 'order') { targetHref = "order.html"; actionLabel = "Order Now"; }
+                            if(item.actionType === 'points') { targetHref = "order.html"; actionLabel = "Claim via Pts"; }
+
+                            cardHTML = `
+                                <div class="product-card" id="card-${key}" ${inlineStyle}>
+                                    <span class="badge badge-limited">${escapeHtml(item.itemsLeft || 'PROMO')}</span>
+                                    ${adminActionsMenu}
+                                    <div class="product-image-container">${imageDOM}</div>
+                                    <div class="product-info">
+                                        <h3 class="product-name">${escapeHtml(item.title)}</h3>
+                                        <p class="product-description">${escapeHtml(item.description)}</p>
+                                        <div class="product-footer">
+                                            <div class="product-price">${escapeHtml(item.priceTag || 'Exclusive')}</div>
+                                            <a href="${targetHref}" class="action-btn" style="background-color: ${accentColor}">${actionLabel}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (type === 'update') {
+                            let bannerDOM = "";
+                            if (item.picture) {
+                                bannerDOM = `<div class="product-image-container" style="height:300px;"><img src="${item.picture}" alt="Announcement Image"></div>`;
+                            }
+
+                            cardHTML = `
+                                <div class="product-card span-full" id="card-${key}" ${inlineStyle}>
+                                    <span class="badge badge-update">UPDATE</span>
+                                    ${adminActionsMenu}
+                                    ${bannerDOM}
+                                    <div class="product-info" style="padding: 30px;">
+                                        <h3 class="product-name" style="font-size: 26px;">${escapeHtml(item.title)}</h3>
+                                        <p class="product-description" style="font-size: 15px; color:#334155;">${escapeHtml(item.description)}</p>
+                                        <div style="font-size:11px; color:#94a3b8; margin-top:10px;">Published by Jesimiel Daelo</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (type === 'youtube') {
+                            const rawInput = item.youtubeId || '';
+                            let embedDOM = `<div class="image-placeholder" style="height:200px;"> Invalid Video Reference Configuration</div>`;
+                            
+                            if (rawInput.trim().startsWith('<iframe')) {
+                                let dynamicIframe = rawInput.replace(/width=".*?"/i, '').replace(/height=".*?"/i, '');
+                                embedDOM = `<div class="video-wrapper">${dynamicIframe}</div>`;
+                            } else {
+                                const videoId = extractYouTubeId(rawInput);
+                                if (videoId) {
+                                    embedDOM = `
+                                        <div class="video-wrapper">
+                                            <iframe src="https://www.youtube.com/embed/${videoId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                        </div>
+                                    `;
+                                }
+                            }
+
+                            cardHTML = `
+                                <div class="product-card" id="card-${key}" ${inlineStyle}>
+                                    <span class="badge badge-video">VIDEO FEATURE</span>
+                                    ${adminActionsMenu}
+                                    ${embedDOM}
+                                    <div class="product-info">
+                                        <h3 class="product-name">${escapeHtml(item.title)}</h3>
+                                        <p class="product-description">${escapeHtml(item.description)}</p>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        showcaseTarget.innerHTML += cardHTML;
+                    } catch (renderError) {
+                        console.error("Skipped broken database item container layout generation: ", renderError);
+                    }
+                });
+
+                attachActionHandlers();
+            }, (error) => {
+                console.error("Firebase read permission canceled or denied: ", error);
+                showcaseTarget.innerHTML = `<p style="color: #ef4444; text-align: center; grid-column: 1/-1;">Content denied, you must be logged in to view.</p>`;
+            });
+        }
+
+        function attachActionHandlers() {
+            document.querySelectorAll('.three-dots-trigger').forEach(trigger => {
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = trigger.getAttribute('data-id');
+                    
+                    document.querySelectorAll('.card-dropdown-menu').forEach(menu => {
+                        if (menu.id !== `dropdown-${id}`) menu.style.display = 'none';
+                    });
+
+                    const targetMenu = document.getElementById(`dropdown-${id}`);
+                    targetMenu.style.display = targetMenu.style.display === 'block' ? 'none' : 'block';
+                });
+            });
+
+            document.querySelectorAll('.edit-option').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const targetDeal = loadedDealsCache[id];
+                    if (!targetDeal) return;
+
+                    document.getElementById('modal-heading-title').textContent = "Modify Selected Entry Layout";
+                    document.getElementById('edit-target-id').value = id;
+                    
+                    typeSelect.value = targetDeal.type || 'promo';
+                    adjustModalFieldsVisibility(typeSelect.value);
+
+                    document.getElementById('deal-title').value = targetDeal.title || '';
+                    document.getElementById('deal-desc').value = targetDeal.description || '';
+                    document.getElementById('deal-count').value = targetDeal.itemsLeft || '';
+                    document.getElementById('deal-action-type').value = targetDeal.actionType || 'spin';
+                    document.getElementById('deal-price-tag').value = targetDeal.priceTag || '';
+                    document.getElementById('deal-youtube-id').value = targetDeal.youtubeId || '';
+                    document.getElementById('deal-accent-color').value = targetDeal.accentColor || '#3b82f6';
+                    
+                    document.getElementById('deal-file').value = "";
+                    currentUploadedBase64 = targetDeal.picture || "";
+                    document.getElementById('file-upload-status').textContent = currentUploadedBase64 ? "Image currently retained in memory buffer" : "";
+
+                    document.querySelectorAll('.card-dropdown-menu').forEach(m => m.style.display = 'none');
+                    modalOverlay.classList.add('active');
+                });
+            });
+
+            document.querySelectorAll('.delete-option').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    if (confirm("Are you sure you want to permanently delete this content module from the database grid?")) {
+                        remove(ref(db, `announcements/${id}`)).catch(err => alert("Error evicting node mapping: " + err.message));
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.card-dropdown-menu').forEach(menu => menu.style.display = 'none');
+        });
+
+        document.getElementById('open-modal-btn').addEventListener('click', () => {
+            document.getElementById('modal-heading-title').textContent = "Post New Announcement Block";
+            document.getElementById('edit-target-id').value = "";
+            document.getElementById('deal-title').value = "";
+            document.getElementById('deal-desc').value = "";
+            document.getElementById('deal-count').value = "";
+            document.getElementById('deal-price-tag').value = "";
+            document.getElementById('deal-youtube-id').value = "";
+            document.getElementById('deal-accent-color').value = "#3b82f6";
+            document.getElementById('deal-file').value = "";
+            document.getElementById('file-upload-status').textContent = "";
+            typeSelect.value = "promo";
+            adjustModalFieldsVisibility("promo");
+            currentUploadedBase64 = "";
+            modalOverlay.classList.add('active');
+        });
+
+        document.getElementById('close-modal-btn').addEventListener('click', () => modalOverlay.classList.remove('active'));
+
+        document.getElementById('submit-deal-btn').addEventListener('click', async () => {
+            const targetId = document.getElementById('edit-target-id').value;
+            const type = typeSelect.value;
+            const title = document.getElementById('deal-title').value.trim();
+            const description = document.getElementById('deal-desc').value.trim();
+            const accentColor = document.getElementById('deal-accent-color').value;
+
+            if (!title || !description) {
+                alert("Please fill out primary text core parameters (Title & Content Description)!");
+                return;
+            }
+
+            const payload = {
+                type,
+                title,
+                description,
+                accentColor,
+                timestamp: Date.now()
+            };
+
+            if (type === 'promo') {
+                payload.itemsLeft = document.getElementById('deal-count').value.trim() || 'LIMITED';
+                payload.actionType = document.getElementById('deal-action-type').value;
+                payload.priceTag = document.getElementById('deal-price-tag').value.trim() || 'Exclusive';
+                payload.picture = currentUploadedBase64;
+            } else if (type === 'update') {
+                payload.picture = currentUploadedBase64; 
+            } else if (type === 'youtube') {
+                payload.youtubeId = document.getElementById('deal-youtube-id').value.trim();
+                if (!payload.youtubeId) {
+                    alert("Please provide a valid YouTube iframe snippet, video URL, or ID.");
+                    return;
+                }
+            }
+
+            try {
+                if (targetId) {
+                    await update(ref(db, `announcements/${targetId}`), payload);
+                } else {
+                    await push(ref(db, 'announcements'), payload);
+                }
+                modalOverlay.classList.remove('active');
+            } catch (err) {
+                alert("Realtime transactional synchronization pipeline collapsed: " + err.message);
+            }
+        });
+
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    </script>
+</body>
+</html> 

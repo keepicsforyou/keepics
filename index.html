@@ -3,11 +3,743 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server is unavailable</title>
+    <meta property="og:title" content="Official KeePics website.">
+    <meta property="og:description" content="KeePics offers customizable aesthetic keychain.">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <link class="tab-logo" rel="icon" type="image/png" href="assets/image/website/logo.png">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/image/website/logo.png">
+    
+    <meta name="theme-color" content="#ff8fa3">
+    
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics.</title>
+
+    
 </head>
-<body>
-    <h1>Our website is currently unavailable, we started again from scratch, meticulously creating on non-pressure environment to create the best experience.</h1>
-    <h2>We will come back as soon as possible, but it will takes weeks to finish.</h2>
-    <h2>- KeePics Web Developer</h2>
+<body class="home-page">
+
+    <nav class="navbar">
+        <div class="logo">KeePics.<span class="logo-dot"></span></div>
+        
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="order.html">Add to Cart</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li id="auth-status"><a href="login.html">Log In</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About</a></li>        
+        </ul>
+    </nav>
+
+    <div class="window-notice-fixed hidden" id="service-notice-window">
+        <div class="window-notice-header">
+            <div class="window-notice-title">Service Time Alert</div>
+            <button class="minimize-notice-btn" id="minimize-notice-btn" title="Minimize Window">×</button>
+        </div>
+        <div class="window-notice-body">
+            Our Services are open from <strong>5:00 AM to 9:00 PM Mon, Tue, Wed (Thursday is delivering items only) (Ordering in Thursday, will result your item delivery will be next week Monday)</strong>. Order your customized items within this timeline window to receive your product tomorrow! Exceeding 9:00 PM will delay your order execution step to the next next day.
+        </div>
+    </div>
+
+    <div class="window-notice-hint active" id="service-notice-hint">
+         Open Hours Hint
+    </div>
+
+    <div class="pwa-install-banner" id="pwa-banner">
+        <div class="pwa-header">
+            <div class="pwa-title">KeePics App Manager</div>
+            <button class="pwa-close" id="pwa-close-btn">×</button>
+        </div>
+        <div class="pwa-body" id="pwa-body-text">
+            Install our free app on your PC or Mobile device for fast tracking, offline access, and a better viewing experience!
+        </div>
+        <div class="pwa-actions">
+            <button class="pwa-btn-install" id="pwa-install-btn">Install App</button>
+            <button class="pwa-btn-check" id="pwa-check-update-btn">Check for Updates</button>
+            <button class="pwa-btn-optout" id="pwa-optout-btn">Don't show again</button>
+        </div>
+    </div>
+
+    <div class="pwa-install-banner" id="update-banner">
+        <div class="pwa-header">
+            <div class="pwa-title">App Update Available</div>
+            <button class="pwa-close" id="update-close-btn">×</button>
+        </div>
+        <div class="pwa-body">
+            A new version of KeePics is ready! Update now to load the latest features and improvements.
+        </div>
+        <div class="pwa-actions">
+            <button class="pwa-btn-install" id="app-update-btn">Update Now</button>
+        </div>
+    </div>
+
+    <div class="pwa-settings-hint" id="pwa-settings-hint" title="App Settings">
+        
+    </div>
+
+    <div class="cinematic-update-overlay" id="cinematic-update-screen">
+        <div class="cinematic-update-card">
+            <div class="cinematic-icon-wrapper" id="cinematic-icon"></div>
+            <h3 id="cinematic-title">Synchronizing Core Blocks...</h3>
+            <p id="cinematic-desc">Downloading layout mappings and asset packages safely over secure lanes.</p>
+            <div class="dramatic-progress-container">
+                <div class="dramatic-progress-bar" id="dramatic-progress-bar"></div>
+            </div>
+            <div class="dramatic-progress-text" id="dramatic-progress-text">0%</div>
+        </div>
+    </div>
+
+    <div class="rewards-popup-overlay" id="rewards-popup">
+        <div class="rewards-popup-box">
+            <button class="close-popup-btn" id="close-popup">×</button>
+            <h3> Daily Rewards Ready!</h3>
+            <p>You haven't finished all your scratch card attempts today! Claim free tokens and reward shop points inside the arcade center.</p>
+            <a href="scratch.html" class="claim-btn">
+                <span class="noti-dot"></span> Claim Your Scratch Card
+            </a>
+            <div>
+                <button class="dismiss-today-link" id="dismiss-today-btn">Don't show this again today</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="home-main">
+
+        <!-- ===== HERO ===== -->
+        <section class="hp-hero">
+            <div class="hp-hero-inner">
+                <span class="hp-eyebrow hp-eyebrow-light">Customized Memory Keychains</span>
+                <h1 class="hp-hero-title">Hold Your <span>Story</span></h1>
+                <p class="hp-hero-sub">
+                    Preserve your favorite pictures, memories, and express your unique individuality —
+                    in a beautifully crafted keychain made just for you.
+                </p>
+                <div class="hp-hero-actions">
+                    <a href="order.html" class="hp-btn hp-btn-light">Preorder Now</a>
+                    <a href="features.html" class="hp-btn hp-btn-outline-light">Explore Features</a>
+                </div>
+                <div class="hp-hero-stats">
+                    <div class="hp-stat">
+                        <strong>₱30</strong>
+                        <span>Custom Keychains</span>
+                    </div>
+                    <div class="hp-stat">
+                        <strong>₱40</strong>
+                        <span>Photobooth Strips</span>
+                    </div>
+                    <div class="hp-stat">
+                        <strong>100%</strong>
+                        <span>Handcrafted</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hp-hero-blob hp-hero-blob-1"></div>
+            <div class="hp-hero-blob hp-hero-blob-2"></div>
+            <div class="hp-hero-blob hp-hero-blob-3"></div>
+        </section>
+
+        <!-- ===== TRUST BAR ===== -->
+        <div class="hp-trustbar">
+            <span>Custom Keychains</span>
+            <span>Photobooth Strips</span>
+            <span>Memory Keeping</span>
+            <span>Freebies & Rewards</span>
+            <span>Student-Made</span>
+        </div>
+
+        <!-- ===== STORY / ABOUT ===== -->
+        <section class="hp-section hp-about" id="hp-story">
+            <div class="hp-section-head">
+                <span class="hp-eyebrow">Our Story</span>
+                <h2>More Than an Accessory —<br>A Memory in Your Pocket</h2>
+                <p>KeePics is a student-run business passionate about making personal memory-keeping affordable, creative, and beautifully yours.</p>
+            </div>
+            <div class="hp-about-grid">
+                <article class="hp-about-card">
+                    <div class="hp-card-icon">✦</div>
+                    <h3>Our Vision</h3>
+                    <p>To expand our business and become a leading provider of customized keychains — offering affordable, creative products that help people express themselves, with customer satisfaction through quality and excellent service.</p>
+                </article>
+                <article class="hp-about-card">
+                    <div class="hp-card-icon">♥</div>
+                    <h3>Our Mission</h3>
+                    <p>To create unique, high-quality products that help customers express their individuality in a creative way — while providing affordable products and excellent service, continuously improving because we value our customers.</p>
+                </article>
+                <article class="hp-about-card">
+                    <div class="hp-card-icon">❋</div>
+                    <h3>Why KeePics?</h3>
+                    <p>Our keychains are stylish, lightweight, and easy to blend with your daily outfit. Each piece is made with care, packaged presentably, and ready to keep your story close.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- ===== PRODUCTS ===== -->
+        <section class="hp-section hp-products" id="hp-products">
+            <div class="hp-section-head">
+                <span class="hp-eyebrow">Our Products</span>
+                <h2>Made to Keep Your Memories</h2>
+                <p>Beautiful, customizable keychains and photobooth strips that preserve what matters most to you.</p>
+            </div>
+            <div class="hp-products-grid">
+                <article class="hp-product-card hp-product-featured">
+                    <span class="hp-product-tag">Best Seller</span>
+                    <h3>Custom Keychain</h3>
+                    <p class="hp-product-desc">Your photo, your design, your story — printed and sealed in a premium keychain case.</p>
+                    <ul class="hp-product-list">
+                        <li><strong>Single-sided</strong><span>₱30.00</span></li>
+                        <li><strong>Double-sided</strong><span>₱33.00</span></li>
+                    </ul>
+                    <a href="order.html" class="hp-btn hp-btn-light">Order Yours</a>
+                </article>
+                <article class="hp-product-card">
+                    <span class="hp-product-tag hp-tag-blue">Memory Strip</span>
+                    <h3>2x6 Photobooth Strips</h3>
+                    <p class="hp-product-desc">Classic photobooth strips — perfect for gifts, souvenirs, and memory keeping.</p>
+                    <ul class="hp-product-list">
+                        <li><strong>On-site</strong><span>₱50.00</span></li>
+                        <li><strong>Website Order</strong><span>₱40.00</span></li>
+                    </ul>
+                    <a href="order.html" class="hp-btn hp-btn-outline">Order Yours</a>
+                </article>
+            </div>
+            <p class="hp-note">Use one (1) voucher per keychain or photobooth product. The ₱3, ₱4, ₱5, and ₱6 vouchers are strictly for Membership Card holders — keep your card handy as a souvenir, and with purpose.</p>
+        </section>
+
+        <!-- ===== FEATURES / CUSTOMIZATION ===== -->
+        <section class="hp-section hp-features" id="hp-features">
+            <div class="hp-section-head">
+                <span class="hp-eyebrow">Fully Customized</span>
+                <h2>Your Preference Is Our Product</h2>
+                <p>Go beyond photos — personalize your keychain with content that means something to you. Their preference is our product.</p>
+            </div>
+            <div class="hp-features-grid">
+                <article class="hp-feature-item">
+                    <div class="hp-feature-icon">♪</div>
+                    <h3>Spotify Songs</h3>
+                    <p>Your favorite track, frozen in time and sealed on your keychain.</p>
+                </article>
+                <article class="hp-feature-item">
+                    <div class="hp-feature-icon">▶</div>
+                    <h3>YouTube Songs & Videos</h3>
+                    <p>Memorable music and moments from the videos you love.</p>
+                </article>
+                <article class="hp-feature-item">
+                    <div class="hp-feature-icon">◎</div>
+                    <h3>Social Media Platforms</h3>
+                    <p>Showcase your handles and favorite platforms in style.</p>
+                </article>
+                <article class="hp-feature-item">
+                    <div class="hp-feature-icon">✦</div>
+                    <h3>In-Game Names</h3>
+                    <p>Your gamer tag and usernames, fully customized just for you.</p>
+                </article>
+                <article class="hp-feature-item">
+                    <div class="hp-feature-icon">♡</div>
+                    <h3>Photo Memories</h3>
+                    <p>Preserve favorite pictures and memories close to your heart.</p>
+                </article>
+                <article class="hp-feature-item">
+                    <div class="hp-feature-icon">☆</div>
+                    <h3>Freebies Stickers</h3>
+                    <p>Every order comes with cute freebie stickers in every package.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- ===== ENGAGEMENT / REWARDS ===== -->
+        <section class="hp-section hp-engage" id="hp-rewards">
+            <div class="hp-engage-inner">
+                <div class="hp-engage-text">
+                    <span class="hp-eyebrow hp-eyebrow-light">Rewards & Engagement</span>
+                    <h2>More Reasons to<br>Keep Your Story</h2>
+                    <p>We keep things exciting with daily rewards, points, and exclusive perks — every purchase brings you closer to your next freebie.</p>
+                    <a href="scratch.html" class="hp-btn hp-btn-light">Play Daily Scratch</a>
+                </div>
+                <div class="hp-engage-grid">
+                    <div class="hp-engage-card">
+                        <span class="hp-engage-icon">✱</span>
+                        <h3>Daily Scratches</h3>
+                        <p>Scratch daily for free tokens and reward shop points.</p>
+                    </div>
+                    <div class="hp-engage-card">
+                        <span class="hp-engage-icon">◉</span>
+                        <h3>KeePics Wheel</h3>
+                        <p>Spin the wheel for exciting prizes — updated monthly.</p>
+                    </div>
+                    <div class="hp-engage-card">
+                        <span class="hp-engage-icon">❖</span>
+                        <h3>Point-Based Purchases</h3>
+                        <p>Earn points on every order and exchange them for vouchers.</p>
+                    </div>
+                    <div class="hp-engage-card">
+                        <span class="hp-engage-icon">♢</span>
+                        <h3>Membership Card</h3>
+                        <p>A keepable souvenir that stores points for exclusive vouchers.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TEAM ===== -->
+        <section class="hp-section hp-team" id="hp-team">
+            <div class="hp-section-head">
+                <span class="hp-eyebrow">The Team Behind KeePics</span>
+                <h2>Meet Our Leaders</h2>
+                <p>HUMSS students from Citi Global College Santa Rosa, working together to bring your memories to life.</p>
+            </div>
+            <div class="hp-team-grid">
+                <article class="hp-team-card">
+                    <div class="hp-team-avatar" style="background-image:url('assets/image/member-profile/pd.png')"></div>
+                    <h3>Princess Delmo</h3>
+                    <span>Chief Executive Officer</span>
+                </article>
+                <article class="hp-team-card">
+                    <div class="hp-team-avatar" style="background-image:url('assets/image/member-profile/jdd.jpg')"></div>
+                    <h3>Jesimiel Daelo</h3>
+                    <span>Operations & Media Technology</span>
+                </article>
+                <article class="hp-team-card">
+                    <div class="hp-team-avatar" style="background-image:url('assets/image/member-profile/mas.jpg')"></div>
+                    <h3>Margarett Anne Sobremisana</h3>
+                    <span>Marketing & Sales</span>
+                </article>
+                <article class="hp-team-card">
+                    <div class="hp-team-avatar" style="background-image:url('assets/image/member-profile/cnt.jpg')"></div>
+                    <h3>Cassandra Nicole Tañola</h3>
+                    <span>Finance & Inventory</span>
+                </article>
+            </div>
+        </section>
+
+        <!-- ===== CTA ===== -->
+        <section class="hp-cta">
+            <h2>Ready to Hold Your Story?</h2>
+            <p>Preorder your customized KeePics keychain today. We're open daily from 5:00 AM to 9:00 PM.</p>
+            <div class="hp-cta-actions">
+                <a href="order.html" class="hp-btn hp-btn-primary">Preorder Now</a>
+                <a href="shop.html" class="hp-btn hp-btn-outline">Visit Shop</a>
+            </div>
+        </section>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="hp-footer">
+            <div class="hp-footer-grid">
+                <div class="hp-footer-brand">
+                    <strong>KeePics.</strong>
+                    <p>Hold your story — every keychain carries a memory, made just for you.</p>
+                </div>
+                <div class="hp-footer-col">
+                    <h4>Quick Links</h4>
+                    <a href="index.html">Home</a>
+                    <a href="order.html">Order</a>
+                    <a href="features.html">Features</a>
+                    <a href="about.html">About</a>
+                </div>
+                <div class="hp-footer-col">
+                    <h4>Rewards</h4>
+                    <a href="scratch.html">Daily Scratch</a>
+                    <a href="game.html">KeePics Wheel</a>
+                    <a href="promo.html">Promo Codes</a>
+                    <a href="rating-wall.html">Ratings</a>
+                </div>
+                <div class="hp-footer-col">
+                    <h4>Visit Us</h4>
+                    <p>#2F Henry Harvey SIH, Canicosa Avenue,<br>Brgy. Balibago, City of Santa Rosa, Laguna</p>
+                    <p>Open Daily: 5:00 AM – 9:00 PM</p>
+                </div>
+            </div>
+            <div class="hp-footer-bottom">
+                <span>© <span id="hp-year"></span> KeePics. All rights reserved.</span>
+                <span>Made with ♥ by the KeePics Team</span>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        document.getElementById('hp-year').textContent = new Date().getFullYear();
+    </script>
+
+    <script>
+        // --- 1. SERVICE WORKER & INTELLIGENT APP UPDATER ---
+        const updateBanner = document.getElementById('update-banner');
+        const appUpdateBtn = document.getElementById('app-update-btn');
+        const updateCloseBtn = document.getElementById('update-close-btn');
+        
+        // Cinematic references
+        const cinematicScreen = document.getElementById('cinematic-update-screen');
+        const dramaticBar = document.getElementById('dramatic-progress-bar');
+        const dramaticText = document.getElementById('dramatic-progress-text');
+        const cinematicTitle = document.getElementById('cinematic-title');
+        const cinematicDesc = document.getElementById('cinematic-desc');
+        const cinematicIcon = document.getElementById('cinematic-icon');
+
+        let assetsToUpdate = [];
+        let isManualCheck = false; // Tracks if update check was manual
+
+        // Helper to check if the user is in the installed app
+        const isRunningAsApp = () => {
+            return ('standalone' in window.navigator && window.navigator.standalone) || 
+                   window.matchMedia('(display-mode: standalone)').matches;
+        };
+
+        // Helper to assert network status
+        function assertNetworkOnline() {
+            if (!navigator.onLine) {
+                if (appUpdateBtn) appUpdateBtn.innerText = "No internet connection";
+                return false;
+            }
+            return true;
+        }
+
+        // Close button for the update banner
+        if (updateCloseBtn) {
+            updateCloseBtn.addEventListener('click', () => {
+                updateBanner.style.display = 'none';
+            });
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                .then(reg => {
+                    console.log('Service Worker registered successfully!', reg.scope);
+                    
+                    if (navigator.serviceWorker.controller && assertNetworkOnline() && isRunningAsApp()) {
+                        navigator.serviceWorker.controller.postMessage({ action: 'CHECK_UPDATE' });
+                    }
+                })
+                .catch(err => console.log('Service Worker installation failed: ', err));
+            });
+
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                const data = event.data;
+                
+                if (data.action === 'UPDATE_STATUS') {
+                    if (!assertNetworkOnline()) {
+                        isManualCheck = false;
+                        return;
+                    }
+                    assetsToUpdate = data.changedAssets;
+
+                    // Show update banner ONLY if updates exist AND it was requested manually
+                    if (assetsToUpdate.length > 0) {
+                        if (isManualCheck) {
+                            updateBanner.style.display = 'flex';
+                            appUpdateBtn.disabled = false;
+                            appUpdateBtn.innerText = `Update Now`;
+
+                            const checkBtn = document.getElementById('pwa-check-update-btn');
+                            if (checkBtn) {
+                                checkBtn.innerText = " Update Found!";
+                                checkBtn.disabled = false;
+                            }
+                        }
+                    } else {
+                        // Same Cache Level reached
+                        if (isManualCheck) {
+                            const checkBtn = document.getElementById('pwa-check-update-btn');
+                            if (checkBtn) {
+                                checkBtn.innerText = "Application is up to date!";
+                                setTimeout(() => {
+                                    checkBtn.disabled = false;
+                                    checkBtn.innerText = "Check for Updates";
+                                }, 2500);
+                            }
+                        }
+                    }
+                    isManualCheck = false;
+                } 
+                else if (data.action === 'UPDATE_PROGRESS') {
+                    if (!assertNetworkOnline()) return;
+                    
+                    // Push live progress changes to the dramatic loader
+                    dramaticBar.style.width = `${data.progress}%`;
+                    dramaticText.innerText = `${data.progress}%`;
+                    
+                    // Adaptive descriptive strings for dynamic flair
+                    if (data.progress > 80) {
+                        cinematicDesc.innerText = "Polishing visual elements and applying custom layout wrappers...";
+                    } else if (data.progress > 40) {
+                        cinematicDesc.innerText = "Injecting updated feature frames and cleaning legacy components...";
+                    }
+                } 
+                else if (data.action === 'UPDATE_COMPLETE') {
+                    if (!assertNetworkOnline()) return;
+                    
+                    // Final dramatic transition sequence
+                    cinematicIcon.innerText = "";
+                    cinematicTitle.innerText = "Configuration Absolute!";
+                    cinematicDesc.innerText = "Re-aligning aesthetic matrix lines. Re-opening KeePics now...";
+                    dramaticBar.style.width = '100%';
+                    dramaticText.innerText = '100%';
+
+                    setTimeout(() => {
+                        window.location.href = window.location.pathname + '?v=' + new Date().getTime();
+                    }, 1600);
+                }
+            });
+        }
+
+        if (appUpdateBtn) {
+            appUpdateBtn.addEventListener('click', () => {
+                if (!assertNetworkOnline()) {
+                    alert("No internet connection");
+                    return;
+                }
+
+                if (assetsToUpdate.length > 0 && navigator.serviceWorker.controller) {
+                    appUpdateBtn.disabled = true;
+                    
+                    // Trigger the dramatic overlay sequences
+                    updateBanner.style.display = 'none';
+                    cinematicScreen.classList.add('show');
+                    
+                    navigator.serviceWorker.controller.postMessage({
+                        action: 'START_UPDATE',
+                        assets: assetsToUpdate
+                    });
+                }
+            });
+        }
+
+        window.addEventListener('online', () => {
+            if (navigator.serviceWorker.controller && isRunningAsApp()) {
+                navigator.serviceWorker.controller.postMessage({ action: 'CHECK_UPDATE' });
+            }
+        });
+
+        // --- 2. PWA INSTALLATION & MANUAL UPDATE ACTION ---
+        let deferredPrompt;
+        const pwaBanner = document.getElementById('pwa-banner');
+        const pwaSettingsHint = document.getElementById('pwa-settings-hint');
+        const pwaInstallBtn = document.getElementById('pwa-install-btn');
+        const pwaCheckUpdateBtn = document.getElementById('pwa-check-update-btn');
+        const pwaCloseBtn = document.getElementById('pwa-close-btn');
+        const pwaOptOutBtn = document.getElementById('pwa-optout-btn');
+        const pwaBodyText = document.getElementById('pwa-body-text');
+
+        // Check if user is on iOS devices
+        const isIos = () => {
+          const userAgent = window.navigator.userAgent.toLowerCase();
+          return /iphone|ipad|ipod/.test(userAgent);
+        };
+        
+        // Detect if already running as a standalone app
+        const isInStandaloneMode = () => {
+            return ('standalone' in window.navigator && window.navigator.standalone) || 
+                   window.matchMedia('(display-mode: standalone)').matches;
+        };
+
+        const hasOptedOut = localStorage.getItem('pwa_optout_preference') === 'true';
+
+        // Manage Initial Component Display Rules
+        if (isInStandaloneMode()) {
+            // Already installed: Hide installation option text, show gear hint for updates
+            pwaBodyText.innerText = "Manage your application settings or check for latest feature synchronization updates safely below.";
+            pwaInstallBtn.style.display = "none";
+            pwaSettingsHint.style.display = 'flex';
+        } else if (isIos() && !hasOptedOut) {
+            pwaBodyText.innerHTML = "To install the app on iOS, tap the <strong>Share</strong> icon at the bottom of your screen and select <strong>Add to Home Screen</strong>.";
+            pwaInstallBtn.style.display = "none"; 
+            pwaBanner.style.display = 'flex';
+        } else {
+            if (window.innerWidth <= 900) {
+                pwaBodyText.innerText = "Install our free app on your Mobile device for faster order tracking and quick home-screen access!";
+            } else {
+                pwaBodyText.innerText = "Install our free app on your PC or Desktop for a lightweight application experience and faster browsing!";
+            }
+        }
+
+        // Standard Chrome/Android prompt capturing
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            if (isInStandaloneMode()) return; 
+
+            deferredPrompt = e;
+
+            if (!hasOptedOut && !isIos()) {
+                pwaBanner.style.display = 'flex';
+                pwaSettingsHint.style.display = 'none';
+            } else if (hasOptedOut) {
+                pwaSettingsHint.style.display = 'flex';
+            }
+        });
+
+        // Manual Update Event Handler
+        pwaCheckUpdateBtn.addEventListener('click', () => {
+            // Guard: Assert network connectivity
+            if (!navigator.onLine) {
+                pwaCheckUpdateBtn.innerText = " Offline";
+                setTimeout(() => {
+                    pwaCheckUpdateBtn.innerText = "Check for Updates";
+                }, 2000);
+                return;
+            }
+
+            isManualCheck = true;
+            pwaCheckUpdateBtn.disabled = true;
+            pwaCheckUpdateBtn.innerText = "Checking...";
+
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                // Fetch new sw.js script mapping records from web server if available
+                navigator.serviceWorker.getRegistration().then(reg => {
+                    if (reg) reg.update();
+                });
+                // Send cross-check configuration properties call
+                navigator.serviceWorker.controller.postMessage({ action: 'CHECK_UPDATE' });
+            } else {
+                pwaCheckUpdateBtn.innerText = "Application is up to date!";
+                setTimeout(() => {
+                    pwaCheckUpdateBtn.disabled = false;
+                    pwaCheckUpdateBtn.innerText = "Check for Updates";
+                }, 2000);
+                isManualCheck = false;
+            }
+        });
+
+        pwaInstallBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User installed the PWA.');
+                }
+                deferredPrompt = null;
+                pwaBanner.style.display = 'none';
+                pwaSettingsHint.style.display = 'none';
+            }
+        });
+
+        pwaCloseBtn.addEventListener('click', () => {
+            pwaBanner.style.display = 'none';
+            pwaSettingsHint.style.display = 'flex';
+        });
+
+        pwaSettingsHint.addEventListener('click', () => {
+            pwaSettingsHint.style.display = 'none';
+            pwaBanner.style.display = 'flex';
+        });
+
+        pwaOptOutBtn.addEventListener('click', () => {
+            localStorage.setItem('pwa_optout_preference', 'true');
+            pwaBanner.style.display = 'none';
+            pwaSettingsHint.style.display = 'flex';
+        });
+
+        window.addEventListener('appinstalled', () => {
+            pwaBanner.style.display = 'none';
+            pwaSettingsHint.style.display = 'none';
+            pwaInstallBtn.style.display = "none";
+        });
+    </script>
+
+    <script>
+        const noticeWindow = document.getElementById('service-notice-window');
+        const noticeHint = document.getElementById('service-notice-hint');
+        const minimizeBtn = document.getElementById('minimize-notice-btn');
+
+        if (localStorage.getItem('hideTimelineNotice') === 'false') {
+            noticeWindow.classList.remove('hidden');
+            noticeHint.classList.remove('active');
+        } else {
+            noticeWindow.classList.add('hidden');
+            noticeHint.classList.add('active');
+        }
+
+        minimizeBtn.addEventListener('click', () => {
+            noticeWindow.classList.add('hidden');
+            noticeHint.classList.add('active');
+            localStorage.setItem('hideTimelineNotice', 'true');
+        });
+
+        noticeHint.addEventListener('click', () => {
+            noticeHint.classList.remove('active');
+            noticeWindow.classList.remove('hidden');
+            localStorage.setItem('hideTimelineNotice', 'false');
+        });
+    </script>
+
+    <script type="module">
+        import { handleNavbarAuth, auth, db } from './assets/database/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        handleNavbarAuth('auth-status');    
+
+        const popupOverlay = document.getElementById('rewards-popup');
+        const closePopupBtn = document.getElementById('close-popup');
+        const dismissTodayBtn = document.getElementById('dismiss-today-btn');
+
+        closePopupBtn.addEventListener('click', () => {
+            popupOverlay.classList.remove('show');
+        });
+
+        dismissTodayBtn.addEventListener('click', () => {
+            const todayStr = getServerDateString();
+            localStorage.setItem('hideRewardsPopupDate', todayStr);
+            popupOverlay.classList.remove('show');
+        });
+
+        function getServerDateString() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const todayStr = getServerDateString();
+                
+                if (localStorage.getItem('hideRewardsPopupDate') === todayStr) {
+                    popupOverlay.classList.remove('show');
+                    return;
+                }
+
+                const scratchRef = ref(db, `user_scratch_data/${user.uid}`);
+                
+                onValue(scratchRef, (snapshot) => {
+                    const data = snapshot.val();
+                    let todayScratchCount = 0;
+
+                    if (data && data.lastScratchDate === todayStr) {
+                        todayScratchCount = data.scratchCount ?? 0;
+                    }
+
+                    if (localStorage.getItem('hideRewardsPopupDate') === todayStr) {
+                        popupOverlay.classList.remove('show');
+                        return;
+                    }
+
+                    if (todayScratchCount < 3) {
+                        popupOverlay.classList.add('show');
+                    } else {
+                        popupOverlay.classList.remove('show');
+                    }
+                });
+            } else {
+                popupOverlay.classList.remove('show');
+            }
+        });
+    </script>
+
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>

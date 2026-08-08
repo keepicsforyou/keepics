@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Official KeePics website.">
+    <meta property="og:description" content="KeePics offers customizable aesthetic keychain.">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <link class="tab-logo" rel="icon" type="image/png" href="assets/image/website/logo.png">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/image/website/logo.png">
+    
+    <meta name="theme-color" content="#ff8fa3">
+    
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics - Claim Rewards</title>
+
+    
+</head>
+<body class="promo-page">
+
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="order.html">Add to Cart</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li id="auth-status"><a href="login.html">Log In</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About</a></li>        
+        </ul>
+    </nav>
+
+    <div class="main-container">
+        <div class="promo-card">
+            <h2> Points Back Promo</h2>
+            <p>Purchasing our products grants you secret code cards. Enter yours below to win token pools or official custom keychains!</p>
+            
+            <div class="input-group">
+                <input type="text" id="promo-input-field" class="promo-input" placeholder="XXXXXX" maxlength="6" autocomplete="off">
+                <button id="claim-action-btn" class="claim-submit-btn">Validate & Claim Reward</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dramatic-overlay" id="reward-claim-overlay">
+        <div class="dramatic-box theme-success" id="dramatic-box-card">
+            <div class="celebration-icon" id="reward-icon"></div>
+            <h3 id="app-modal-title">Claim Authorized!</h3>
+            <div class="reward-display-text" id="reward-target-node">You just claimed: null</div>
+            <div>
+                <button class="close-dramatic-btn" id="dismiss-claim-overlay">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { handleNavbarAuth, auth, db } from './assets/database/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        handleNavbarAuth('auth-status');
+
+        const promoInput = document.getElementById('promo-input-field');
+        const claimBtn = document.getElementById('claim-action-btn');
+        const overlay = document.getElementById('reward-claim-overlay');
+        const boxCard = document.getElementById('dramatic-box-card');
+        const modalTitle = document.getElementById('app-modal-title');
+        const targetNode = document.getElementById('reward-target-node');
+        const dismissOverlay = document.getElementById('dismiss-claim-overlay');
+        const rewardIcon = document.getElementById('reward-icon');
+
+        let activeUser = null;
+
+        onAuthStateChanged(auth, (user) => {
+            activeUser = user;
+        });
+
+        // Simplified native-feeling pop-up window generator
+        function showAppPopup(title, text, icon = "ℹ", styleTheme = "theme-alert") {
+            boxCard.className = `dramatic-box ${styleTheme}`;
+            modalTitle.innerText = title;
+            targetNode.innerText = text;
+            rewardIcon.innerText = icon;
+            overlay.classList.add('show');
+        }
+
+        claimBtn.addEventListener('click', async () => {
+            // REMOVED .toUpperCase() to preserve uppercase/lowercase exact casing matching database keys
+            const typedCode = promoInput.value.trim();
+
+            if (!activeUser) {
+                showAppPopup("Access Denied", "Please log in to your account first.", "", "theme-alert");
+                return;
+            }
+
+            if (typedCode.length !== 6) {
+                showAppPopup("Invalid Code", "Vouchers must be exactly 6 characters.", "", "theme-alert");
+                return;
+            }
+
+            claimBtn.disabled = true;
+            claimBtn.innerText = "Verifying...";
+
+            try {
+                const codeRef = ref(db, `promo_codes/${typedCode}`);
+                const snapshot = await get(codeRef);
+
+                if (!snapshot.exists()) {
+                    showAppPopup("Not Found", "This code does not exist. Please try again.", "", "theme-alert");
+                    resetClaimButton();
+                    return;
+                }
+
+                const data = snapshot.val();
+
+                if (data.claimed === true) {
+                    showAppPopup("Already Claimed", "This reward has already been claimed.", "", "theme-alert");
+                    resetClaimButton();
+                    return;
+                }
+
+                const updates = {};
+                updates[`promo_codes/${typedCode}/claimed`] = true;
+
+                let iconGraphic = "";
+
+                if (data.reward.includes('pts')) {
+                    const extractedPts = parseInt(data.reward);
+                    const userGameRef = ref(db, `user_game_data/${activeUser.uid}`);
+                    const userSnap = await get(userGameRef);
+                    let currentPoints = 0;
+                    
+                    if (userSnap.exists()) {
+                        currentPoints = userSnap.val().points || 0;
+                    }
+                    updates[`user_game_data/${activeUser.uid}/points`] = currentPoints + extractedPts;
+                    iconGraphic = "";
+                } else {
+                    iconGraphic = "";
+
+                    let accountName = activeUser.displayName || "KeePics User";
+                    try {
+                        const userProfileSnap = await get(ref(db, `users/${activeUser.uid}`));
+                        if (userProfileSnap.exists()) {
+                            const profileData = userProfileSnap.val();
+                            accountName = profileData.name || profileData.username || accountName;
+                        }
+                    } catch (err) {
+                        console.warn("Using baseline configuration profiles.");
+                    }
+
+                    await fetch("https://formspree.io/f/mvzjkyvz", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        body: JSON.stringify({
+                            name: accountName,
+                            email: activeUser.email || "No email available",
+                            message: "Wons a KeePics Keychain"
+                        })
+                    });
+                }
+
+                await update(ref(db), updates);
+
+                showAppPopup("Claim Authorized!", `You just claimed: ${data.reward}`, iconGraphic, "theme-success");
+                promoInput.value = "";
+
+            } catch (err) {
+                console.error(err);
+                showAppPopup("System Error", "An issue occurred writing data transitions.", "", "theme-alert");
+            } finally {
+                resetClaimButton();
+            }
+        });
+
+        dismissOverlay.addEventListener('click', () => {
+            overlay.classList.remove('show');
+        });
+
+        function resetClaimButton() {
+            claimBtn.disabled = false;
+            claimBtn.innerText = "Validate & Claim Reward";
+        }
+    </script>
+
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

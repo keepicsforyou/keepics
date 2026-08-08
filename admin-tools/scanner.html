@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assets/image/website/logo.png">
+    <link rel="stylesheet" href="../styles/styles.css">
+    <title>KeePics - QR Scanner Terminal</title>
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="qrmaker.html">QR Maker</a></li>
+            <li><a href="scanner.html" class="active">Scanner</a></li>        
+        </ul>
+    </nav>
+
+    <div class="admin-container" id="loading-screen">
+        <h2>Loading</h2>
+        <p>Please wait...</p>
+    </div>
+
+    <div class="admin-container" id="error-screen">
+        <h2 class="isx-76" > Access Denied</h2>
+        <p class="isx-77" >Your account does not have Admin privileges.</p>
+    </div>
+
+    <div class="admin-container" id="scanner-screen" style="display: none;">
+        <h2>Scan Customer QR</h2>
+        <p class="subtitle">Align a customer's encrypted KeePics token inside the scanning frame.</p>
+        <div id="reader"></div>
+    </div>
+
+<script type="module">
+    import { auth } from '../assets/database/firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const ADMIN_UIDS = ['nf6DyVHXpbTMxbtpDS9YicgGIYu1', '4dyuS34hliSLb0Ew0wGytuSviTG2'];
+
+    const loadingScreen = document.getElementById('loading-screen');
+    const errorScreen = document.getElementById('error-screen');
+    const scannerScreen = document.getElementById('scanner-screen');
+
+    let qrScanner;
+
+    onAuthStateChanged(auth, (user) => {
+        loadingScreen.style.display = 'none';
+
+        if (!user) {
+            window.location.href = '../login.html';
+            return;
+        }
+
+        if (!ADMIN_UIDS.includes(user.uid)) {
+            errorScreen.style.display = 'block';
+            return;
+        }
+
+        scannerScreen.style.display = 'block';
+        initializeScanner();
+    });
+
+    function initializeScanner() {
+        qrScanner = new Html5QrcodeScanner(
+            "reader", 
+            { fps: 15, qrbox: { width: 260, height: 260 } },
+            false
+        );
+        qrScanner.render(onScanSuccess, onScanFailure);
+    }
+
+    function onScanSuccess(decodedText) {
+        if (decodedText.startsWith("KEEPICS_SECURE_V1:")) {
+            qrScanner.clear(); // Kill engine tracking instantly
+            
+            const encodedData = decodedText.split("KEEPICS_SECURE_V1:")[1];
+            try {
+                const targetUid = atob(encodedData); // Reverse Base64 processing payload
+                window.location.href = `vouchercheck.html?uid=${targetUid}`;
+            } catch (err) {
+                alert("Decryption Error: Scanned item contains corrupted token data structure.");
+                initializeScanner();
+            }
+        } else {
+            alert("Scan Denied: Invalid security signature structure detected.");
+        }
+    }
+
+    function onScanFailure() {
+        // Continuous passive frame cycle hook bypass drop log bloat
+    }
+</script>
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assets/image/website/logo.png">
+    <link rel="manifest" href="qrmaker.webmanifest">
+    <meta name="theme-color" content="#ff8fa3">
+    <link rel="stylesheet" href="../styles/styles.css">
+    <title>KeePics - Admin QR Generator</title>
+    
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="qrmaker.html" class="active">QR Maker</a></li>
+            <li><a href="scanner.html">Scanner</a></li>        
+        </ul>
+    </nav>
+
+    <div class="admin-container" id="loading-screen">
+        <h2>Loading...</h2>
+        <p class="subtitle">Please wait...</p>
+    </div>
+
+    <div class="admin-container" id="error-screen">
+        <h2 class="isx-76" >URL Invalid</h2>
+        <p class="isx-77" >Admin can only scan</p>
+    </div>
+
+    <div class="content-layout" id="workspace" style="display: none;">
+        
+        <div class="admin-container" id="generator-screen">
+            <h2>Generate Store QR</h2>
+            <p class="subtitle">Input a user's UID to generate a protected internal system token QR code.</p>
+
+            <div class="form-group">
+                <label for="input-uid">Customer's Firebase UID *</label>
+                <input type="text" id="input-uid" placeholder="e.g. abCDefg12345..." required autocomplete="off">
+            </div>
+
+            <button class="btn" id="generate-btn">Generate QR Code</button>
+
+            <div id="qr-preview-area">
+                <img id="qr-image" src="" alt="QR Code" crossorigin="anonymous">
+                <button class="btn btn-download" id="download-btn"> Download QR Image</button>
+            </div>
+        </div>
+
+        <div class="sidebar-container" id="sidebar-container">
+            <h2>User Registry</h2>
+            <p class="subtitle">Quickly copy data metrics down into the generator framework.</p>
+            <ul class="user-list" id="user-list">
+                </ul>
+        </div>
+        
+    </div>
+
+<script type="module">
+    import { auth, db } from '../assets/database/firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const ADMIN_UIDS = ['nf6DyVHXpbTMxbtpDS9YicgGIYu1', '4dyuS34hliSLb0Ew0wGytuSviTG2'];
+
+    const loadingScreen = document.getElementById('loading-screen');
+    const errorScreen = document.getElementById('error-screen');
+    const workspace = document.getElementById('workspace');
+    
+    workspace.style.display = 'none';
+    loadingScreen.style.display = 'block';
+
+    onAuthStateChanged(auth, (user) => {
+        loadingScreen.style.display = 'none';
+
+        if (!user) {
+            window.location.href = '../login.html';
+            return;
+        }
+
+        if (!ADMIN_UIDS.includes(user.uid)) {
+            errorScreen.style.display = 'block';
+            return;
+        }
+
+        workspace.style.display = 'flex';
+        loadUserRegistry();
+    });
+
+    // Realtime database listener engine synchronizing data records locally
+    function loadUserRegistry() {
+        const userListEl = document.getElementById('user-list');
+        const usersRef = ref(db, 'users'); 
+        
+        onValue(usersRef, (snapshot) => {
+            userListEl.innerHTML = '';
+            const data = snapshot.val();
+            
+            if (!data) {
+                userListEl.innerHTML = '<li style="color: #64748b; font-size: 0.85rem; text-align: center; padding: 15px;">No user entities found in database node "users".</li>';
+                return;
+            }
+            
+            Object.keys(data).forEach(uid => {
+                const userObj = data[uid];
+                const identifier = userObj.email || userObj.username || userObj.displayName || 'Anonymous User';
+                
+                const li = document.createElement('li');
+                li.className = 'user-item';
+                li.innerHTML = `
+                    <div class="user-info">
+                        <span class="user-email" title="${identifier}">${identifier}</span>
+                        <span class="user-uid" title="${uid}">${uid}</span>
+                    </div>
+                    <button class="copy-btn" data-uid="${uid}">Copy</button>
+                `;
+                userListEl.appendChild(li);
+            });
+
+            // Clipboard inject tracking events mapping directly onto manual field input systems
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const uid = e.target.getAttribute('data-uid');
+                    
+                    navigator.clipboard.writeText(uid).then(() => {
+                        // Drop value inside our manual target generator container field
+                        document.getElementById('input-uid').value = uid;
+                        
+                        const originalText = e.target.innerText;
+                        e.target.innerText = 'Copied!';
+                        e.target.style.background = 'linear-gradient(135deg, #a7f3d0, #34d399)';
+                        e.target.style.color = '#064e3b';
+                        
+                        setTimeout(() => {
+                            e.target.innerText = originalText;
+                            e.target.style.background = 'linear-gradient(135deg, #bfe3fe, #93c5fd)';
+                            e.target.style.color = '#1e3a8a';
+                        }, 1200);
+                    }).catch(err => {
+                        console.error('Clipboard injection execution sequence interrupted: ', err);
+                    });
+                });
+            });
+        });
+    }
+
+    const generateBtn = document.getElementById('generate-btn');
+    const inputUid = document.getElementById('input-uid');
+    const qrPreviewArea = document.getElementById('qr-preview-area');
+    const qrImage = document.getElementById('qr-image');
+    let currentUid = '';
+
+    generateBtn.addEventListener('click', () => {
+        const uid = inputUid.value.trim();
+
+        if (!uid) {
+            alert("Please enter a Firebase UID.");
+            return;
+        }
+
+        currentUid = uid;
+        generateBtn.innerText = "Generating...";
+        
+        const securePayload = `KEEPICS_SECURE_V1:${btoa(uid)}`;
+
+        // Render QR
+        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(securePayload)}`;
+        
+        qrImage.onload = () => {
+            generateBtn.innerText = "Generate QR Code";
+            qrPreviewArea.style.display = 'block';
+        };
+    });
+
+    document.getElementById('download-btn').addEventListener('click', () => {
+        if (!qrImage.src) return;
+
+        fetch(qrImage.src)
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `KeePics_QR_${currentUid}.png`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            })
+            .catch(() => {
+                alert("Failed to download image.");
+            });
+    });
+
+    // Register isolated Admin QR Maker Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('qrmaker-sw.js', { scope: './' })
+                .then(reg => console.log('Admin PWA Service Worker Registered', reg))
+                .catch(err => console.error('Admin PWA Service Worker Failed', err));
+        });
+    }
+</script>
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

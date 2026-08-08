@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics.</title>
+    
+</head>
+<body class="game-page">
+
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="features.html">Go back</a></li>
+        </ul>
+    </nav>
+
+
+<div class="container">
+        <div class="isx-6" id="showHintWrapper" >
+            <button class="isx-7" id="showHintBtn" >Show Hint</button>
+        </div>
+
+        <div class="claim-notice-banner" id="claimNoticeBanner">
+             Only press claim, when you receive the item.
+            <button class="close-banner-btn" id="closeBannerBtn">×</button>
+        </div>
+
+        <div class="history-board">
+            <div class="history-header-wrapper">
+                <div class="history-title"> Spin History</div>
+                <button class="more-history-btn" id="moreHistoryBtn">View All Logs</button>
+            </div>
+            <ul class="history-list" id="historyList">
+                <div class="history-placeholder">Please log in to see spin logs</div>
+            </ul>
+        </div>
+
+        <h1 class="game-title">KeePics Wheel</h1>
+        <div class="tries-left" id="triesDisplay">Tries Left: --</div>
+        <div class="countdown-timer" id="timerDisplay">Checking Status...</div>
+
+        <div class="wheel-wrapper" id="wheelWrapper">
+            <div class="indicator"></div>
+            <div class="wheel-cap"></div>
+            <canvas id="wheel" width="330" height="330"></canvas>
+        </div>
+
+        <button id="spinBtn" disabled>SPIN NOW</button>
+
+        <div class="info-panel">
+            <h3> How to Play</h3>
+            <p class="isx-8" >
+                Tap <strong>SPIN NOW</strong> to use your turns. Landing on "Spin Again" returns your try! Your 5 turns reset completely every 6am, 12nn, 6pm, and 12midnight server time.
+            </p>
+        </div>
+
+        <div class="info-panel">
+            <h3> Prizes & Chances</h3>
+            <ul id="prizesChancesList"></ul>
+        </div>
+
+        <br>
+        <button class="unlock-btn" id="adminResetBtn"> Reset Machine (Admin Only)</button>
+    </div>
+
+    <div class="modal" id="prizeModal">
+        <div class="modal-content">
+            <h2> YOU HAVE WON </h2>
+            <p class="isx-9" id="modalPrizeText" ></p>
+            
+            <div id="prizeVisualContainer"></div>
+            
+            <br>
+            <div id="modalClaimContainer"></div>
+            <br>
+            <button class="close-btn" id="closePrizeBtn">Return to Game</button>
+        </div>
+    </div>
+
+    <div class="modal" id="historyModal">
+        <div class="modal-content isx-10" >
+            <h2> ALL SPIN RESULTS</h2>
+            <div class="history-log-box">
+                <ul class="isx-11" id="fullHistoryLogList" ></ul>
+            </div>
+            <button class="close-btn" id="closeHistoryBtn">Close History</button>
+        </div>
+    </div>
+
+<script type="module">
+    import { auth, db } from './assets/database/firebase-config.js';
+    import { ref, set, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { handleNavbarAuth } from './assets/database/firebase-config.js';
+    
+    if(typeof handleNavbarAuth === 'function') handleNavbarAuth('auth-status');
+
+    // UI Wire-up
+    const hamburger = document.getElementById('hamburger-menu');
+    const navMenu = document.getElementById('nav-menu');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    const canvas = document.getElementById('wheel');
+    const ctx = canvas.getContext('2d');
+    const spinBtn = document.getElementById('spinBtn');
+    const triesDisplay = document.getElementById('triesDisplay');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const prizeModal = document.getElementById('prizeModal');
+    const modalPrizeText = document.getElementById('modalPrizeText');
+    const prizeVisualContainer = document.getElementById('prizeVisualContainer');
+    const historyModal = document.getElementById('historyModal');
+    const historyList = document.getElementById('historyList');
+    const fullHistoryLogList = document.getElementById('fullHistoryLogList');
+    const moreHistoryBtn = document.getElementById('moreHistoryBtn');
+    const closePrizeBtn = document.getElementById('closePrizeBtn');
+    const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+    const adminResetBtn = document.getElementById('adminResetBtn');
+    const prizesChancesList = document.getElementById('prizesChancesList');
+    const modalClaimContainer = document.getElementById('modalClaimContainer');
+    
+    // Banner and Preference DOM elements
+    const claimNoticeBanner = document.getElementById('claimNoticeBanner');
+    const closeBannerBtn = document.getElementById('closeBannerBtn');
+    const showHintWrapper = document.getElementById('showHintWrapper');
+    const showHintBtn = document.getElementById('showHintBtn');
+
+    const MAX_TRIES = 5; 
+
+    // NOTICE PREFERENCE HANDLING (localStorage integration)
+    function initializeNoticePreference() {
+        const isDismissed = localStorage.getItem('dismissedClaimNotice') === 'true';
+        if (isDismissed) {
+            claimNoticeBanner.style.display = 'none';
+            showHintWrapper.style.display = 'block';
+        } else {
+            claimNoticeBanner.style.display = 'block';
+            showHintWrapper.style.display = 'none';
+        }
+    }
+
+    closeBannerBtn.addEventListener('click', () => {
+        localStorage.setItem('dismissedClaimNotice', 'true');
+        claimNoticeBanner.style.display = 'none';
+        showHintWrapper.style.display = 'block';
+    });
+
+    showHintBtn.addEventListener('click', () => {
+        localStorage.removeItem('dismissedClaimNotice');
+        claimNoticeBanner.style.display = 'block';
+        showHintWrapper.style.display = 'none';
+    });
+
+    initializeNoticePreference();
+    
+    // Stickers and Vouchers have been removed from the segments pool
+    const segments = [
+        { label: "150 Pts", weight: 25.30, color: "#fdd3eb", displayStr: " 150 Digital Points", isPoints: true, pointsValue: 150},
+        { label: "200 Pts", weight: 21.30, color: "#f3fffd", displayStr: " 200 Digital Points", isPoints: true, pointsValue: 200},
+        { label: "Spin Again", weight: 15.00, color: "#fde0d3", displayStr: " Spin Again"},
+        { label: "250 Pts", weight: 12.00, color: "#ffb6c1", displayStr: " 250 Digital Points", isPoints: true, pointsValue: 250},
+        { label: "Nothing", weight: 11.00, color: "#d3fde9", displayStr: " Nothing"}
+    ];
+
+    const totalWeight = segments.reduce((sum, seg) => sum + seg.weight, 0);
+
+    let currentUser = null;
+    let serverUserData = { tries: MAX_TRIES, points: 0, lastResetPeriod: "", history: {} };
+    let currentRotation = 0;
+    let isSpinning = false;
+    let activeOutcomeIndex = null; 
+    let keychainStock = 7; 
+
+    const spinAgainIndex = segments.findIndex(seg => seg.label === "Spin Again");
+
+    // Real-time listener for the Keychain inventory remaining in stock
+    const wheelSettingsRef = ref(db, 'wheel_settings/keychain_left');
+    onValue(wheelSettingsRef, (snapshot) => {
+        const val = snapshot.val();
+        if (val !== null) {
+            keychainStock = val;
+        } else {
+            set(wheelSettingsRef, 7);
+            keychainStock = 7;
+        }
+        updatePrizesDisplay();
+    });
+
+    function updatePrizesDisplay() {
+        prizesChancesList.innerHTML = '';
+        const displayList = [...segments].sort((a, b) => a.weight - b.weight);
+        displayList.forEach(seg => {
+            const li = document.createElement('li');
+            let stockBadge = '';
+            if (seg.isKeychain) {
+                stockBadge = ` <span style="color: #ff8fa3; font-weight: 800; font-size: 0.75rem;">(${keychainStock} Left)</span>`;
+            }
+            li.innerHTML = `<span>${seg.displayStr}${stockBadge}</span> <span class="chance">${seg.weight.toFixed(2)}%</span>`;
+            prizesChancesList.appendChild(li);
+        });
+    }
+
+    // Evaluates if the logged-in account has already obtained a Keychain
+    function hasKeychain() {
+        const historyNode = serverUserData.history || {};
+        return Object.values(historyNode).some(item => item.displayStr && item.displayStr.includes("Keychain"));
+    }
+
+    window.claimReward = function(uniqueId, modalBtnElement = null) {
+        if (!currentUser) return;
+        
+        const historyNode = serverUserData.history || {};
+        if (!historyNode[uniqueId]) return;
+        
+        if (historyNode[uniqueId].claimed) {
+            alert(" Invalid Win: This award has already been verified and claimed!");
+            return;
+        }
+        
+        const processClaim = confirm(`Confirm registration to claim: "${historyNode[uniqueId].displayStr}"?`);
+        if (processClaim) {
+            const claimTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const itemRef = ref(db, `user_game_data/${currentUser.uid}/history/${uniqueId}`);
+            update(itemRef, {
+                claimed: true,
+                claimedAtStr: claimTime
+            }).then(() => {
+                alert(` Success! Item marked as claimed at ${claimTime}.`);
+                if (modalBtnElement) {
+                    modalBtnElement.className = "claim-btn claimed";
+                    modalBtnElement.innerText = `Claimed at ${claimTime}`;
+                    modalBtnElement.disabled = true;
+                }
+                if(historyModal.style.display === 'flex' || historyModal.style.display === 'block') openHistoryModal();
+            }).catch(err => {
+                console.error("Error setting claim status:", err);
+            });
+        }
+    };
+
+    function getCurrentResetPeriod() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = now.getHours();
+        
+        let activePeriodHour = "00";
+        if (hours >= 6 && hours < 12) activePeriodHour = "06";
+        else if (hours >= 12 && hours < 18) activePeriodHour = "12";
+        else if (hours >= 18) activePeriodHour = "18";
+        
+        return `${year}-${month}-${day}_${activePeriodHour}`;
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            const userGameRef = ref(db, 'user_game_data/' + user.uid);
+            
+            onValue(userGameRef, (snapshot) => {
+                const data = snapshot.val();
+                const currentPeriod = getCurrentResetPeriod();
+
+                if (data) {
+                    serverUserData = data;
+                    if (serverUserData.points === undefined) serverUserData.points = 0;
+                    
+                    if (serverUserData.lastResetPeriod !== currentPeriod) {
+                        serverUserData.tries = MAX_TRIES;
+                        serverUserData.lastResetPeriod = currentPeriod;
+                        
+                        update(userGameRef, {
+                            tries: MAX_TRIES,
+                            lastResetPeriod: currentPeriod
+                        });
+                    }
+                } else {
+                    serverUserData = { tries: MAX_TRIES, points: 0, lastResetPeriod: currentPeriod, history: {} };
+                    set(userGameRef, serverUserData);
+                }
+                updateUI();
+                loadHistoryData();
+            });
+        } else {
+            currentUser = null;
+            serverUserData = { tries: 0, points: 0, lastResetPeriod: "", history: {} };
+            triesDisplay.innerText = "LOCKED";
+            timerDisplay.innerText = "Please Login First";
+            spinBtn.disabled = true;
+            historyList.innerHTML = '<div class="history-placeholder">You must be logged in to play first.</div>';
+            moreHistoryBtn.style.display = "none";
+        }
+    });
+
+    function calculateTimeUntilNextReset() {
+        const now = new Date();
+        const currentHours = now.getHours();
+        
+        let targetHours;
+        if (currentHours < 6) targetHours = 6;
+        else if (currentHours < 12) targetHours = 12;
+        else if (currentHours < 18) targetHours = 18;
+        else targetHours = 24;
+        
+        const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), targetHours, 0, 0, 0);
+        const timeLeft = targetDate.getTime() - now.getTime();
+        
+        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        
+        if (!currentUser) {
+            timerDisplay.innerText = "Please Login First";
+            return;
+        }
+
+        timerDisplay.innerText = `Next Reset: ${hours}h ${minutes}m ${seconds}s`;
+
+        const currentPeriod = getCurrentResetPeriod();
+        if (serverUserData && serverUserData.lastResetPeriod && serverUserData.lastResetPeriod !== currentPeriod) {
+            const userGameRef = ref(db, 'user_game_data/' + currentUser.uid);
+            update(userGameRef, {
+                tries: MAX_TRIES,
+                lastResetPeriod: currentPeriod
+            });
+        }
+    }
+    setInterval(calculateTimeUntilNextReset, 1000);
+
+    function createHistoryRow(pushKey, spinData) {
+        const item = document.createElement('li');
+        item.className = 'history-item';
+        
+        let actionMarkup = `<span class="time-tag">${spinData.timestamp}</span>`;
+        if (spinData.isPhysicalOrVoucher) {
+            if (spinData.claimed) {
+                actionMarkup = `<button class="claim-btn claimed" disabled>Claimed at ${spinData.claimedAtStr || ''}</button>`;
+            } else {
+                actionMarkup = `<button class="claim-btn" onclick="window.claimReward('${pushKey}')">Claim</button>`;
+            }
+        }
+
+        item.innerHTML = `<span><span class="prize-tag">${spinData.displayStr}</span></span> ${actionMarkup}`;
+        return item;
+    }
+
+    function loadHistoryData() {
+        historyList.innerHTML = '';
+        const historyNode = serverUserData.history || {};
+        const logsArray = Object.keys(historyNode).map(key => ({ id: key, ...historyNode[key] }));
+
+        if (logsArray.length === 0) {
+            historyList.innerHTML = '<div class="history-placeholder">No spins yet on your account</div>';
+            moreHistoryBtn.style.display = "none";
+            return;
+        }
+
+        moreHistoryBtn.style.display = logsArray.length > 3 ? "inline-block" : "none";
+        const previewList = [...logsArray].reverse().slice(0, 3);
+        
+        previewList.forEach(spinData => {
+            historyList.appendChild(createHistoryRow(spinData.id, spinData));
+        });
+    }
+
+    function openHistoryModal() {
+        fullHistoryLogList.innerHTML = '';
+        const historyNode = serverUserData.history || {};
+        const logsArray = Object.keys(historyNode).map(key => ({ id: key, ...historyNode[key] }));
+
+        [...logsArray].reverse().forEach(spinData => {
+            fullHistoryLogList.appendChild(createHistoryRow(spinData.id, spinData));
+        });
+        historyModal.style.display = 'flex';
+    }
+
+    function closeHistoryModal() { historyModal.style.display = 'none'; }
+
+    function drawWheel() {
+        let currentAngle = 0;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = centerX;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < segments.length; i++) {
+            const sliceAngle = (segments[i].weight / totalWeight) * (2 * Math.PI);
+            
+            ctx.fillStyle = segments[i].color;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+            ctx.lineTo(centerX, centerY);
+            ctx.fill();
+
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            ctx.save();
+            ctx.fillStyle = "#333333"; 
+            ctx.font = "bold 10px sans-serif";
+            ctx.translate(centerX, centerY);
+            ctx.rotate(currentAngle + sliceAngle / 2);
+            ctx.textAlign = "right";
+            ctx.fillText(segments[i].label, radius - 12, 4);
+            ctx.restore();
+
+            segments[i].startAngle = currentAngle;
+            segments[i].endAngle = currentAngle + sliceAngle;
+            currentAngle += sliceAngle;
+        }
+    }
+
+    function updateUI() {
+        if (!currentUser) return;
+        
+        triesDisplay.innerText = `Tries Left: ${serverUserData.tries ?? 0}`;
+        if ((serverUserData.tries ?? 0) <= 0) {
+            spinBtn.disabled = true;
+            spinBtn.innerText = "LOCKED";
+        } else if (!isSpinning) {
+            spinBtn.disabled = false;
+            spinBtn.innerText = "SPIN NOW";
+        }
+    }
+
+    function unlockWheel() {
+        const passwordAttempt = prompt("Enter Admin Password:");
+        if (passwordAttempt === "KeePics001") {
+            if (!currentUser) return alert("Please authenticate user account entry first before manual override mapping.");
+            
+            const userGameRef = ref(db, 'user_game_data/' + currentUser.uid);
+            set(userGameRef, {
+                tries: MAX_TRIES,
+                points: serverUserData.points ?? 0,
+                lastResetPeriod: getCurrentResetPeriod(),
+                history: {}
+            }).then(() => {
+                alert(" Machine reset accomplished on server data profile successfully!");
+            });
+        } else if (passwordAttempt !== null) {
+            alert(" Access Denied.");
+        }
+    }
+
+    function getRandomOutcome() {
+        const rand = Math.random() * totalWeight;
+        let cumulative = 0;
+        let outcomeIndex = segments.length - 1;
+        for (let i = 0; i < segments.length; i++) {
+            cumulative += segments[i].weight;
+            if (rand < cumulative) {
+                outcomeIndex = i;
+                break;
+            }
+        }
+        // Enforces only one keychain per user, and blocks the win if global database stock runs out
+        if (segments[outcomeIndex].isKeychain && (hasKeychain() || keychainStock <= 0)) {
+            return segments.findIndex(seg => seg.label === "Spin Again");
+        }
+        return outcomeIndex;
+    }
+
+    function spin() {
+        if (!currentUser) {
+            alert("You need to login first, because the machine data is stored in the server.");
+            return;
+        }
+        if (isSpinning || (serverUserData.tries ?? 0) <= 0) return;
+
+        const currentPeriod = getCurrentResetPeriod();
+        let calculatedTries = serverUserData.tries ?? 0;
+
+        isSpinning = true;
+        spinBtn.disabled = true;
+        spinBtn.innerText = "PROCESSING..."; 
+
+        activeOutcomeIndex = getRandomOutcome();
+        const selectedPrize = segments[activeOutcomeIndex];
+        
+        if (activeOutcomeIndex !== spinAgainIndex) { 
+            calculatedTries--;
+        }
+
+        let nextPointsBalance = serverUserData.points ?? 0;
+        if (selectedPrize.isPoints) {
+            nextPointsBalance += selectedPrize.pointsValue;
+        }
+
+        const userGameRef = ref(db, 'user_game_data/' + currentUser.uid);
+        update(userGameRef, { 
+            tries: calculatedTries,
+            points: nextPointsBalance,
+            lastResetPeriod: currentPeriod 
+        }).then(() => {
+            // Decrement item counter if user hits the keychain
+            if (selectedPrize.isKeychain) {
+                set(ref(db, 'wheel_settings/keychain_left'), Math.max(0, keychainStock - 1));
+            }
+
+            const sliceStart = selectedPrize.startAngle;
+            const sliceEnd = selectedPrize.endAngle;
+            const targetSliceAngle = sliceStart + (Math.random() * (sliceEnd - sliceStart));
+            
+            const targetAngle = (1.5 * Math.PI) - targetSliceAngle;
+            const cinematicSpins = (8 + Math.floor(Math.random() * 4)) * 360; 
+            currentRotation += cinematicSpins + (targetAngle * 180 / Math.PI) - (currentRotation % 360);
+
+            canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                spinBtn.disabled = true; 
+                spinBtn.innerText = "PROCESSING..."; 
+                
+                // Immediately push outcome log to server to capture key reference for claiming mechanics
+                const pushKey = pushSpinResultToDatabase(segments[activeOutcomeIndex]);
+                handleOutcome(activeOutcomeIndex, pushKey);
+            }, 6000); 
+        }).catch(err => {
+            isSpinning = false;
+            updateUI();
+            console.error("Database validation hand-shake rejected:", err);
+        });
+    }
+
+    function pushSpinResultToDatabase(prizeObj) {
+        if (!currentUser) return null;
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        
+        const historyRef = ref(db, `user_game_data/${currentUser.uid}/history`);
+        const newLogRef = push(historyRef);
+        set(newLogRef, {
+            displayStr: prizeObj.displayStr,
+            isPhysicalOrVoucher: prizeObj.isPhysicalOrVoucher || false,
+            claimed: false,
+            timestamp: timeString
+        });
+        return newLogRef.key;
+    }
+
+    function handleOutcome(index, pushKey) {
+        const selected = segments[index];
+        modalClaimContainer.innerHTML = ''; // Reset container state
+        
+        if (selected.isPhysicalOrVoucher) {
+            modalPrizeText.innerText = selected.displayStr;
+            
+            if (selected.isKeychain) {
+                prizeVisualContainer.innerHTML = `
+                    <div class="prize-frame animate-frame">
+                        <img src="assets/image/website/logo.png" alt="Keychain Reward" onerror="this.parentNode.innerHTML='';">
+                    </div>`;
+            } else {
+                prizeVisualContainer.innerHTML = `
+                    <div class="prize-frame">
+                        <div class="emoji-display">${selected.emoji || ''}</div>
+                    </div>`;
+            }
+
+            // Appends a functional matching Claim Now button directly inside the pop-up modal panel
+            const claimBtn = document.createElement('button');
+            claimBtn.className = "claim-btn";
+            claimBtn.style.cssText = "padding: 12px 35px; font-size: 1.05rem; border-radius: 50px; margin-top: 10px; width: 85%;";
+            claimBtn.innerText = "Claim Now";
+            claimBtn.onclick = () => window.claimReward(pushKey, claimBtn);
+            modalClaimContainer.appendChild(claimBtn);
+            
+            prizeModal.style.display = 'flex';
+        } else if (index === spinAgainIndex) {
+            alert(" Spin Again! Your spin turn was preserved.");
+            updateUI(); 
+        } else if (selected.isPoints) {
+            alert(` Points added! Successfully credited ${selected.pointsValue} points to your shop profile.`);
+            updateUI();
+        } else {
+            alert(" Better Luck Next Time.");
+            updateUI(); 
+        }
+    }
+
+    function closeModal() { 
+        prizeModal.style.display = 'none'; 
+        activeOutcomeIndex = null;
+        updateUI(); 
+    }
+
+    // Initialize immediate renderings on start
+    drawWheel();
+    updatePrizesDisplay();
+
+    spinBtn.addEventListener('click', spin);
+    moreHistoryBtn.addEventListener('click', openHistoryModal);
+    closeHistoryBtn.addEventListener('click', closeHistoryModal);
+    closePrizeBtn.addEventListener('click', closeModal);
+    adminResetBtn.addEventListener('click', unlockWheel);
+</script>
+</body>
+</html>

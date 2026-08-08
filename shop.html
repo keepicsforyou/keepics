@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics - Voucher Shop</title>
+    
+</head>
+<body class="shop-page">
+
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="features.html">Go back</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="isx-6" id="showHintWrapper" >
+            <button class="isx-7" id="showHintBtn" >Show Hint</button>
+        </div>
+
+        <div class="claim-notice-banner isx-73" id="claimNoticeBanner" >
+             Present your QR code to the Admin to claim physical items.
+            <span class="isx-74" id="closeNoticeBtn" >&times;</span>
+        </div>
+
+        <h1>Voucher Shop</h1>
+        <p class="isx-75" >Redeem your hard-earned points for awesome rewards</p>
+
+        <div class="points-dashboard">
+            <div class="points-title"> Your Point Balance</div>
+            <div class="points-val" id="pointsDisplay">--</div>
+        </div>
+
+        <div class="history-board">
+            <div class="history-header-wrapper">
+                <div class="history-title"> Purchase Log History</div>
+            </div>
+            <ul class="history-list" id="historyList">
+                <div class="history-placeholder">Please log in to see item purchases</div>
+            </ul>
+        </div>
+
+        <div class="shop-grid">
+            <div class="shop-item">
+                <div class="item-emoji"></div>
+                <div class="item-name">2PHP off Voucher</div>
+                <div class="item-cost">6,000 pts</div>
+                <button class="buy-btn" onclick="purchaseItem('voucher_2php', 6000, '2PHP off Voucher', 'voucher')" id="btn-voucher_2php" disabled>Redeem</button>
+            </div>
+
+            <div class="shop-item">
+                <div class="item-emoji"></div>
+                <div class="item-name">3PHP off Voucher</div>
+                <div class="item-cost">9,000 pts</div>
+                <button class="buy-btn" onclick="purchaseItem('voucher_3php', 9000, '3PHP off Voucher', 'voucher')" id="btn-voucher_3php" disabled>Redeem</button>
+            </div>
+
+            <div class="shop-item">
+                <div class="item-emoji"></div>
+                <div class="item-name">4PHP off Voucher</div>
+                <div class="item-cost">12,000 pts</div>
+                <button class="buy-btn" onclick="purchaseItem('voucher_4php', 12000, '4PHP off Voucher', 'voucher')" id="btn-voucher_4php" disabled>Redeem</button>
+            </div>
+
+            <div class="shop-item">
+                <div class="item-emoji"></div>
+                <div class="item-name">Meme Sticker</div>
+                <div class="item-cost">14,000 pts</div>
+                <button class="buy-btn" onclick="purchaseItem('meme_sticker', 14000, 'Meme Sticker', 'item')" id="btn-meme_sticker" disabled>Redeem</button>
+            </div>
+
+            <div class="shop-item">
+                <div class="item-emoji"></div>
+                <div class="item-name">5PHP off Voucher</div>
+                <div class="item-cost">15,000 pts</div>
+                <button class="buy-btn" onclick="purchaseItem('voucher_5php', 15000, '5PHP off Voucher', 'voucher')" id="btn-voucher_5php" disabled>Redeem</button>
+            </div>
+
+            <div class="shop-item">
+                <div class="item-emoji"></div>
+                <div class="item-name">6PHP off Voucher</div>
+                <div class="item-cost">18,000 pts</div>
+                <button class="buy-btn" onclick="purchaseItem('voucher_6php', 18000, '6PHP off Voucher', 'voucher')" id="btn-voucher_6php" disabled>Redeem</button>
+            </div>
+
+
+            <div class="shop-item">
+                <div class="item-emoji"></div>
+                <div class="item-name">Custom Keychain</div>
+                <div class="item-cost">40,000 pts</div>
+                <button class="buy-btn" onclick="purchaseItem('keychain_custom', 40000, 'Custom Keychain', 'item')" id="btn-keychain_custom" disabled>Redeem</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="keychain-modal-gateway" class="modal-overlay">
+        <div class="modal-box">
+            <span class="modal-close-btn" id="close-keychain-modal">&times;</span>
+            <h2>Customize Prize Keychain</h2>
+            
+            <form id="modal-keychain-form" action="https://formsubmit.co/a1e63f151d76e68502b50191e9ef4195" method="POST" enctype="multipart/form-data" autocomplete="off">
+                <input type="hidden" name="Customer Name" id="modal-hidden-name">
+                <input type="hidden" name="Customer Email" id="modal-hidden-email">
+                <input type="hidden" name="Selected_Product_Tier" value="Prize Keychain from shop">
+
+                <div class="setting-group">
+                    <label>Upload Asset Photo:</label>
+                    <div class="file-input-wrapper">
+                        <div class="preview-thumbnail" id="modal-preview-thumb"></div>
+                        <span class="file-name-text" id="modal-file-text">No file chosen</span>
+                        <span class="file-btn">Choose File</span>
+                        <input type="file" name="Custom Keychain Photo Asset" id="modal-file-input" accept="image/*" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-modal-btn">Submit Prize Claim</button>
+            </form>
+        </div>
+    </div>
+    
+<script type="module">
+    import { auth, db } from './assets/database/firebase-config.js';
+    import { ref, update, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { handleNavbarAuth } from './assets/database/firebase-config.js';
+    
+    if(typeof handleNavbarAuth === 'function') handleNavbarAuth('auth-status');
+
+    const hamburger = document.getElementById('hamburger-menu');
+    const navMenu = document.getElementById('nav-menu');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    const claimNoticeBanner = document.getElementById('claimNoticeBanner');
+    const closeNoticeBtn = document.getElementById('closeNoticeBtn');
+    const showHintWrapper = document.getElementById('showHintWrapper');
+    const showHintBtn = document.getElementById('showHintBtn');
+
+    function hideBanner() {
+        if (claimNoticeBanner) claimNoticeBanner.style.display = 'none';
+        if (showHintWrapper) showHintWrapper.style.display = 'block';
+    }
+
+    function showBanner() {
+        if (claimNoticeBanner) claimNoticeBanner.style.display = 'block';
+        if (showHintWrapper) showHintWrapper.style.display = 'none';
+    }
+
+    if (localStorage.getItem('hideShopNoticeBanner') === 'true') {
+        hideBanner();
+    }
+
+    if (closeNoticeBtn) {
+        closeNoticeBtn.addEventListener('click', () => {
+            hideBanner();
+            localStorage.setItem('hideShopNoticeBanner', 'true');
+        });
+    }
+
+    if (showHintBtn) {
+        showHintBtn.addEventListener('click', () => {
+            showBanner();
+            localStorage.removeItem('hideShopNoticeBanner');
+        });
+    }
+
+    const pointsDisplay = document.getElementById('pointsDisplay');
+    const historyList = document.getElementById('historyList');
+    
+    const keychainModal = document.getElementById('keychain-modal-gateway');
+    const closeKeychainModal = document.getElementById('close-keychain-modal');
+    const modalFileInput = document.getElementById('modal-file-input');
+    const modalFileText = document.getElementById('modal-file-text');
+    const modalPreviewThumb = document.getElementById('modal-preview-thumb');
+    const modalHiddenName = document.getElementById('modal-hidden-name');
+    const modalHiddenEmail = document.getElementById('modal-hidden-email');
+    
+    let currentUser = null;
+    let currentPoints = 0;
+    let serverUserData = { shop_history: {} };
+    let targetedActiveClaimId = null;
+
+    const itemsList = [
+        { id: 'voucher_2php', cost: 6000 },
+        { id: 'voucher_3php', cost: 9000 },
+        { id: 'voucher_4php', cost: 12000 },
+        { id: 'meme_sticker', cost: 14000 },
+        { id: 'voucher_5php', cost: 15000 },
+        { id: 'voucher_6php', cost: 18000 },
+        { id: 'keychain_custom', cost: 40000 }
+    ];
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            
+            modalHiddenName.value = user.displayName || user.email.split('@')[0];
+            modalHiddenEmail.value = user.email;
+
+            const userGameRef = ref(db, 'user_game_data/' + user.uid);
+            
+            onValue(userGameRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    serverUserData = data;
+                    currentPoints = data.points ?? 0;
+                    pointsDisplay.innerText = `${currentPoints.toLocaleString()} pts`;
+                    
+                    loadShopHistory(data.shop_history);
+                } else {
+                    pointsDisplay.innerText = "0 pts";
+                    historyList.innerHTML = '<div class="history-placeholder">No shop transactions executed yet.</div>';
+                }
+                updateButtonStates();
+            });
+        } else {
+            currentUser = null;
+            pointsDisplay.innerText = "LOCKED";
+            historyList.innerHTML = '<div class="history-placeholder">You must be logged in to view items.</div>';
+            disableAllButtons();
+        }
+    });
+
+    function updateButtonStates() {
+        itemsList.forEach(item => {
+            const btn = document.getElementById(`btn-${item.id}`);
+            if (btn) {
+                btn.disabled = currentPoints < item.cost;
+            }
+        });
+    }
+
+    function disableAllButtons() {
+        itemsList.forEach(item => {
+            const btn = document.getElementById(`btn-${item.id}`);
+            if (btn) btn.disabled = true;
+        });
+    }
+
+    closeKeychainModal.addEventListener('click', () => {
+        keychainModal.classList.remove('active');
+        targetedActiveClaimId = null;
+    });
+
+    modalFileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const file = this.files[0];
+            modalFileText.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                modalPreviewThumb.style.backgroundImage = `url('${e.target.result}')`;
+                modalPreviewThumb.style.borderStyle = 'solid';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            modalFileText.textContent = "No file chosen";
+            modalPreviewThumb.style.backgroundImage = 'none';
+            modalPreviewThumb.style.borderStyle = 'dashed';
+        }
+    });
+
+    document.getElementById('modal-keychain-form').addEventListener('submit', function(e) {
+        if (!currentUser || !targetedActiveClaimId) {
+            e.preventDefault();
+            return;
+        }
+
+        const claimTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const itemRef = ref(db, `user_game_data/${currentUser.uid}/shop_history/${targetedActiveClaimId}`);
+        
+        update(itemRef, {
+            claimed: true,
+            claimedAtStr: claimTime
+        }).catch(err => {
+            console.error("Firebase update sync dropped layout context structural adjustments:", err);
+        });
+    });
+
+    window.claimReward = function(uniqueId) {
+        if (!currentUser) return;
+        
+        const historyNode = serverUserData.shop_history || {};
+        if (!historyNode[uniqueId]) return;
+        
+        if (historyNode[uniqueId].claimed) {
+            alert(" Invalid Win: This voucher has already been verified and claimed!");
+            return;
+        }
+
+        if (historyNode[uniqueId].itemId === 'keychain_custom') {
+            targetedActiveClaimId = uniqueId;
+            keychainModal.classList.add('active');
+            return;
+        }
+    };
+
+    function loadShopHistory(historyNode) {
+        historyList.innerHTML = '';
+        if (!historyNode) {
+            historyList.innerHTML = '<div class="history-placeholder">No purchases logged yet.</div>';
+            return;
+        }
+
+        const logsArray = Object.keys(historyNode).map(key => ({ id: key, ...historyNode[key] }));
+        
+        logsArray.reverse().forEach(log => {
+            const li = document.createElement('li');
+            li.className = 'history-item';
+            
+            let actionMarkup = `<span class="time-tag">${log.timestamp}</span>`;
+            
+            if (log.claimable) {
+                if (log.claimed) {
+                    actionMarkup = `<button class="claim-btn claimed" disabled>Claimed at ${log.claimedAtStr || ''}</button>`;
+                } else {
+                    if (log.itemId === 'keychain_custom') {
+                        actionMarkup = `<button class="claim-btn" onclick="window.claimReward('${log.id}')">Submit Details</button>`;
+                    } else {
+                        actionMarkup = `<div style="font-size: 0.7rem; color: #ff8fa3; font-weight: bold; border: 1px solid #ffb6c1; padding: 4px 8px; border-radius: 12px; background: rgba(255, 182, 193, 0.1);">Admin Scan Required</div>`;
+                    }
+                }
+            }
+
+            li.innerHTML = `
+                <div>
+                    <div><strong>${log.itemName}</strong></div>
+                    <div class="time-tag">${log.timestamp}</div>
+                </div>
+                <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                    <div class="cost-tag">-${log.cost.toLocaleString()} pts</div>
+                    <div>${actionMarkup}</div>
+                </div>
+            `;
+            historyList.appendChild(li);
+        });
+    }
+
+    window.purchaseItem = function(itemId, cost, itemName, itemType) {
+        if (!currentUser) return;
+        if (currentPoints < cost) {
+            alert(" Insufficient points balance configuration error.");
+            return;
+        }
+
+        const confirmPurchase = confirm(`Are you sure you want to redeem "${itemName}" for ${cost.toLocaleString()} points?`);
+        if (!confirmPurchase) return;
+
+        const userGameRef = ref(db, 'user_game_data/' + currentUser.uid);
+        const shopHistoryRef = ref(db, `user_game_data/${currentUser.uid}/shop_history`);
+        
+        const now = new Date();
+        const dateString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        let updatedPoints = currentPoints - cost;
+
+        const updatePayload = {
+            points: updatedPoints
+        };
+
+        const isClaimableItem = (itemType.toLowerCase() === 'voucher' || itemType.toLowerCase() === 'item');
+
+        update(userGameRef, updatePayload).then(() => {
+            push(shopHistoryRef, {
+                itemId: itemId,
+                itemName: itemName,
+                itemType: itemType,
+                cost: cost,
+                timestamp: dateString,
+                claimable: isClaimableItem,
+                claimed: false,
+                claimedAtStr: ""
+            }).then(() => {
+                alert(` Successfully redeemed ${itemName}!`);
+            });
+        }).catch(err => {
+            alert("Database Error: Transaction dropped safely.");
+            console.error(err);
+        });
+    };
+</script>
+</body>
+</html>

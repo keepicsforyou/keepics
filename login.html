@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics - Authentication</title>
+    
+</head>
+<body class="login-page">
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="order.html">Add to Cart</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li id="auth-status"><a href="login.html" class="active">Log In</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About</a></li>        
+        </ul>
+    </nav>
+
+    <section class="login-hero">
+        <div class="box login-box">
+            <h2 id="form-title">Sign in</h2>
+            <div id="form-subtitle" class="login-subtitle">to continue to KeePics</div>
+
+            <div id="social-block">
+                <button type="button" id="google-auth-btn" class="google-btn">
+                  
+                   Continue with Google
+                </button>
+                <div class="divider" id="social-divider">or use your email</div>
+            </div>
+
+            <form id="auth-form">
+                <div class="name-fields-container" id="name-fields">
+                    <div class="form-group">
+                        <input type="text" id="first-name" placeholder="First name">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="last-name" placeholder="Last name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Email address" required>
+                </div>
+                
+                <div id="password-group">
+                    <div class="form-group password-container">
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                        <span class="toggle-password" id="eye-icon">Show</span>
+                    </div>
+
+                    <div class="forgot-link-container">
+                        <span id="forgot-password-trigger">Forgot password?</span>
+                    </div>
+                </div>
+
+                <div id="error-box" class="error-message">
+                    <span class="error-icon"></span>
+                    <span id="error-text"></span>
+                </div>
+
+                <div id="success-box" class="success-message">
+                    <span class="success-icon"></span>
+                    <span id="success-text"></span>
+                </div>
+
+                <div class="form-actions">
+                    <div class="switch-mode-text">
+                        <span id="toggle-auth-mode">Create account</span>
+                    </div>
+                    <button type="submit" id="main-submit-btn" class="submit-btn">Next</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    </script>
+
+    <script type="module">
+        import { 
+            auth, 
+            googleProvider,
+            signInWithPopup,
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword,
+            updateProfile,
+            sendPasswordResetEmail,
+            sendEmailVerification,
+            handleNavbarAuth,
+            db
+        } from './assets/database/firebase-config.js';
+        
+        import { ref, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        handleNavbarAuth('auth-status');
+
+        const authForm = document.getElementById('auth-form');
+        const formTitle = document.getElementById('form-title');
+        const formSubtitle = document.getElementById('form-subtitle');
+        const mainSubmitBtn = document.getElementById('main-submit-btn');
+        const toggleAuthModeBtn = document.getElementById('toggle-auth-mode');
+        const errorBox = document.getElementById('error-box');
+        const errorText = document.getElementById('error-text');
+        const successBox = document.getElementById('success-box');
+        const successText = document.getElementById('success-text');
+        const googleAuthBtn = document.getElementById('google-auth-btn');
+        const socialBlock = document.getElementById('social-block');
+        
+        const passwordGroup = document.getElementById('password-group');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        
+        const nameFields = document.getElementById('name-fields');
+        const firstNameInput = document.getElementById('first-name');
+        const lastNameInput = document.getElementById('last-name');
+        const forgotPasswordTrigger = document.getElementById('forgot-password-trigger');
+
+        // Flow Management State Machine: 'login' | 'signup' | 'forgot'
+        let currentMode = 'login';
+
+        const displayStatus = (err, successMsg = "") => {
+            // Reset blocks
+            errorText.textContent = "";
+            errorBox.style.display = "none";
+            successText.textContent = "";
+            successBox.style.display = "none";
+
+            if (err) {
+                const errorCode = err.code || err.message || "";
+                let humanReadableMessage = "An unexpected error occurred. Please try again.";
+
+                if (errorCode.includes('invalid-credential') || errorCode.includes('wrong-password')) {
+                    humanReadableMessage = "Wrong password. Try again or reset your password if forgotten.";
+                } else if (errorCode.includes('user-not-found')) {
+                    humanReadableMessage = "No account found with this email address.";
+                } else if (errorCode.includes('invalid-email')) {
+                    humanReadableMessage = "Please enter a valid email address.";
+                } else if (errorCode.includes('email-already-in-use')) {
+                    humanReadableMessage = "This email is already registered to an account.";
+                } else if (errorCode.includes('weak-password')) {
+                    humanReadableMessage = "Password should be at least 6 characters long.";
+                } else if (errorCode.includes('too-many-requests')) {
+                    humanReadableMessage = "Too many failed attempts. This account has been temporarily blocked.";
+                }
+
+                errorText.textContent = humanReadableMessage;
+                errorBox.style.display = "flex";
+            }
+
+            if (successMsg) {
+                successText.textContent = successMsg;
+                successBox.style.display = "flex";
+            }
+        };
+
+        const redirectUser = () => {
+            if (document.referrer && !document.referrer.includes('login.html')) {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = "index.html";
+            }
+        };
+
+        // Helper function to update the user record node in Realtime Database
+        function saveUserToRegistry(user, customName = null) {
+            const userRef = ref(db, `users/${user.uid}`);
+            const updates = {
+                uid: user.uid,
+                email: user.email,
+                displayName: customName || user.displayName || user.email.split('@')[0],
+                lastLogin: Date.now()
+            };
+            return update(userRef, updates).catch(err => console.error("Registry error:", err));
+        }
+
+        const switchAuthMode = (targetMode) => {
+            currentMode = targetMode;
+            displayStatus(null);
+
+            if (currentMode === 'login') {
+                formTitle.textContent = "Sign in";
+                formSubtitle.textContent = "to continue to KeePics";
+                mainSubmitBtn.textContent = "Next";
+                toggleAuthModeBtn.textContent = "Create account";
+                
+                socialBlock.style.display = "block";
+                nameFields.style.display = "none";
+                passwordGroup.style.display = "block";
+                
+                firstNameInput.removeAttribute('required');
+                lastNameInput.removeAttribute('required');
+                passwordInput.setAttribute('required', '');
+            } 
+            else if (currentMode === 'signup') {
+                formTitle.textContent = "Create account";
+                formSubtitle.textContent = "to get started with KeePics";
+                mainSubmitBtn.textContent = "Sign up";
+                toggleAuthModeBtn.textContent = "Sign in instead";
+                
+                socialBlock.style.display = "block";
+                nameFields.style.display = "flex";
+                passwordGroup.style.display = "block";
+                
+                firstNameInput.setAttribute('required', '');
+                lastNameInput.setAttribute('required', '');
+                passwordInput.setAttribute('required', '');
+            } 
+            else if (currentMode === 'forgot') {
+                formTitle.textContent = "Account recovery";
+                formSubtitle.textContent = "Get a validation link sent to your inbox";
+                mainSubmitBtn.textContent = "Send Link";
+                toggleAuthModeBtn.textContent = "Back to Sign in";
+                
+                socialBlock.style.display = "none";
+                nameFields.style.display = "none";
+                passwordGroup.style.display = "none";
+                
+                firstNameInput.removeAttribute('required');
+                lastNameInput.removeAttribute('required');
+                passwordInput.removeAttribute('required');
+            }
+        };
+
+        eyeIcon.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = 'Show';
+            }
+        });
+
+        toggleAuthModeBtn.addEventListener('click', () => {
+            if (currentMode === 'login' || currentMode === 'forgot') {
+                switchAuthMode('signup');
+            } else {
+                switchAuthMode('login');
+            }
+        });
+
+        forgotPasswordTrigger.addEventListener('click', () => {
+            switchAuthMode('forgot');
+        });
+
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = passwordInput.value;
+            displayStatus(null);
+
+            if (currentMode === 'login') {
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => { 
+                        return saveUserToRegistry(userCredential.user).then(() => redirectUser());
+                    })
+                    .catch((err) => { displayStatus(err); });
+            } 
+            else if (currentMode === 'signup') {
+                const fullName = `${firstNameInput.value.trim()} ${lastNameInput.value.trim()}`;
+                
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        return updateProfile(userCredential.user, { displayName: fullName })
+                            .then(() => userCredential.user);
+                    })
+                    .then((user) => {
+                        return saveUserToRegistry(user, fullName).then(() => sendEmailVerification(user));
+                    })
+                    .then(() => { 
+                        localStorage.setItem('isLoggedIn', 'true');
+                        localStorage.setItem('displayName', fullName);
+                        displayStatus(null, "Account created! A secure verification link has been delivered to your email address.");
+                        setTimeout(() => { redirectUser(); }, 4000);
+                    })
+                    .catch((err) => { displayStatus(err); });
+            } 
+            else if (currentMode === 'forgot') {
+                sendPasswordResetEmail(auth, email)
+                    .then(() => {
+                        displayStatus(null, "Password reset link transmitted successfully. Check your email inbox or spam folder.");
+                    })
+                    .catch((err) => { displayStatus(err); });
+            }
+        });
+
+        googleAuthBtn.addEventListener('click', () => {
+            displayStatus(null);
+            signInWithPopup(auth, googleProvider)
+                .then((result) => {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('displayName', result.user.displayName);
+                    return saveUserToRegistry(result.user).then(() => redirectUser());
+                })
+                .catch((err) => { displayStatus(err); });
+        });
+    </script>
+</body>
+</html>

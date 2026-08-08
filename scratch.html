@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics - Daily Scratch Card</title>
+    
+</head>
+<body class="scratch-page">
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="features.html">Go back</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Daily Scratch Card</h1>
+        <div class="subtitle" id="serverDateDisplay">Loading Server Time...</div>
+        
+        <div class="scratches-badge" id="scratchesCountDisplay"> Scratches Today: -- / 3</div>
+        <p class="isx-70" >Scratch to reveal your points!</p>
+        
+        <div class="card-wrapper" id="cardContainer">
+            <div class="prize-underlay">
+                <span class="prize-emoji" id="underlayEmoji"></span>
+                <span class="prize-text" id="underlayText">Determining Prize...</span>
+            </div>
+            <canvas id="scratchCanvas" class="scratch-canvas" width="320" height="160"></canvas>
+        </div>
+
+        <div class="status-msg" id="statusMessage">Checking server status...</div>
+        <div id="actionArea"></div>
+    </div>
+
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    </script>
+
+    <script type="module">
+        import { auth, db } from './assets/database/firebase-config.js';
+        import { ref, get, update, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusMsg = document.getElementById('statusMessage');
+        const serverDateDisplay = document.getElementById('serverDateDisplay');
+        const scratchesCountDisplay = document.getElementById('scratchesCountDisplay');
+        const underlayEmoji = document.getElementById('underlayEmoji');
+        const underlayText = document.getElementById('underlayText');
+        const actionArea = document.getElementById('actionArea');
+        
+        let isDrawing = false;
+        let lastX = -1;
+        let lastY = -1;
+        let currentUser = null;
+
+        // Size the canvas backing store to the full rendered prize container
+        // so the scratch cover always fills exactly where the prize is shown.
+        function resizeCanvas() {
+            const wrapper = document.getElementById('cardContainer');
+            if (!wrapper) return;
+            const rect = wrapper.getBoundingClientRect();
+            const newWidth = Math.max(1, Math.round(rect.width));
+            const newHeight = Math.max(1, Math.round(rect.height));
+            if (canvas.width !== newWidth || canvas.height !== newHeight) {
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+            }
+        }
+        let rewardGranted = false;
+        let selectedPrize = null;
+        let todayScratchCount = 0;
+
+        // Configured strictly for 100, 150, 200, 250, and rare 500 weights
+        const scratchPrizes = [
+            { type: "points", value: 100, chance: 35.0, emoji: "", displayStr: "100 POINTS" },
+            { type: "points", value: 150, chance: 30.0, emoji: "", displayStr: "150 POINTS" },
+            { type: "points", value: 200, chance: 20.0, emoji: "", displayStr: "200 POINTS" },
+            { type: "points", value: 250, chance: 13.0, emoji: "", displayStr: "250 POINTS" },
+            { type: "points", value: 500, chance: 2.0,  emoji: "", displayStr: "MYSTIC 500 PTS!" }
+        ];
+
+        function getOutcome() {
+            const totalWeight = scratchPrizes.reduce((sum, p) => sum + p.chance, 0);
+            const rand = Math.random() * totalWeight;
+            let cumulative = 0;
+            for (let i = 0; i < scratchPrizes.length; i++) {
+                cumulative += scratchPrizes[i].chance;
+                if (rand < cumulative) return scratchPrizes[i];
+            }
+            return scratchPrizes[scratchPrizes.length - 1];
+        }
+
+        function getServerDateString() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                checkDailyStatus();
+            } else {
+                resizeCanvas();
+                statusMsg.innerText = "Please Log In to check your daily card!";
+                serverDateDisplay.innerText = "Authentication Required";
+                scratchesCountDisplay.innerText = " Scratches Today: Locked";
+                ctx.fillStyle = '#b0b0b0';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+
+        function checkDailyStatus() {
+            const todayStr = getServerDateString();
+            serverDateDisplay.innerText = `Server Date: ${todayStr}`;
+            actionArea.innerHTML = "";
+            rewardGranted = false;
+            canvas.dataset.locked = "false"; 
+            
+            const scratchRef = ref(db, `user_scratch_data/${currentUser.uid}`);
+            
+            get(scratchRef).then((snapshot) => {
+                const data = snapshot.val();
+                
+                if (data && data.lastScratchDate === todayStr) {
+                    todayScratchCount = data.scratchCount ?? 0;
+                } else {
+                    todayScratchCount = 0;
+                }
+
+                scratchesCountDisplay.innerText = ` Scratches Today: ${todayScratchCount} / 3`;
+
+                if (todayScratchCount >= 3) {
+                    underlayEmoji.innerText = "";
+                    underlayText.innerText = "Limit Reached";
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    statusMsg.innerText = " You have used your 3 scratch cards for today! Come back tomorrow.";
+                } else {
+                    // Restore uncompleted active card from database if page refreshed midway
+                    if (data && data.isScratched === false && data.lastScratchDate === todayStr) {
+                        selectedPrize = {
+                            type: data.prizeType,
+                            value: data.prizeValue,
+                            emoji: data.prizeEmoji,
+                            displayStr: data.prizeText
+                        };
+                        statusMsg.innerText = " Restoring your unfinished scratch card...";
+                        underlayEmoji.innerText = selectedPrize.emoji;
+                        underlayText.innerText = selectedPrize.displayStr;
+                        initScratchLayer();
+                    } else {
+                        selectedPrize = getOutcome();
+                        underlayEmoji.innerText = selectedPrize.emoji;
+                        underlayText.innerText = selectedPrize.displayStr;
+                        initScratchLayer();
+                    }
+                }
+            }).catch(() => {
+                statusMsg.innerText = "Error syncing with database server.";
+            });
+        }
+
+        function initScratchLayer() {
+            resizeCanvas();
+            ctx.globalCompositeOperation = 'source-over';
+            
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            gradient.addColorStop(0.0, '#FFFBD8');
+            gradient.addColorStop(0.12, '#FDD3EB');
+            gradient.addColorStop(0.25, '#DDD7E5');
+            gradient.addColorStop(0.37, '#E5F7FB');
+            gradient.addColorStop(0.5, '#F3FFFD');
+            gradient.addColorStop(0.62, '#FDE0D3');
+            gradient.addColorStop(0.75, '#D3FDE9');
+            gradient.addColorStop(0.87, '#EFD3FD');
+            gradient.addColorStop(1.0, '#FDD3D9');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 32px MC, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('KeePics.', canvas.width / 2, canvas.height / 2);
+            ctx.globalCompositeOperation = 'source-over';
+            
+            statusMsg.innerText = " Swipe over the card surface to reveal your prize!";
+
+            // Remove stale listeners first so each card gets exactly one handler set
+            canvas.removeEventListener('mousedown', startScratch);
+            canvas.removeEventListener('mousemove', scratchMove);
+            window.removeEventListener('mouseup', endScratch);
+            canvas.removeEventListener('touchstart', startScratch);
+            canvas.removeEventListener('touchmove', scratchMove);
+            window.removeEventListener('touchend', endScratch);
+
+            canvas.addEventListener('mousedown', startScratch);
+            canvas.addEventListener('mousemove', scratchMove);
+            window.addEventListener('mouseup', endScratch);
+            canvas.addEventListener('touchstart', startScratch);
+            canvas.addEventListener('touchmove', scratchMove);
+            window.addEventListener('touchend', endScratch);
+        }
+
+        function startScratch(e) {
+            e.preventDefault();
+            isDrawing = true;
+            lastX = -1;
+            lastY = -1;
+            scratch(e);
+        }
+
+        function endScratch() {
+            isDrawing = false;
+            lastX = -1;
+            lastY = -1;
+            checkPercentageCleared();
+        }
+
+        function scratchMove(e) {
+            if (isDrawing) {
+                e.preventDefault();
+                scratch(e);
+            }
+        }
+
+        function scratch(e) {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.lineWidth = 32;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            const rect = canvas.getBoundingClientRect();
+            
+            let clientX = (typeof e.clientX === 'number') ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+            let clientY = (typeof e.clientY === 'number') ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+
+            if (clientX === null || clientY === null) return;
+            
+            const canvasX = ((clientX - rect.left) / rect.width) * canvas.width;
+            const canvasY = ((clientY - rect.top) / rect.height) * canvas.height;
+            
+            ctx.beginPath();
+            
+            if (lastX === -1 || lastY === -1) {
+                // First contact: stamp a circle so there is no delay before effect starts
+                ctx.arc(canvasX, canvasY, 18, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                // Connect consecutive points so fast swipes erase a continuous trail
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(canvasX, canvasY);
+                ctx.stroke();
+            }
+            
+            lastX = canvasX;
+            lastY = canvasY;
+        }
+
+        function checkPercentageCleared() {
+            if (rewardGranted || !currentUser || todayScratchCount >= 3) return;
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            let cleared = 0;
+            for (let i = 3; i < pixels.length; i += 4) {
+                if (pixels[i] === 0) cleared++;
+            }
+            
+            const percentCleared = (cleared / (pixels.length / 4)) * 100;
+
+            // Session anti-cheat lock triggers upon breaking > 1% cover
+            if (percentCleared > 1 && percentCleared <= 45) {
+                savePendingScratchToDatabase();
+            }
+
+            // Reveal fully when past 45% threshold
+            if (percentCleared > 45) {
+                rewardGranted = true;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                processScratchCommit();
+            }
+        }
+
+        function savePendingScratchToDatabase() {
+            if (canvas.dataset.locked === "true") return; 
+            canvas.dataset.locked = "true";
+
+            const todayStr = getServerDateString();
+            const scratchRef = ref(db, `user_scratch_data/${currentUser.uid}`);
+            
+            update(scratchRef, {
+                lastScratchDate: todayStr,
+                scratchCount: todayScratchCount, 
+                isScratched: false,              
+                prizeType: selectedPrize.type,
+                prizeValue: selectedPrize.value,
+                prizeEmoji: selectedPrize.emoji,
+                prizeText: selectedPrize.displayStr
+            }).catch((err) => {
+                console.error("Session locking failed: ", err);
+                canvas.dataset.locked = "false"; 
+            });
+        }
+
+        function processScratchCommit() {
+            const todayStr = getServerDateString();
+            const scratchRef = ref(db, `user_scratch_data/${currentUser.uid}`);
+            const nextCount = todayScratchCount + 1;
+            
+            canvas.dataset.locked = "false"; 
+            
+            set(scratchRef, {
+                lastScratchDate: todayStr,
+                scratchCount: nextCount,
+                isScratched: true, 
+                prizeType: selectedPrize.type,
+                prizeValue: selectedPrize.value,
+                prizeEmoji: selectedPrize.emoji,
+                prizeText: selectedPrize.displayStr
+            }).then(() => {
+                statusMsg.innerText = ` Added +${selectedPrize.value} points to your profile!`;
+                allocatePoints(selectedPrize.value, nextCount);
+            });
+        }
+
+        function allocatePoints(amount, nextCount) {
+            const userGameRef = ref(db, 'user_game_data/' + currentUser.uid);
+            get(userGameRef).then((snapshot) => {
+                let currentPoints = 0;
+                if (snapshot.exists()) {
+                    currentPoints = snapshot.val().points ?? 0;
+                }
+                update(userGameRef, { points: currentPoints + amount }).then(() => {
+                    showNextSteps(nextCount);
+                });
+            });
+        }
+
+        function showNextSteps(nextCount) {
+            todayScratchCount = nextCount;
+            scratchesCountDisplay.innerText = ` Scratches Today: ${todayScratchCount} / 3`;
+            
+            if (todayScratchCount < 3) {
+                actionArea.innerHTML = `<button class="cta-nav-btn" id="nextScratchBtn">Scratch Next Card</button>`;
+                document.getElementById('nextScratchBtn').addEventListener('click', () => {
+                    checkDailyStatus();
+                });
+            } else {
+                statusMsg.innerText = " All 3 daily cards scratched! Come back tomorrow.";
+                actionArea.innerHTML = `<a href="shop.html" class="cta-nav-btn">Go to Voucher Shop</a>`;
+            }
+        }
+    </script>
+</body>
+</html>

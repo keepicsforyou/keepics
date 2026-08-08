@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics - Order</title>
+    <style>
+        /* ===== Order flow page-specific additions ===== */
+        body.order-page .hidden { display: none !important; }
+
+        body.order-page .product-emoji {
+            width: 100%;
+            height: 225px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4.4rem;
+            background: linear-gradient(135deg, #fff1f4, #eef6ff);
+            user-select: none;
+        }
+
+        body.order-page .flow-head {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        body.order-page .flow-head .flow-eyebrow {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(191, 227, 254, 0.9);
+            color: #3b82c4;
+            font-weight: 800;
+            font-size: 0.68rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 6px 16px;
+            border-radius: 30px;
+            margin-bottom: 12px;
+        }
+
+        body.order-page .flow-head p {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            margin: 8px 0 0;
+        }
+
+        body.order-page .flow-sub {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 10px;
+        }
+
+        body.order-page .flow-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            text-align: left;
+            background: rgba(248, 250, 252, 0.92);
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            cursor: pointer;
+            transition: all 0.22s ease;
+        }
+
+        body.order-page .flow-option:hover {
+            border-color: #ffb6c1;
+            background: #ffffff;
+            box-shadow: 0 8px 20px rgba(255, 143, 163, 0.16);
+            transform: translateY(-1px);
+        }
+
+        body.order-page .flow-option .flow-ico {
+            flex: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #ffe4e6, #ffb6c1);
+            box-shadow: 0 4px 10px rgba(255, 143, 163, 0.25);
+        }
+
+        body.order-page .flow-option small {
+            display: block;
+            font-weight: 500;
+            color: #64748b;
+            font-size: 0.78rem;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        body.order-page .flow-field {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.92rem;
+            color: #1e293b;
+            background: #ffffff;
+            margin-bottom: 12px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none;
+        }
+
+        body.order-page .flow-field:focus {
+            border-color: #ff8fa3;
+            box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.18);
+        }
+
+        body.order-page .flow-btn {
+            width: 100%;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 20px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
+            box-shadow: 0 8px 22px rgba(255, 143, 163, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        body.order-page .flow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(255, 143, 163, 0.5);
+        }
+
+        body.order-page .flow-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            padding: 8px 0;
+            margin-top: 4px;
+            transition: color 0.2s ease;
+        }
+
+        body.order-page .flow-back:hover { color: #b73b49; }
+
+        body.order-page .flow-lock {
+            text-align: center;
+            padding: 10px 0 4px;
+        }
+
+        body.order-page .flow-lock .lock-ico {
+            width: 64px;
+            height: 64px;
+            margin: 6px auto 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            color: #64748b;
+        }
+
+        body.order-page .review-summary {
+            background: rgba(248, 250, 252, 0.9);
+            border: 1px solid #e9edf2;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+
+        body.order-page .review-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.86rem;
+            padding: 5px 0;
+            color: #475569;
+        }
+
+        body.order-page .review-row span:first-child { color: #94a3b8; font-weight: 600; }
+        body.order-page .review-row span:last-child { text-align: right; font-weight: 700; color: #1e3a8a; }
+
+        body.order-page .review-total {
+            border-top: 2px dashed rgba(255, 182, 193, 0.55);
+            margin-top: 8px;
+            padding-top: 10px;
+            font-size: 1rem;
+        }
+
+        body.order-page .review-total span:last-child { color: #b73b49; font-size: 1.08rem; }
+
+        body.order-page .delivery-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1.5px solid rgba(255, 182, 193, 0.5);
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            box-shadow: 0 6px 18px rgba(255, 143, 163, 0.12);
+        }
+
+        body.order-page .delivery-pill .pill-ico {
+            width: 30px;
+            height: 30px;
+            flex: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ffe4e6, #ffb6c1);
+            font-size: 0.9rem;
+        }
+
+        body.order-page .delivery-pill .pill-text { flex: 1; min-width: 0; }
+        body.order-page .delivery-pill .pill-title { font-size: 0.8rem; font-weight: 800; color: #1e3a8a; }
+        body.order-page .delivery-pill .pill-detail { font-size: 0.74rem; color: #64748b; line-height: 1.4; word-break: break-word; }
+
+        body.order-page .delivery-pill .change-btn {
+            flex: none;
+            background: #ffffff;
+            border: 1.5px solid #ffb6c1;
+            color: #b73b49;
+            font-weight: 800;
+            font-size: 0.72rem;
+            padding: 7px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        body.order-page .delivery-pill .change-btn:hover {
+            background: linear-gradient(135deg, #ffe4e6, #ffb6c1);
+            border-color: #ff8fa3;
+        }
+
+        body.order-page .sent-banner {
+            position: relative;
+            z-index: 2;
+            max-width: 620px;
+            margin: 26px auto 0;
+            padding: 16px 22px;
+            background: linear-gradient(135deg, #d3fde9, #a7f3d0);
+            border: 1px solid rgba(19, 115, 51, 0.25);
+            border-radius: 18px;
+            color: #137333;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 10px 26px rgba(19, 115, 51, 0.14);
+        }
+
+        body.order-page #summary-items-list { display: flex; flex-direction: column; }
+
+        body.order-page .order-form { display: none; }
+
+        /* Block page content only — keep the navbar visible & usable */
+        #orderOffModal {
+            top: 78px;
+            height: calc(100vh - 78px);
+            z-index: 999;
+            background: rgba(30, 58, 138, 0.45);
+            backdrop-filter: blur(4px);
+        }
+
+        @media (max-width: 768px) {
+            #orderOffModal {
+                top: 60px;
+                height: calc(100vh - 60px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            body.order-page .product-emoji { height: 170px; font-size: 3.4rem; }
+        }
+    </style>
+</head>
+<body class="order-page">
+
+    <!-- Decorative background art -->
+    <div class="op-bg-art" aria-hidden="true">
+        <div class="op-blob op-blob-1"></div>
+        <div class="op-blob op-blob-2"></div>
+        <div class="op-blob op-blob-3"></div>
+        <div class="op-dot-grid"></div>
+        <div class="op-ring op-ring-1"></div>
+        <div class="op-ring op-ring-2"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">KeePics<span class="logo-dot"></span></div>
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="order.html" class="active">Order</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li id="auth-status"><a href="login.html">Log In</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <section class="op-hero">
+        <span class="op-hero-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            KeePics Store
+        </span>
+        <h1 class="op-hero-title">Online ordering is still unavailable due to the coder is hungry, He wants to be treated Jollibee before finishing</h1>
+        <p class="op-hero-subtitle">Anyways, checkout the new feature <a href="photobooth.html">Photobooth</a> </p>
+        <div class="op-hero-stats">
+            <div class="op-stat"><strong id="ownerName">Guest</strong><span>Account</span></div>
+            <div class="op-stat"><strong id="cartCountStat">0</strong><span>Items Chosen</span></div>
+            <div class="op-stat"><strong id="totalStat">₱0</strong><span>Estimated Total</span></div>
+        </div>
+    </section>
+
+    <script type="module">
+        import { auth, handleNavbarAuth, db } from './assets/database/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        if (typeof handleNavbarAuth === 'function') handleNavbarAuth('auth-status');
+
+        /* ---------- Navbar ---------- */
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        /* ---------- Success banner on return ---------- */
+        const urlParams = new URLSearchParams(window.location.search);
+        const sentBanner = document.getElementById('sentBanner');
+        if (urlParams.get('sent') === '1') {
+            sentBanner.classList.remove('hidden');
+            sessionStorage.removeItem('keepicsCart');
+            sessionStorage.removeItem('keepicsDelivery');
+            try { localStorage.removeItem('keepicsOrderDraft'); } catch (e) {}
+            setTimeout(() => {
+                sentBanner.classList.add('hidden');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }, 6000);
+        }
+
+        /* ---------- Catalog data ---------- */
+        const PRODUCTS = [
+            { id: 'sticker_pack',  name: 'KeePics Sticker Pack',   price: 50, emoji: '🏷️', tag: 'New'  },
+            { id: 'lanyard',       name: 'Lanyard + ID Sleeve',    price: 45, emoji: '📿' },
+            { id: 'sticker_sheet', name: 'Sticker Sheet ×3',       price: 35, emoji: '🎨' },
+            { id: 'phone_charm',   name: 'Phone Charm',            price: 30, emoji: '📱' },
+            { id: 'polaroid_pack', name: 'Polaroid Frame Pack',    price: 25, emoji: '🖼️' },
+            { id: 'acrylic_key',   name: 'Acrylic Keychain',       price: 60, emoji: '🔑', tag: 'New' }
+        ];
+
+        /* ---------- Cart state (local draft + Firebase cloud sync) ---------- */
+        let cart = [];
+        let deliveryPref = null;
+        let remoteLoaded = false;
+
+        const ORDER_DB = (uid) => ref(db, `orders/${uid}`);
+        const LS_DRAFT = 'keepicsOrderDraft';
+
+        function loadLocalDraft() {
+            try {
+                const saved = localStorage.getItem(LS_DRAFT);
+                if (saved) {
+                    const draft = JSON.parse(saved);
+                    if (Array.isArray(draft.cart)) cart = draft.cart;
+                    if (draft.deliveryPref) deliveryPref = draft.deliveryPref;
+                }
+            } catch (e) { /* ignore corrupt draft */ }
+        }
+        loadLocalDraft();
+
+        let currentItem = null; // item being configured in product modal
+
+        const el = (id) => document.getElementById(id);
+
+        /* ---------- Render catalog ---------- */
+        const productGrid = el('productGrid');
+        productGrid.innerHTML = PRODUCTS.map(p => `
+            <div class="easy" data-tag="${p.tag || ''}">
+                <div class="picture-container">
+                    <div class="product-emoji">${p.emoji}</div>
+                    <div class="op-hover-overlay">
+                        <span class="op-configure-btn">＋ Add to Order</span>
+                    </div>
+                </div>
+                <div class="easy-details">
+                    <h3>${p.name}</h3>
+                    <span class="price">₱${p.price}.00</span>
+                    <span class="easy-sub">CGC Merch · KeePics</span>
+                </div>
+            </div>
+        `).join('');
+
+        productGrid.querySelectorAll('.easy').forEach((card, i) => {
+            card.addEventListener('click', () => openProductModal(PRODUCTS[i]));
+        });
+
+        /* ---------- Product modal ---------- */
+        const productModal = el('productModal');
+        let productQty = 1;
+
+        function openProductModal(item) {
+            currentItem = item;
+            productQty = 1;
+            el('pmName').textContent = item.name;
+            el('pmPrice').textContent = `₱${item.price}.00 each`;
+            el('pmQty').textContent = '1';
+            productModal.classList.remove('hidden');
+        }
+
+        el('closeProductModal').addEventListener('click', () => productModal.classList.add('hidden'));
+        productModal.addEventListener('click', (e) => { if (e.target === productModal) productModal.classList.add('hidden'); });
+
+        el('pmMinus').addEventListener('click', () => {
+            if (productQty > 1) { productQty--; el('pmQty').textContent = productQty; }
+        });
+        el('pmPlus').addEventListener('click', () => {
+            if (productQty < 99) { productQty++; el('pmQty').textContent = productQty; }
+        });
+        el('pmAddBtn').addEventListener('click', () => {
+            const existing = cart.find(c => c.id === currentItem.id);
+            if (existing) {
+                existing.qty = Math.min(99, existing.qty + productQty);
+            } else {
+                cart.push({ id: currentItem.id, name: currentItem.name, price: currentItem.price, emoji: currentItem.emoji, qty: productQty });
+            }
+            productModal.classList.add('hidden');
+            persistCart();
+            renderSummary();
+        });
+
+        /* ---------- Persistence: localStorage draft + Firebase cloud ---------- */
+        function persistLocalDraft() {
+            try {
+                localStorage.setItem(LS_DRAFT, JSON.stringify({ cart, deliveryPref }));
+            } catch (e) { /* storage full / private mode */ }
+        }
+
+        function persistCart() {
+            persistLocalDraft();
+            if (currentAuthUser && remoteLoaded) {
+                set(ORDER_DB(currentAuthUser.uid), { cart, deliveryPref: deliveryPref || null })
+                    .catch(err => console.error('Order sync failed:', err));
+            }
+        }
+        function persistDelivery() {
+            persistLocalDraft();
+            if (currentAuthUser && remoteLoaded) {
+                set(ORDER_DB(currentAuthUser.uid), { cart, deliveryPref: deliveryPref || null })
+                    .catch(err => console.error('Order sync failed:', err));
+            }
+        }
+
+        /* ---------- Summary render ---------- */
+        const summaryList = el('summary-items-list');
+
+        function renderSummary() {
+            summaryList.innerHTML = '';
+
+            if (cart.length === 0) {
+                summaryList.innerHTML = '<li style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:18px 0;">Your cart is empty. Pick something cute! 🍡</li>';
+                el('summaryCount').textContent = '0';
+                el('cartCountStat').textContent = '0';
+                el('summaryTotal').textContent = '₱0.00';
+                el('totalStat').textContent = '₱0';
+                updateCheckoutButton();
+                renderDeliveryPref();
+                return;
+            }
+
+            let total = 0;
+            let itemCount = 0;
+
+            cart.forEach(c => {
+                const subtotal = c.price * c.qty;
+                total += subtotal;
+                itemCount += c.qty;
+
+                const li = document.createElement('li');
+                li.className = 'summary-item';
+                li.style.display = 'flex';
+                li.style.alignItems = 'center';
+                li.style.gap = '10px';
+                li.innerHTML = `
+                    <span style="font-size:1.25rem; flex:none;">${c.emoji}</span>
+                    <div style="flex:1; min-width:0;">
+                        <div class="summary-item-title" style="font-size:0.86rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.name}</div>
+                        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                            <button class="queue-btn" data-act="minus" data-id="${c.id}" style="width:24px; height:24px; border-radius:7px; font-weight:800; cursor:pointer; line-height:1;">−</button>
+                            <span style="font-size:0.8rem; font-weight:800; color:#1e3a8a; min-width:16px; text-align:center;">${c.qty}</span>
+                            <button class="queue-btn" data-act="plus" data-id="${c.id}" style="width:24px; height:24px; border-radius:7px; font-weight:800; cursor:pointer; line-height:1;">+</button>
+                        </div>
+                    </div>
+                    <div style="text-align:right; flex:none;">
+                        <div style="font-size:0.82rem; font-weight:800; color:#b73b49;">₱${subtotal.toFixed(2)}</div>
+                        <button class="remove-item-btn" data-act="remove" data-id="${c.id}" style="border:none; border-radius:7px; font-size:0.68rem; font-weight:800; padding:3px 8px; cursor:pointer; margin-top:4px;">Remove</button>
+                    </div>
+                `;
+                summaryList.appendChild(li);
+            });
+
+            el('summaryCount').textContent = String(itemCount);
+            el('cartCountStat').textContent = String(itemCount);
+            el('summaryTotal').textContent = `₱${total.toFixed(2)}`;
+            el('totalStat').textContent = `₱${total}`;
+
+            renderDeliveryPref();
+            updateCheckoutButton();
+        }
+
+        summaryList.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-act]');
+            if (!btn) return;
+            const id = btn.dataset.id;
+            const item = cart.find(c => c.id === id);
+            if (!item) return;
+
+            if (btn.dataset.act === 'plus') item.qty = Math.min(99, item.qty + 1);
+            else if (btn.dataset.act === 'minus') {
+                item.qty--;
+                if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+            }
+            else if (btn.dataset.act === 'remove') cart = cart.filter(c => c.id !== id);
+
+            persistCart();
+            renderSummary();
+        });
+
+        /* ---------- Delivery preference display ---------- */
+        function renderDeliveryPref() {
+            const box = el('deliveryPrefBox');
+            if (!deliveryPref) { box.classList.add('hidden'); return; }
+
+            box.classList.remove('hidden');
+            const icons = {
+                'needs_room': '📬', 'get_to_us': '🏫',
+                'friend_pickup': '🤝', 'cannot_order': '🚫'
+            };
+            el('pillIco').textContent = icons[deliveryPref.kind] || '📦';
+
+            let title = '';
+            let detail = '';
+            if (deliveryPref.kind === 'needs_room') {
+                title = 'Deliver to me';
+                detail = `Room ${deliveryPref.room || '—'} · ${deliveryPref.building || '—'}`;
+            } else if (deliveryPref.kind === 'get_to_us') {
+                title = 'Get it to us';
+                detail = '12-HUMSS-3 · Old Building';
+            } else if (deliveryPref.kind === 'friend_pickup') {
+                title = 'Friend pickup';
+                detail = deliveryPref.friendName || '—';
+            } else if (deliveryPref.kind === 'cannot_order') {
+                title = 'Cannot order';
+                detail = 'No one available to receive it';
+            }
+            el('pillTitle').textContent = title;
+            el('pillDetail').textContent = detail;
+        }
+
+        el('changeDeliveryBtn').addEventListener('click', () => {
+            if (!currentAuthUser) { redirectToLogin(); return; }
+            openCheckoutFlow();
+        });
+
+        /* ---------- Auth ---------- */
+        let currentAuthUser = null;
+
+        onAuthStateChanged(auth, (user) => {
+            currentAuthUser = user;
+            const ownerEl = el('ownerName');
+
+            if (user) {
+                ownerEl.textContent = (user.displayName || user.email.split('@')[0]).split(' ')[0];
+                el('checkoutAuthNotice').classList.add('hidden');
+                el('checkoutBtn').disabled = false;
+
+                // Load this user's saved order from the cloud so refresh never loses it.
+                onValue(ORDER_DB(user.uid), (snap) => {
+                    const data = snap.val();
+                    if (data) {
+                        if (Array.isArray(data.cart)) cart = data.cart;
+                        deliveryPref = data.deliveryPref || null;
+                        persistLocalDraft();
+                        remoteLoaded = true;
+                    } else {
+                        // First time from this device — upload the local draft to the cloud.
+                        remoteLoaded = true;
+                        persistCart();
+                    }
+                    renderSummary();
+                }, (err) => {
+                    remoteLoaded = true;
+                    console.error('Failed to load saved order:', err);
+                    renderSummary();
+                });
+            } else {
+                ownerEl.textContent = 'Guest';
+                el('checkoutAuthNotice').classList.remove('hidden');
+                el('checkoutBtn').disabled = true;
+                remoteLoaded = false;
+            }
+            updateCheckoutButton();
+        });
+
+        function redirectToLogin() {
+            sessionStorage.setItem('keepicsPostLoginRedirect', window.location.pathname + window.location.search);
+            window.location.href = 'login.html';
+        }
+
+        /* ---------- Checkout button ---------- */
+        const checkoutBtn = el('checkoutBtn');
+
+        function updateCheckoutButton() {
+            if (!currentAuthUser) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.textContent = 'Log in to checkout →';
+                return;
+            }
+            if (cart.length === 0) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.textContent = 'Your cart is empty';
+                return;
+            }
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = 'Proceed to Checkout →';
+        }
+
+        checkoutBtn.addEventListener('click', () => {
+            if (!currentAuthUser) { redirectToLogin(); return; }
+            if (cart.length === 0) return;
+            openCheckoutFlow();
+        });
+
+        /* ---------- Checkout flow modal ---------- */
+        const checkoutModal = el('checkoutModal');
+        const stages = {
+            cgc: el('stage-cgc'),
+            dmethod: el('stage-dmethod'),
+            address: el('stage-address'),
+            handoff: el('stage-handoff'),
+            friend: el('stage-friend'),
+            cannot: el('stage-cannot'),
+            review: el('stage-review')
+        };
+
+        function showStage(name) {
+            Object.values(stages).forEach(s => s.classList.add('hidden'));
+            stages[name].classList.remove('hidden');
+            if (name === 'address') {
+                el('roomInput').value = (deliveryPref && deliveryPref.room) || '';
+                el('buildingInput').value = (deliveryPref && deliveryPref.building) || '';
+            }
+            if (name === 'friend') {
+                el('friendNameInput').value = (deliveryPref && deliveryPref.friendName) || '';
+            }
+            if (name === 'review') buildReview();
+        }
+
+        function openCheckoutFlow() {
+            // If a valid delivery pref already exists, jump straight to review (still changeable).
+            // A "cannot order" pref always restarts the questions so they can change their answer.
+            if (deliveryPref && deliveryPref.kind !== 'cannot_order') {
+                showStage('review');
+            } else {
+                showStage('cgc');
+            }
+            checkoutModal.classList.remove('hidden');
+        }
+
+        el('closeCheckoutModal').addEventListener('click', () => checkoutModal.classList.add('hidden'));
+        checkoutModal.addEventListener('click', (e) => { if (e.target === checkoutModal) checkoutModal.classList.add('hidden'); });
+
+        /* --- CGC stage --- */
+        el('cgcYesBtn').addEventListener('click', () => showStage('dmethod'));
+        el('cgcNoBtn').addEventListener('click', () => showStage('handoff'));
+
+        /* --- Delivery method stage --- */
+        el('dmethodBack').addEventListener('click', () => showStage('cgc'));
+        el('deliverMeBtn').addEventListener('click', () => showStage('address'));
+        el('getUsBtn').addEventListener('click', () => {
+            deliveryPref = { kind: 'get_to_us', room: '', building: '', friendName: '', createdAt: Date.now() };
+            persistDelivery();
+            showStage('review');
+        });
+
+        /* --- Address stage --- */
+        el('addressBack').addEventListener('click', () => showStage('dmethod'));
+        el('saveAddressBtn').addEventListener('click', () => {
+            const room = el('roomInput').value.trim();
+            const building = el('buildingInput').value.trim();
+            if (!room) { el('roomInput').focus(); return; }
+            if (!building) { el('buildingInput').focus(); return; }
+            deliveryPref = { kind: 'needs_room', room, building, friendName: '', createdAt: Date.now() };
+            persistDelivery();
+            showStage('review');
+        });
+
+        /* --- Handoff stage --- */
+        el('handoffBack').addEventListener('click', () => showStage('cgc'));
+        el('friendBtn').addEventListener('click', () => showStage('friend'));
+        el('nobodyBtn').addEventListener('click', () => {
+            deliveryPref = { kind: 'cannot_order', room: '', building: '', friendName: '', createdAt: Date.now() };
+            persistDelivery();
+            showStage('cannot');
+        });
+
+        /* --- Friend stage --- */
+        el('friendBack').addEventListener('click', () => showStage('handoff'));
+        el('saveFriendBtn').addEventListener('click', () => {
+            const friendName = el('friendNameInput').value.trim();
+            if (!friendName) { el('friendNameInput').focus(); return; }
+            deliveryPref = { kind: 'friend_pickup', room: '', building: '', friendName, createdAt: Date.now() };
+            persistDelivery();
+            showStage('review');
+        });
+
+        /* --- Cannot order stage --- */
+        el('cannotCloseBtn').addEventListener('click', () => checkoutModal.classList.add('hidden'));
+
+        /* --- Review stage --- */
+        el('reviewBack').addEventListener('click', () => showStage('cgc'));
+
+        function buildReview() {
+            const user = currentAuthUser;
+            const itemsText = cart.map(c => `${c.name}`).join(', ');
+            const qtyText = cart.map(c => `${c.name} ×${c.qty}`).join(', ');
+            const total = cart.reduce((sum, c) => sum + (c.price * c.qty), 0);
+
+            let eligibility = '';
+            let method = '';
+            let room = '';
+            let building = '';
+            let friend = '';
+
+            if (deliveryPref.kind === 'needs_room' || deliveryPref.kind === 'get_to_us') {
+                eligibility = 'CGCian';
+                if (deliveryPref.kind === 'needs_room') {
+                    method = 'Deliver it to me';
+                    room = deliveryPref.room || '';
+                    building = deliveryPref.building || '';
+                } else {
+                    method = 'Get it to us · 12-HUMSS-3 Old Building';
+                }
+            } else if (deliveryPref.kind === 'friend_pickup') {
+                eligibility = 'Not a CGCian (friend pickup)';
+                method = 'A friend from the organization will pick it up';
+                friend = deliveryPref.friendName || '';
+            } else {
+                eligibility = 'Not a CGCian';
+                method = 'Cannot order — no one available to receive it';
+            }
+
+            // Store for FormSubmit
+            window.__orderPayload = {
+                itemsText, qtyText, total, eligibility, method, room, building, friend
+            };
+
+            const rows = `
+                <div class="review-row"><span>Customer</span><span>${(user?.displayName || user?.email || '—')}</span></div>
+                <div class="review-row"><span>Email</span><span>${user?.email || '—'}</span></div>
+                <div class="review-row"><span>Items</span><span>${itemsText}</span></div>
+                <div class="review-row"><span>Quantities</span><span>${qtyText}</span></div>
+                <div class="review-row"><span>Eligibility</span><span>${eligibility}</span></div>
+                <div class="review-row"><span>Method</span><span>${method}</span></div>
+                ${room ? `<div class="review-row"><span>Room</span><span>${room}</span></div>` : ''}
+                ${building ? `<div class="review-row"><span>Building</span><span>${building}</span></div>` : ''}
+                ${friend ? `<div class="review-row"><span>Friend</span><span>${friend}</span></div>` : ''}
+                <div class="review-row review-total"><span>Total (PHP)</span><span>₱${total.toFixed(2)}</span></div>
+            `;
+            el('reviewSummary').innerHTML = rows;
+            renderDeliveryPref();
+        }
+
+        /* ---------- Place order (FormSubmit) ---------- */
+        el('placeOrderBtn').addEventListener('click', () => {
+            if (!currentAuthUser) { redirectToLogin(); return; }
+            if (!deliveryPref || deliveryPref.kind === 'cannot_order' || cart.length === 0) return;
+
+            const payload = window.__orderPayload;
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const form = el('orderForm');
+            el('f_subject').value = `New KeePics Order from ${currentAuthUser.displayName || currentAuthUser.email}`;
+            el('f_name').value = currentAuthUser.displayName || currentAuthUser.email.split('@')[0];
+            el('f_email').value = currentAuthUser.email || '';
+            el('f_date').value = dateStr;
+            el('f_items').value = payload.itemsText;
+            el('f_quantities').value = payload.qtyText;
+            el('f_total').value = `₱${payload.total.toFixed(2)}`;
+            el('f_eligibility').value = payload.eligibility;
+            el('f_method').value = payload.method;
+            el('f_room').value = payload.room;
+            el('f_building').value = payload.building;
+            el('f_friend').value = payload.friend;
+            el('f_uid').value = currentAuthUser.uid || '';
+
+            // Clear local + cloud state before redirecting (banner confirms on return)
+            try { localStorage.removeItem(LS_DRAFT); } catch (e) {}
+            if (currentAuthUser) remove(ORDER_DB(currentAuthUser.uid)).catch(() => {});
+            cart = [];
+            deliveryPref = null;
+
+            const btn = el('placeOrderBtn');
+            btn.textContent = 'Sending order…';
+            btn.disabled = true;
+            form.submit();
+        });
+
+        /* ---------- Order off / maintenance popup ---------- */
+        const orderOffModal = el('orderOffModal');
+        // Don't interrupt the "order sent" confirmation banner flow.
+        if (!urlParams.get('sent')) orderOffModal.classList.remove('hidden');
+        el('orderOffCloseBtn').addEventListener('click', () => orderOffModal.classList.add('hidden'));
+        orderOffModal.addEventListener('click', (e) => { if (e.target === orderOffModal) orderOffModal.classList.add('hidden'); });
+
+        /* ---------- Init ---------- */
+        renderSummary();
+    </script>
+</body>
+</html>

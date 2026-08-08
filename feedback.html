@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Material Symbols (Rounded) -->
+    
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics.</title>
+    
+</head>
+<body class="feedback-page">
+
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="features.html">Go back</a></li>
+        </ul>
+    </nav>
+
+    <div class="stacked-container">
+        <div class="form-wrapper">
+            <!-- Progress Tracker -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <form action="https://formspree.io/f/mvzjkyvz" method="POST" enctype="multipart/form-data" id="feedback-form">
+              
+                <h2 class="isx-3" >Drop Us Some Feedback!</h2>
+                
+                <!-- STAGE 1: Quick Categories -->
+                <div class="form-step active" data-step="1">
+                    <div class="form-group">
+                        <label>Stage 1: What caught your attention today? (Select any)</label>
+                        <div class="tag-grid">
+                            <label class="tag-label">
+                                <input type="checkbox" name="Topic[]" value="Product Quality">
+                                <svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg> Product Quality
+                            </label>
+                            <label class="tag-label">
+                                <input type="checkbox" name="Topic[]" value="Website Interface">
+                                <svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></svg> Website Layout
+                            </label>
+                            <label class="tag-label">
+                                <input type="checkbox" name="Topic[]" value="Social Media">
+                                <svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg> Social Media Pages
+                            </label>
+                            <label class="tag-label">
+                                <input type="checkbox" name="Topic[]" value="New Suggestions">
+                                <svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg> Cool New Ideas
+                            </label>    
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STAGE 2: Core Performance Indicators -->
+                <div class="form-step" data-step="2">
+                    <label class="isx-5" >Stage 2: Rate our work!</label>
+                    
+                    <div class="form-group">
+                        <label>How's the overall look and quality of the products?</label>
+                        <div class="emoji-rating-container">
+                            <label class="emoji-btn"><input type="radio" name="Product_Rating" value="Not Tried" checked><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg><span class="label-text">Haven't tried</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Product_Rating" value="Poor"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px"  aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.4" cy="10" r="1.4" fill="currentColor"/><circle cx="15.6" cy="10" r="1.4" fill="currentColor"/><path d="M9.5 8 L7.8 6.8 M14.5 8 L16.2 6.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M8 15.5 Q12 13.5 16 15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><span class="label-text">Bad</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Product_Rating" value="Fair"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px"  aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.4" cy="10.5" r="1.4" fill="currentColor"/><circle cx="15.6" cy="10.5" r="1.4" fill="currentColor"/><path d="M8.5 15.5 L15.5 15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="label-text">Meh</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Product_Rating" value="Good"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px"  aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.4" cy="10" r="1.4" fill="currentColor"/><circle cx="15.6" cy="10" r="1.4" fill="currentColor"/><path d="M8 13.5 Q12 17.5 16 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><span class="label-text">Good</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Product_Rating" value="Excellent"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px"  aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.4" cy="9.5" r="1.4" fill="currentColor"/><circle cx="15.6" cy="9.5" r="1.4" fill="currentColor"/><path d="M8 13 Q12 18 16 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M7 7.5 L9 8.6 M17 7.5 L15 8.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="label-text">Love it!</span></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>How friendly and helpful is our customer service?</label>
+                        <div class="emoji-rating-container">
+                            <label class="emoji-btn"><input type="radio" name="Service_Rating" value="Not Tried" checked><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg><span class="label-text">No experience</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Service_Rating" value="Poor"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px"  aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.4" cy="10" r="1.4" fill="currentColor"/><circle cx="15.6" cy="10" r="1.4" fill="currentColor"/><path d="M9.5 8 L7.8 6.8 M14.5 8 L16.2 6.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M8 15.5 Q12 13.5 16 15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><span class="label-text">Slow/Bad</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Service_Rating" value="Fair"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px"  aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.4" cy="10.5" r="1.4" fill="currentColor"/><circle cx="15.6" cy="10.5" r="1.4" fill="currentColor"/><path d="M8.5 15.5 L15.5 15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="label-text">Okay</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Service_Rating" value="Good"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px"  aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.4" cy="10" r="1.4" fill="currentColor"/><circle cx="15.6" cy="10" r="1.4" fill="currentColor"/><path d="M8 13.5 Q12 17.5 16 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><span class="label-text">Helpful</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Service_Rating" value="Excellent"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px"  aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.4" cy="9.5" r="1.4" fill="currentColor"/><circle cx="15.6" cy="9.5" r="1.4" fill="currentColor"/><path d="M8 13 Q12 18 16 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M7 7.5 L9 8.6 M17 7.5 L15 8.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="label-text">Superb!</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STAGE 3: System Usability Assessment -->
+                <div class="form-step" data-step="3">
+                    <label class="isx-5" >Stage 3: Website Check</label>
+                    
+                    <div class="form-group">
+                        <label>Was it easy to navigate and place an order on our site?</label>
+                        <div class="emoji-rating-container">
+                            <label class="emoji-btn"><input type="radio" name="Web_Ease_Rating" value="Not Tried" checked><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg><span class="label-text">Didn't buy yet</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Web_Ease_Rating" value="Confusing"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg><span class="label-text">Confusing</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Web_Ease_Rating" value="Hard"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zm-4-5l-4-4V4h8v3.5l-4 4z"/></svg><span class="label-text">Bit hard</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Web_Ease_Rating" value="Easy"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg><span class="label-text">Easy enough</span></label>
+                            <label class="emoji-btn"><input type="radio" name="Web_Ease_Rating" value="Frictionless"><svg class="isx-4" viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor"  aria-hidden="true"><path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/></svg><span class="label-text">Super smooth</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STAGE 4: Qualitative Critiques -->
+                <div class="form-step" data-step="4">
+                    <label class="isx-5" >Stage 4: Your thoughts</label>
+                    
+                    <div class="form-group">
+                        <label for="improvements">What's one thing we can do better?</label>
+                        <textarea id="improvements" name="Suggestions" placeholder="Share your suggestions, designs, or features you want to see..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="concern">Got any problems or glitches to report?</label>
+                        <textarea id="concern" name="Issues_Reported" placeholder="Let us know if anything was broken, delayed, or had issues..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Dynamic Navigation Buttons -->
+                <div class="btn-controls">
+                    <button type="button" class="prev-btn" id="prev-btn" style="display: none;">Back</button>
+                    <button type="button" class="next-btn" id="next-btn">Next</button>
+                    <button type="submit" class="submit-btn" id="submit-btn" style="display: none;">Submit</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { handleNavbarAuth } from './assets/database/firebase-config.js';
+        handleNavbarAuth('auth-status');
+    </script>
+
+    <script>
+        // Navbar functionality
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // --- STAGE NAVIGATION SYSTEM ---
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        const steps = document.querySelectorAll('.form-step');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const progressBar = document.getElementById('progress-bar');
+
+        function updateFormLayout() {
+            steps.forEach(step => {
+                step.classList.remove('active');
+                if (parseInt(step.getAttribute('data-step')) === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+
+            const progressPercent = (currentStep / totalSteps) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            if (currentStep === 1) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            } else if (currentStep === totalSteps) {
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'flex';
+            } else {
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateFormLayout();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateFormLayout();
+            }
+        });
+    </script>
+</body>
+</html>

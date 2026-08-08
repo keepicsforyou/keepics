@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Official KeePics website.">
+    <meta property="og:description" content="KeePics offers customizable aesthetic keychain.">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <!-- Google Material Symbols (Rounded variant for a clean, friendly look) -->
+    
+    
+    <title>KeePics.</title>
+    
+    
+    
+    <script>
+        (function() {
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            
+            window.checkNotificationStatesFast = function() {
+                const routes = ['game.html', 'shop.html', 'public-chat.html', 'rating-wall.html', 'feedback.html', 'promo.html'];
+                
+                routes.forEach(route => {
+                    const cacheState = localStorage.getItem(`keepics_viewed_${route}`);
+                    const dot = document.querySelector(`.arcade-link[href="${route}"] .notification-dot`);
+                    if (dot && cacheState !== 'true') {
+                        dot.classList.add('is-active');
+                    }
+                });
+
+                const scratchDot = document.getElementById('dot-scratch');
+                const scratchCacheDate = localStorage.getItem('keepics_scratch_claimed_date');
+                if (scratchDot && scratchCacheDate !== todayStr) {
+                    scratchDot.classList.add('is-active');
+                }
+            };
+        })();
+    </script>
+</head>
+<body class="features-page">
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="order.html">Add to Cart</a></li>
+            <li><a href="features.html" class="active">Features</a></li>
+            <li id="auth-status"><a href="login.html">Log In</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About</a></li>        
+        </ul>
+    </nav>
+
+    <div class="order-container">
+        <!-- Category 1: Games / Prizes -->
+        <div class="page-header"><h1>Games / Prizes</h1></div>
+        <div class="liquid-glass-wrapper">
+            <section class="arcade-container">
+                <a href="scratch.html" id="link-scratch" class="arcade-link" onclick="markAsRead(this)">
+                    <div class="notification-dot" id="dot-scratch"></div>
+                    <div class="arcade-card">
+                        <div class="card-icon-container">
+                            <svg class="isx-2" viewBox="0 0 24 24" width="40px" height="40px" fill="currentColor"  aria-hidden="true"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>Daily Scratch</h3>
+                            <p>Claim your free daily 3 scratches to earn points.</p>
+                        </div>
+                        <div class="card-arrow"><svg viewBox="0 0 24 24" width="20px" height="20px" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></div>
+                    </div>
+                </a>
+                <a href="game.html" id="link-game" class="arcade-link" onclick="markAsRead(this)">
+                    <div class="notification-dot" id="dot-game"></div>
+                    <div class="arcade-card">
+                        <div class="card-icon-container">
+                            <svg class="isx-2" viewBox="0 0 24 24" width="40px" height="40px" fill="currentColor"  aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>KeePics Wheel</h3>
+                            <p>Spin every 6 hours and have a chance to win our exclusive items and deals.</p>
+                        </div>
+                        <div class="card-arrow"><svg viewBox="0 0 24 24" width="20px" height="20px" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></div>
+                    </div>
+                </a>
+                <a href="shop.html" id="link-shop" class="arcade-link" onclick="markAsRead(this)">
+                    <div class="notification-dot" id="dot-shop"></div>
+                    <div class="arcade-card">
+                        <div class="card-icon-container">
+                            <svg class="isx-2" viewBox="0 0 24 24" width="40px" height="40px" fill="currentColor"  aria-hidden="true"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>Prize Shop</h3>
+                            <p>Redeem your collected tokens directly for aesthetic accessories and discounts.</p>
+                        </div>
+                        <div class="card-arrow"><svg viewBox="0 0 24 24" width="20px" height="20px" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></div>
+                    </div>
+                </a>
+            </section>
+        </div>
+
+        <!-- Category 2: Community Layout Segment -->
+        <div class="page-header"><h1>Community</h1></div>
+        <div class="liquid-glass-wrapper">
+            <section class="arcade-container">
+                <a href="public-chat.html" id="link-chat" class="arcade-link" onclick="markAsRead(this)">
+                    <div class="notification-dot" id="dot-chat"></div>
+                    <div class="arcade-card">
+                        <div class="card-icon-container">
+                            <svg class="isx-2" viewBox="0 0 24 24" width="40px" height="40px" fill="currentColor"  aria-hidden="true"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>Community Chat</h3>
+                            <p>Connect with other people!</p>
+                        </div>
+                        <div class="card-arrow"><svg viewBox="0 0 24 24" width="20px" height="20px" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></div>
+                    </div>
+                </a>
+
+                <a href="rating-wall.html" id="link-rating" class="arcade-link" onclick="markAsRead(this)">
+                    <div class="notification-dot" id="dot-rating"></div>
+                    <div class="arcade-card">
+                        <div class="card-icon-container">
+                            <svg class="isx-2" viewBox="0 0 24 24" width="40px" height="40px" fill="currentColor"  aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>KeePics Review</h3>
+                            <p>Tell us what you think about our product.</p>
+                        </div>
+                        <div class="card-arrow"><svg viewBox="0 0 24 24" width="20px" height="20px" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></div>
+                    </div>
+                </a>
+
+                <a href="feedback.html" id="link-feedback" class="arcade-link" onclick="markAsRead(this)">
+                    <div class="notification-dot" id="dot-feedback"></div>
+                    <div class="arcade-card">
+                        <div class="card-icon-container">
+                            <svg class="isx-2" viewBox="0 0 24 24" width="40px" height="40px" fill="currentColor"  aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 14v-2.47l6.88-6.88c.2-.2.51-.2.71 0l1.77 1.77c.2.2.2.51 0 .71L8.47 14H6zm12 0h-3.5l-2-2H18v2z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>Service Feedback</h3>
+                            <p>Tell us privately what you think.</p>
+                        </div>
+                        <div class="card-arrow"><svg viewBox="0 0 24 24" width="20px" height="20px" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></div>
+                    </div>
+                </a>
+            </section>
+        </div>
+                        <a href="promo.html" id="link-promo" class="arcade-link" onclick="markAsRead(this)">
+                    <div class="notification-dot" id="dot-promo"></div>
+                    <div class="arcade-card">
+                        <div class="card-icon-container">
+                            <svg class="isx-2" viewBox="0 0 24 24" width="40px" height="40px" fill="currentColor"  aria-hidden="true"><path d="M22 10V6c0-1.11-.9-2-2-2H4c-1.1 0-1.99.89-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 7.5h-2v-2h2v2zm0-4.5h-2v-2h2v2zm0-4.5h-2v-2h2v2z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>Promo Code</h3>
+                            <p>Claim your points-back promo and have a chance to win free KeePics keychain</p>
+                        </div>
+                        <div class="card-arrow"><svg viewBox="0 0 24 24" width="20px" height="20px" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></div>
+                    </div>
+                </a>
+    </div>
+
+    <!-- Execute state detection immediately as elements finish parsing -->
+    <script>
+        window.checkNotificationStatesFast();
+    </script>
+
+    <!-- Firebase Configuration Imports -->
+    <script type="module">
+        import { handleNavbarAuth, auth, db } from './assets/database/firebase-config.js';
+        import { ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        
+        handleNavbarAuth('auth-status');    
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const now = new Date();
+                const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                const scratchRef = ref(db, `user_scratch_data/${user.uid}`);
+                
+                get(scratchRef).then((snapshot) => {
+                    const data = snapshot.val();
+                    const scratchDot = document.getElementById('dot-scratch');
+                    
+                    if (data && data.lastScratchDate === todayStr && data.scratchCount >= 3) {
+                        if (scratchDot) scratchDot.classList.remove('is-active');
+                        localStorage.setItem('keepics_scratch_claimed_date', todayStr);
+                    } else {
+                        if (scratchDot) scratchDot.classList.add('is-active');
+                        localStorage.removeItem('keepics_scratch_claimed_date');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Standard Client Side Navigation Interactions Script -->
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        function markAsRead(element) {
+            const targetUrl = element.getAttribute('href');
+            const dot = element.querySelector('.notification-dot');
+            
+            if (dot) {
+                dot.remove(); 
+                if (targetUrl !== 'scratch.html') {
+                    localStorage.setItem(`keepics_viewed_${targetUrl}`, 'true');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

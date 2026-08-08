@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics - Reviews Wall</title>
+    
+</head>
+<body class="rating-wall-page">
+
+    <div id="page-wrapper" class="main-content-wrapper">
+        <nav class="navbar">
+            <div class="logo">KeePics.</div>
+            
+            <div class="hamburger" id="hamburger-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+
+            <ul class="nav-links" id="nav-menu">
+            <li><a href="features.html">Go back</a></li>
+            </ul>
+        </nav>
+
+        <div class="wall-container">
+            <section class="action-card">
+                <h2>Community Feedback</h2>
+                <p>Loved your custom keychain? Let us know!</p>
+                <p>Hi there! This is a message from the developer of this website, I don't know how can I implement photo uploading feature here on the reviews, I even forgot how I manage to implement image upload on chat community. Please upload your reviews (If you wanted pictures, go to community chat) and rate it there for everyone to see, thank you! - Admin Miel.</p>
+                <button class="write-review-btn" id="open-review-modal"><svg viewBox="0 0 24 24" width="18px" height="18px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg> Post a Review</button>
+            </section>
+
+            <main class="reviews-feed">
+                <div id="ratings-display-target">
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="review-modal">
+        <section class="comments-section">
+            <button class="close-modal-btn" id="close-review-modal">&times;</button>
+            
+            <h3>Product Reviews</h3>
+            <p class="subtitle">Select your star rating below:</p>
+            
+            <div class="star-rating-selector" id="star-container">
+                <span data-value="1"><svg viewBox="0 0 24 24" width="28px" height="28px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+                <span data-value="2"><svg viewBox="0 0 24 24" width="28px" height="28px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+                <span data-value="3"><svg viewBox="0 0 24 24" width="28px" height="28px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+                <span data-value="4"><svg viewBox="0 0 24 24" width="28px" height="28px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+                <span data-value="5"><svg viewBox="0 0 24 24" width="28px" height="28px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+            </div>
+
+            <div class="fb-comment-box">
+                <input type="text" id="main-rating-field" placeholder="Share your experience with KeePics..." autocomplete="off">
+                <button id="submit-review-btn">Publish Review</button>
+            </div>
+        </section>
+    </div>
+
+    <script type="module">
+        import { handleNavbarAuth, initCommentsSystem } from './assets/database/firebase-config.js';
+
+        handleNavbarAuth('auth-status');
+        initCommentsSystem('ratings-display-target');
+    </script>
+
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        const reviewModal = document.getElementById('review-modal');
+        const openModalBtn = document.getElementById('open-review-modal');
+        const closeModalBtn = document.getElementById('close-review-modal');
+
+        openModalBtn.addEventListener('click', () => {
+            reviewModal.classList.add('active');
+            currentRating = 5;
+            highlightStars(5);
+            if (typeof window.setRating === 'function') {
+                window.setRating(5);
+            }
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            closeModalWindow();
+        });
+
+        reviewModal.addEventListener('click', (e) => {
+            if (e.target === reviewModal) closeModalWindow();
+        });
+
+        function closeModalWindow() {
+            reviewModal.classList.remove('active');
+            currentRating = 0;
+            highlightStars(0);
+            document.getElementById('main-rating-field').value = '';
+        }
+
+        let currentRating = 0;
+        const stars = document.querySelectorAll('#star-container span');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                currentRating = parseInt(star.getAttribute('data-value'));
+                highlightStars(currentRating);
+                
+                if (typeof window.setRating === 'function') {
+                    window.setRating(currentRating);
+                }
+            });
+        });
+
+        function highlightStars(rating) {
+            stars.forEach(star => {
+                const starValue = parseInt(star.getAttribute('data-value'));
+                if (starValue <= rating) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        }
+
+        document.getElementById('submit-review-btn').addEventListener('click', async () => {
+            if (currentRating === 0) {
+                alert('Please select a star rating before submitting!');
+                return;
+            }
+
+            const inputField = document.getElementById('main-rating-field');
+            if (!inputField.value.trim()) {
+                alert('Please type a comment before publishing!');
+                return;
+            }
+
+            try {
+                if (typeof window.submitComment === 'function') {
+                    await window.submitComment('main-rating-field');
+                    closeModalWindow();
+                } else {
+                    alert("Database engine down. Please try again later.");
+                }
+            } catch (error) {
+                console.error("Error saving review: ", error);
+                alert("Something went wrong saving your review. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>

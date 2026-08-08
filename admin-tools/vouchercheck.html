@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assets/image/website/logo.png">
+    <link rel="stylesheet" href="../styles/styles.css">
+    <title>KeePics - Admin Scanner</title>
+    
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="qrmaker.html">QR Maker</a></li>
+            <li><a href="scanner.html">Scanner</a></li>        
+        </ul>
+    </nav>
+
+
+    <div class="admin-container" id="loading-screen">
+        <h2>Loading...</h2>
+        <h2>Loading...</h2>
+        <p>Please wait...</p>
+    </div>
+
+    <div class="admin-container" id="error-screen">
+        <h2 class="isx-76" >You are not the admin lol</h2>
+        <p class="isx-78" id="error-message" ></p>
+    </div>
+
+    <div class="admin-container" id="dashboard-screen" style="display: none;">
+        <div class="user-header">
+            <h2 id="display-name">Loading...</h2>
+            <p id="display-email">loading@email.com</p>
+            <p class="isx-79" >UID: <span id="display-uid"></span></p>
+        </div>
+
+        <h3 class="isx-80" >Customer Cart / Inventory</h3>
+        <div id="cart-list">
+            </div>
+    </div>
+
+<script type="module">
+    import { auth, db } from '../assets/database/firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const ADMIN_UIDS = ['nf6DyVHXpbTMxbtpDS9YicgGIYu1', '4dyuS34hliSLb0Ew0wGytuSviTG2'];
+
+    const loadingScreen = document.getElementById('loading-screen');
+    const errorScreen = document.getElementById('error-screen');
+    const errorMessage = document.getElementById('error-message');
+    const dashboardScreen = document.getElementById('dashboard-screen');
+    const cartList = document.getElementById('cart-list');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetUid = urlParams.get('uid');
+    const targetName = urlParams.get('name') || "Member Account";
+    const targetEmail = urlParams.get('email') || "Voucher Account Data";
+
+    document.getElementById('display-name').innerText = decodeURIComponent(targetName);
+    document.getElementById('display-email').innerText = decodeURIComponent(targetEmail);
+    document.getElementById('display-uid').innerText = targetUid;
+
+    function showError(msg) {
+        loadingScreen.style.display = 'none';
+        dashboardScreen.style.display = 'none';
+        errorScreen.style.display = 'block';
+        errorMessage.innerText = msg;
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            window.location.href = '../login.html';
+            return;
+        }
+
+        if (!ADMIN_UIDS.includes(user.uid)) {
+            showError("Your account does not have Admin privileges. Please exit.");
+            return;
+        }
+
+        if (!targetUid) {
+            showError("No User ID found. Please scan a valid KeePics QR code.");
+            return;
+        }
+
+        loadingScreen.style.display = 'none';
+        dashboardScreen.style.display = 'block';
+        loadUserCart(targetUid);
+    });
+
+    function loadUserCart(uid) {
+        const cartRef = ref(db, `user_game_data/${uid}/shop_history`);
+        
+        onValue(cartRef, (snapshot) => {
+            cartList.innerHTML = ''; 
+            const data = snapshot.val();
+            
+            if (!data) {
+                cartList.innerHTML = '<p style="color: #94a3b8; font-style: italic;">This user has no items in their inventory.</p>';
+                return;
+            }
+
+            // Grabbing keys directly handles our dynamic object rendering perfectly
+            const keys = Object.keys(data).reverse();
+            
+            keys.forEach(key => {
+                const item = data[key];
+                const isClaimed = item.claimed;
+                
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                
+                // Dynamically compile ALL available details from this object
+                let allInformation = '';
+                for (const [prop, value] of Object.entries(item)) {
+                    if (value !== "" && prop !== "claimable" && prop !== "claimed") {
+                        allInformation += `<div style="margin-top: 4px; color: #475569; font-size: 0.85rem;"><strong>${prop}:</strong> ${value}</div>`;
+                    }
+                }
+
+                card.innerHTML = `
+                    <div style="margin-bottom: 12px;">
+                        <h3 style="margin: 0 0 10px 0; color: #1e3a8a; font-size: 1.2rem;">${item.itemName || 'Unknown Item'}</h3>
+                        <div style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; word-break: break-word;">
+                            <div style="margin-top: 4px; color: #475569; font-size: 0.85rem;"><strong>Firebase Key ID:</strong> ${key}</div>
+                            ${allInformation}
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <strong style="font-size: 0.9rem;">Status: 
+                                ${isClaimed 
+                                    ? `<span class="item-status status-claimed">Claimed at ${item.claimedAtStr}</span>` 
+                                    : `<span class="item-status status-unclaimed">Unclaimed</span>`
+                                }
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        ${item.claimable && !isClaimed ? `<button class="action-btn btn-claim" onclick="adminClaim('${uid}', '${key}')">Claim</button>` : ''}
+                        <button class="action-btn btn-delete" onclick="adminDelete('${uid}', '${key}')">Delete</button>
+                    </div>
+                `;
+                cartList.appendChild(card);
+            });
+        });
+    }
+
+    window.adminClaim = function(uid, itemId) {
+        if (!confirm("Are you sure you want to mark this item as CLAIMED?")) return;
+        
+        const claimTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const itemRef = ref(db, `user_game_data/${uid}/shop_history/${itemId}`);
+        
+        update(itemRef, {
+            claimed: true,
+            claimedAtStr: claimTime
+        }).then(() => {
+            alert("Item successfully claimed.");
+        }).catch(err => {
+            alert("Database Error: " + err.message);
+        });
+    };
+
+    window.adminDelete = function(uid, itemId) {
+        if (!confirm("WARNING: This will permanently delete this voucher from the user's account. Continue?")) return;
+
+        const itemRef = ref(db, `user_game_data/${uid}/shop_history/${itemId}`);
+        remove(itemRef).then(() => {
+            alert("Item voided and removed from database.");
+        }).catch(err => {
+            alert("Database Error: " + err.message);
+        });
+    };
+</script>
+    <script>
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
