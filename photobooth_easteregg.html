@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/image/website/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>KeePics - Life Cut Photo Booth</title>
+    <style>
+        /* ==========================================================
+           KeePics Photo Booth — Life Cut style
+           ========================================================== */
+        body.photobooth-page {
+            background-image: linear-gradient(135deg, #fff1f4 0%, #ffe4e6 25%, #eef6ff 55%, #fff1f4 100%);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        body.photobooth-page .pb-hidden { display: none !important; }
+
+        /* ---------- Shared layout ---------- */
+        body.photobooth-page .pb-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        body.photobooth-page .pb-head {
+            text-align: center;
+            margin-bottom: 26px;
+        }
+
+        body.photobooth-page .pb-head .pb-eyebrow {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 182, 193, 0.8);
+            color: #b73b49;
+            font-weight: 800;
+            font-size: 0.68rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 6px 16px;
+            border-radius: 30px;
+            margin-bottom: 12px;
+        }
+
+        body.photobooth-page .pb-head h1 {
+            font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+            color: var(--navy);
+            letter-spacing: -0.5px;
+        }
+
+        body.photobooth-page .pb-head h1 span { background: linear-gradient(120deg, #4C154F, #B73B49 45%, #295778 85%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+        body.photobooth-page .pb-head p {
+            color: #64748b;
+            font-size: 0.92rem;
+            margin-top: 6px;
+        }
+
+        /* ---------- Steps progress ---------- */
+        body.photobooth-page .pb-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        body.photobooth-page .pb-step-dot {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1.5px solid #e2e8f0;
+            border-radius: 30px;
+            padding: 7px 14px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.25s ease;
+        }
+
+        body.photobooth-page .pb-step-dot .pb-num {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: #e2e8f0;
+            color: #64748b;
+            font-size: 0.68rem;
+            flex: none;
+        }
+
+        body.photobooth-page .pb-step-dot.active {
+            border-color: #ff8fa3;
+            background: linear-gradient(135deg, #ffe4e6, #ffb6c1);
+            color: #b73b49;
+        }
+
+        body.photobooth-page .pb-step-dot.active .pb-num { background: #ff8fa3; color: #fff; }
+
+        body.photobooth-page .pb-step-dot.done { border-color: #a7f3d0; color: #137333; }
+        body.photobooth-page .pb-step-dot.done .pb-num { background: #a7f3d0; color: #137333; }
+
+        body.photobooth-page .pb-step-arrow { color: #ffb6c1; font-weight: 800; font-size: 0.9rem; }
+
+        /* ---------- Generic panel ---------- */
+        body.photobooth-page .pb-panel {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1.5px solid #f1dfe4;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 45px rgba(183, 59, 73, 0.12);
+            animation: pbFadeUp 0.4s ease both;
+        }
+
+        @keyframes pbFadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---------- Welcome ---------- */
+        body.photobooth-page .pb-welcome {
+            text-align: center;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        body.photobooth-page .pb-welcome-logo {
+            font-size: 3.4rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 10px 18px rgba(255, 143, 163, 0.35));
+        }
+
+        body.photobooth-page .pb-welcome h2 { color: var(--navy); font-size: 1.5rem; margin-bottom: 8px; }
+        body.photobooth-page .pb-welcome p { color: #64748b; font-size: 0.92rem; line-height: 1.6; margin-bottom: 18px; }
+
+        body.photobooth-page .pb-feature-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 0 0 22px;
+        }
+
+        body.photobooth-page .pb-feature-chip {
+            background: #fff9fb;
+            border: 1.5px solid #ffe4e6;
+            border-radius: 14px;
+            padding: 12px 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        body.photobooth-page .pb-feature-chip .pb-chip-ico { display: block; font-size: 1.3rem; margin-bottom: 6px; }
+
+        /* ---------- Big buttons ---------- */
+        body.photobooth-page .pb-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
+            box-shadow: 0 8px 22px rgba(255, 143, 163, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            font-family: inherit;
+        }
+
+        body.photobooth-page .pb-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255, 143, 163, 0.5); }
+        body.photobooth-page .pb-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        body.photobooth-page .pb-btn.ghost {
+            background: #fff;
+            color: #64748b;
+            border: 1.5px solid #e2e8f0;
+            box-shadow: none;
+        }
+
+        body.photobooth-page .pb-btn.ghost:hover { border-color: #ffb6c1; color: #b73b49; }
+
+        body.photobooth-page .pb-btn.green { background: linear-gradient(135deg, #a7f3d0, #34d399); box-shadow: 0 8px 22px rgba(52, 211, 153, 0.3); color: #064e3b; }
+        body.photobooth-page .pb-btn.blue { background: linear-gradient(135deg, #bfe3fe, #60a5fa); box-shadow: 0 8px 22px rgba(96, 165, 250, 0.3); color: #1e3a8a; }
+
+        /* ---------- Booth ---------- */
+        body.photobooth-page .pb-booth-wrap {
+            display: grid;
+            grid-template-columns: 1fr 220px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        @media (max-width: 780px) {
+            body.photobooth-page .pb-booth-wrap { grid-template-columns: 1fr; }
+        }
+
+        body.photobooth-page .pb-booth-stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            max-height: 66vh;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #111827;
+            box-shadow: inset 0 0 0 3px rgba(255,255,255,0.08), 0 20px 40px rgba(0,0,0,0.25);
+        }
+
+        body.photobooth-page #cameraFeed {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        body.photobooth-page #guideCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        body.photobooth-page .pb-countdown {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(2px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 5;
+        }
+
+        body.photobooth-page .pb-countdown.show { opacity: 1; pointer-events: auto; }
+
+        body.photobooth-page .pb-countdown .pb-cd-num {
+            font-size: clamp(4rem, 16vw, 8rem);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 8px 30px rgba(255, 143, 163, 0.8);
+            animation: pbPulse 0.9s ease infinite;
+        }
+
+        @keyframes pbPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
+        }
+
+        body.photobooth-page .pb-shot-status {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.92);
+            color: #b73b49;
+            font-weight: 800;
+            font-size: 0.72rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 7px 16px;
+            border-radius: 30px;
+            z-index: 4;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            white-space: nowrap;
+        }
+
+        body.photobooth-page .pb-booth-controls {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        body.photobooth-page .pb-shutter {
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            border: none;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #ffd1da 45%, #ff8fa3 90%);
+            box-shadow: 0 8px 24px rgba(255, 143, 163, 0.55), inset 0 -4px 10px rgba(183,59,73,0.25);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+            flex: none;
+        }
+
+        body.photobooth-page .pb-shutter:hover { transform: scale(1.06); }
+        body.photobooth-page .pb-shutter:active { transform: scale(0.94); }
+        body.photobooth-page .pb-shutter:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+        body.photobooth-page .pb-shutter .pb-shutter-inner {
+            width: 58px; height: 58px;
+            margin: auto;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            background: radial-gradient(circle at 35% 35%, #ffe4e6, #ff8fa3 80%);
+        }
+
+        /* ---------- Thumbnails ---------- */
+        body.photobooth-page .pb-thumbs {
+            background: #fff9fb;
+            border: 1.5px solid #ffe4e6;
+            border-radius: 18px;
+            padding: 14px;
+        }
+
+        body.photobooth-page .pb-thumbs h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        body.photobooth-page .pb-thumb-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        @media (max-width: 780px) {
+            body.photobooth-page .pb-thumb-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        body.photobooth-page .pb-thumb {
+            position: relative;
+            aspect-ratio: 3 / 4;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f1f5f9;
+            border: 2px dashed #e2e8f0;
+        }
+
+        body.photobooth-page .pb-thumb.filled { border-style: solid; border-color: #ff8fa3; }
+
+        body.photobooth-page .pb-thumb .pb-thumb-num {
+            position: absolute;
+            top: 4px; left: 6px;
+            font-size: 0.6rem;
+            font-weight: 900;
+            color: #94a3b8;
+            background: rgba(255,255,255,0.85);
+            border-radius: 6px;
+            padding: 2px 6px;
+        }
+
+        body.photobooth-page .pb-thumb.filled .pb-thumb-num { color: #b73b49; background: #ffe4e6; }
+        body.photobooth-page .pb-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        /* ---------- Customize ---------- */
+        body.photobooth-page .pb-custom-layout {
+            display: grid;
+            grid-template-columns: minmax(260px, 420px) 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 780px) {
+            body.photobooth-page .pb-custom-layout { grid-template-columns: 1fr; }
+        }
+
+        body.photobooth-page .pb-preview-wrap {
+            position: sticky;
+            top: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @media (max-width: 780px) {
+            body.photobooth-page .pb-preview-wrap { position: static; }
+        }
+
+        body.photobooth-page .pb-preview-frame {
+            position: relative;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 18px 40px rgba(30, 58, 138, 0.2);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        body.photobooth-page #previewCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        body.photobooth-page .pb-custom-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        body.photobooth-page .pb-ctrl-group {
+            background: #fff9fb;
+            border: 1.5px solid #ffe4e6;
+            border-radius: 16px;
+            padding: 14px;
+        }
+
+        body.photobooth-page .pb-ctrl-group h4 {
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        body.photobooth-page .pb-swatches {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        body.photobooth-page .pb-swatch {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+        }
+
+        body.photobooth-page .pb-swatch:hover { transform: scale(1.1); }
+        body.photobooth-page .pb-swatch.selected { border-color: #1e3a8a; transform: scale(1.14); }
+
+        body.photobooth-page .pb-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        body.photobooth-page .pb-chip {
+            border: 1.5px solid #e2e8f0;
+            background: #fff;
+            border-radius: 30px;
+            padding: 8px 14px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            font-family: inherit;
+        }
+
+        body.photobooth-page .pb-chip:hover { border-color: #ffb6c1; color: #b73b49; }
+        body.photobooth-page .pb-chip.selected { background: linear-gradient(135deg, #ffe4e6, #ffb6c1); border-color: #ff8fa3; color: #b73b49; }
+
+        body.photobooth-page .pb-sticker-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+        }
+
+        @media (max-width: 780px) {
+            body.photobooth-page .pb-sticker-grid { grid-template-columns: repeat(8, 1fr); }
+        }
+
+        body.photobooth-page .pb-sticker-btn {
+            aspect-ratio: 1;
+            border: none;
+            background: #fff;
+            border-radius: 10px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            padding: 0;
+        }
+
+        body.photobooth-page .pb-sticker-btn:hover { transform: scale(1.18) rotate(-6deg); }
+
+        body.photobooth-page .pb-text-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #1e293b;
+            background: #fff;
+            margin-bottom: 10px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        body.photobooth-page .pb-text-input:focus { border-color: #ff8fa3; box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.18); }
+
+        body.photobooth-page .pb-caption-info {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        body.photobooth-page .pb-tools-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* ---------- Save ---------- */
+        body.photobooth-page .pb-save-layout {
+            display: grid;
+            grid-template-columns: minmax(240px, 360px) 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 780px) {
+            body.photobooth-page .pb-save-layout { grid-template-columns: 1fr; }
+        }
+
+        body.photobooth-page .pb-save-img {
+            width: 100%;
+            border-radius: 14px;
+            box-shadow: 0 18px 40px rgba(30, 58, 138, 0.22);
+        }
+
+        body.photobooth-page .pb-success {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        body.photobooth-page .pb-success .pb-succ-ico {
+            width: 76px; height: 76px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #d3fde9, #a7f3d0);
+            box-shadow: 0 10px 26px rgba(19, 115, 51, 0.2);
+        }
+
+        /* ---------- Live gallery ---------- */
+        body.photobooth-page .pb-live-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        body.photobooth-page .pb-live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1.5px solid #a7f3d0;
+            color: #137333;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 7px 14px;
+            border-radius: 30px;
+        }
+
+        body.photobooth-page .pb-live-badge .pb-live-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #34d399;
+            animation: pbBlink 1.4s ease infinite;
+        }
+
+        @keyframes pbBlink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        body.photobooth-page .pb-live-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 14px;
+        }
+
+        body.photobooth-page .pb-live-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 26px rgba(30, 58, 138, 0.12);
+            border: 1.5px solid #f1dfe4;
+            transition: transform 0.2s ease;
+            animation: pbFadeUp 0.4s ease both;
+        }
+
+        body.photobooth-page .pb-live-card:hover { transform: translateY(-3px) rotate(-0.5deg); }
+
+        body.photobooth-page .pb-live-card img {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+        }
+
+        body.photobooth-page .pb-live-meta {
+            padding: 10px 12px;
+        }
+
+        body.photobooth-page .pb-live-meta .pb-live-author {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        body.photobooth-page .pb-live-meta .pb-live-time {
+            font-size: 0.68rem;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        body.photobooth-page .pb-live-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.88rem;
+            padding: 36px 0;
+            font-weight: 600;
+        }
+
+        /* ---------- Lightbox ---------- */
+        body.photobooth-page .pb-lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            backdrop-filter: blur(6px);
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        body.photobooth-page .pb-lightbox img {
+            max-width: min(420px, 90vw);
+            max-height: 85vh;
+            border-radius: 16px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        /* ---------- Error / permission ---------- */
+        body.photobooth-page .pb-cam-error {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+            color: #cbd5e1;
+            background: #111827;
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        body.photobooth-page .pb-cam-error .pb-err-ico { font-size: 2.6rem; }
+        body.photobooth-page .pb-cam-error p { font-size: 0.88rem; line-height: 1.5; max-width: 380px; }
+
+        /* Loader */
+        body.photobooth-page .pb-spinner {
+            width: 18px; height: 18px;
+            border: 3px solid rgba(255,255,255,0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: pbSpin 0.7s linear infinite;
+        }
+
+        @keyframes pbSpin { to { transform: rotate(360deg); } }
+
+        body.photobooth-page .pb-save-notes {
+            background: #fff9fb;
+            border: 1.5px dashed #ffb6c1;
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 0.78rem;
+            color: #64748b;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body class="photobooth-page">
+
+    <nav class="navbar">
+        <div class="logo">KeePics<span class="logo-dot"></span></div>
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="photobooth.html" class="active">Photo Booth</a></li>
+            <li><a href="order.html">Order</a></li>
+            <li><a href="features.html">Features</a></li>
+            <li id="auth-status"><a href="login.html">Log In</a></li>
+        </ul>
+    </nav>
+
+    <div class="pb-shell">
+
+        <!-- ===== Steps progress ===== -->
+        <div class="pb-steps" id="pbSteps">
+            <span class="pb-step-dot active" id="pbStep1"><span class="pb-num">1</span> Shoot</span>
+            <span class="pb-step-arrow">→</span>
+            <span class="pb-step-dot" id="pbStep2"><span class="pb-num">2</span> Customize</span>
+            <span class="pb-step-arrow">→</span>
+            <span class="pb-step-dot" id="pbStep3"><span class="pb-num">3</span> Save</span>
+        </div>
+
+        <!-- ===== STEP 0: WELCOME ===== -->
+        <section class="pb-panel pb-welcome" id="stepWelcome">
+            <div class="pb-welcome-logo">📸</div>
+            <h2>Photo Booth</h2>
+            <p>Snap 4 studio-quality cuts with accurate face guides, then decorate your strip with frames, stickers and filters — just like the Korean photo booths. Your strip is saved live and sent straight to the KeePics team.</p>
+            <button class="pb-btn" id="startBtn">Start Photo Session →</button>
+            <button class="pb-btn ghost pb-hidden" id="resumeBtn" style="margin-top:10px;" type="button">↩ Resume saved draft</button>
+            <p style="margin-top:12px; font-size:0.75rem; color:#94a3b8; font-weight:600;">Camera access is required. Photos are never stored on your device automatically — only when you save.</p>
+        </section>
+
+        <!-- ===== STEP 1: CAMERA / SHOOT ===== -->
+        <section class="pb-panel pb-hidden" id="stepShoot">
+            <div class="pb-head">
+                <span class="pb-eyebrow">Step 1 · Shoot</span>
+                <h1>Strike a <span>pose</span></h1>
+                <p>Line your face up inside the glowing guide each time. 4 shots, 4 cuts.</p>
+            </div>
+
+            <div class="pb-booth-wrap">
+                <div>
+                    <div class="pb-booth-stage" id="boothStage">
+                        <video id="cameraFeed" autoplay playsinline muted></video>
+                        <canvas id="guideCanvas"></canvas>
+                        <div class="pb-shot-status" id="shotStatus">Press the shutter for Cut 1</div>
+                        <div class="pb-countdown" id="countdownOverlay"><span class="pb-cd-num" id="countdownNum">3</span></div>
+                        <div class="pb-cam-error pb-hidden" id="camError">
+                            <span class="pb-err-ico">🚫</span>
+                            <p id="camErrorText">Camera is not available.</p>
+                            <button class="pb-btn ghost" id="retryCamBtn" type="button">Try again</button>
+                        </div>
+                    </div>
+
+                    <div class="pb-booth-controls">
+                        <button class="pb-btn ghost" id="restartShotsBtn" type="button" disabled>↺ Restart cuts</button>
+                        <button class="pb-shutter" id="shutterBtn" type="button" disabled title="Capture cut"><span class="pb-shutter-inner"></span></button>
+                        <button class="pb-btn" id="shootNextBtn" type="button" disabled>Customize Strip →</button>
+                    </div>
+                </div>
+
+                <div class="pb-thumbs">
+                    <h3>Your 4 cuts</h3>
+                    <div class="pb-thumb-grid" id="thumbGrid">
+                        <div class="pb-thumb"><span class="pb-thumb-num">1</span></div>
+                        <div class="pb-thumb"><span class="pb-thumb-num">2</span></div>
+                        <div class="pb-thumb"><span class="pb-thumb-num">3</span></div>
+                        <div class="pb-thumb"><span class="pb-thumb-num">4</span></div>
+                    </div>
+                    <div class="pb-save-notes" style="margin-top:12px;">
+                        💡 Tip: each shot has its own guide position. Keep your face inside the oval, and the camera will cut the frame automatically — just like a real photo booth.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== STEP 2: CUSTOMIZE ===== -->
+        <section class="pb-panel pb-hidden" id="stepCustomize">
+            <div class="pb-head">
+                <span class="pb-eyebrow">Step 2 · Customize</span>
+                <h1>Make it <span>yours</span></h1>
+                <p>Pick a frame, slap on stickers, add a filter and a caption.</p>
+            </div>
+
+            <div class="pb-custom-layout">
+                <div class="pb-preview-wrap">
+                    <div class="pb-preview-frame" id="previewFrame" style="width: min(320px, 100%);">
+                        <canvas id="previewCanvas" width="600" height="800"></canvas>
+                    </div>
+                    <div class="pb-tools-row">
+                        <button class="pb-btn ghost" id="backToShootBtn" type="button">← Back</button>
+                        <button class="pb-btn" id="customNextBtn" type="button">Save Strip →</button>
+                    </div>
+                </div>
+
+                <div class="pb-custom-controls">
+                    <div class="pb-ctrl-group">
+                        <h4>Layout</h4>
+                        <div class="pb-chips" id="layoutChips">
+                            <button class="pb-chip selected" data-layout="1x4" type="button">Vertical · 1 × 4</button>
+                            <button class="pb-chip" data-layout="2x2" type="button">Grid · 2 × 2</button>
+                        </div>
+                    </div>
+
+                    <div class="pb-ctrl-group">
+                        <h4>Frame theme</h4>
+                        <div class="pb-swatches" id="themeSwatches"></div>
+                    </div>
+
+                    <div class="pb-ctrl-group">
+                        <h4>Film style</h4>
+                        <div class="pb-chips" id="filmChips">
+                            <button class="pb-chip selected" data-film="classic" type="button">Classic</button>
+                            <button class="pb-chip" data-film="polaroid" type="button">Polaroid</button>
+                            <button class="pb-chip" data-film="black" type="button">Black frame</button>
+                        </div>
+                    </div>
+
+                    <div class="pb-ctrl-group">
+                        <h4>Filter</h4>
+                        <div class="pb-chips" id="filterChips">
+                            <button class="pb-chip selected" data-filter="none" type="button">Original</button>
+                            <button class="pb-chip" data-filter="bw" type="button">Mono</button>
+                            <button class="pb-chip" data-filter="sepia" type="button">Vintage</button>
+                            <button class="pb-chip" data-filter="vivid" type="button">Vivid</button>
+                            <button class="pb-chip" data-filter="soft" type="button">Soft</button>
+                        </div>
+                    </div>
+
+                    <div class="pb-ctrl-group">
+                        <h4>Stickers <span style="text-transform:none; font-weight:600; color:#94a3b8;">(tap to add · drag to move · double-tap to remove)</span></h4>
+                        <div class="pb-sticker-grid" id="stickerGrid"></div>
+                    </div>
+
+                    <div class="pb-ctrl-group">
+                        <h4>Caption</h4>
+                        <input class="pb-text-input" id="captionInput" type="text" maxlength="40" placeholder="e.g. KeePics 2026 💗" autocomplete="off">
+                        <div class="pb-chips" id="captionStyleChips">
+                            <button class="pb-chip selected" data-capstyle="hand" type="button">✍️ Hand</button>
+                            <button class="pb-chip" data-capstyle="modern" type="button">Modern</button>
+                            <button class="pb-chip" data-capstyle="mono" type="button">Typewriter</button>
+                        </div>
+                        <div class="pb-caption-info">Shown at the bottom of your strip.</div>
+                    </div>
+
+                    <div class="pb-ctrl-group">
+                        <h4>Actions</h4>
+                        <div class="pb-tools-row">
+                            <button class="pb-btn ghost" id="clearStickersBtn" type="button">🧹 Clear stickers</button>
+                            <button class="pb-btn ghost" id="downloadBtn" type="button">⬇ Download strip</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== STEP 3: SAVE / SEND ===== -->
+        <section class="pb-panel pb-hidden" id="stepSave">
+            <div class="pb-head">
+                <span class="pb-eyebrow">Step 3 · Save & Send</span>
+                <h1>Finish your <span>strip</span></h1>
+                <p>Add your details — the strip is live-saved and emailed to the KeePics team.</p>
+            </div>
+
+            <div class="pb-save-layout">
+                <div>
+                    <img class="pb-save-img" id="savePreviewImg" alt="Your photo strip preview">
+                </div>
+
+                <div>
+                    <div class="pb-ctrl-group">
+                        <h4>Who are we sharing this with?</h4>
+                        <input class="pb-text-input" id="customerNameInput" type="text" maxlength="60" placeholder="Your name or ID" autocomplete="off">
+                        <input class="pb-text-input" id="customerEmailInput" type="email" maxlength="80" placeholder="Email (optional — for your receipt)" autocomplete="off">
+                        <div class="pb-save-notes">
+                            📤 Your strip is uploaded to the <strong>live gallery</strong> in realtime and emailed to the KeePics team so it can be printed into your <strong>2×6 photobooth strips</strong> product.
+                        </div>
+                    </div>
+
+                    <div class="pb-tools-row" style="margin-top:14px;">
+                        <button class="pb-btn ghost" id="backToCustomBtn" type="button">← Back</button>
+                        <button class="pb-btn green" id="saveBtn" type="button">Save & Send 📬</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SUCCESS ===== -->
+        <section class="pb-panel pb-hidden" id="stepSuccess">
+            <div class="pb-success">
+                <div class="pb-succ-ico">🎉</div>
+                <h2 style="color:var(--navy); margin-bottom:8px;">Strip saved!</h2>
+                <p style="color:#64748b; font-size:0.92rem; line-height:1.6; max-width:440px; margin:0 auto 18px;">
+                    Your life-cut strip is now in the live gallery and on its way to the KeePics team.
+                    You can download a copy from the previous step anytime.
+                </p>
+                <div class="pb-tools-row" style="justify-content:center;">
+                    <button class="pb-btn" id="newSessionBtn" type="button">Take another 📸</button>
+                    <button class="pb-btn ghost" id="viewGalleryBtn" type="button">View live gallery ↓</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== LIVE GALLERY ===== -->
+        <section class="pb-panel" id="liveGallery" style="margin-top:26px;">
+            <div class="pb-live-head">
+                <div>
+                    <h2 style="color:var(--navy); font-size:1.35rem;">Live Gallery</h2>
+                    <p style="color:#64748b; font-size:0.85rem;">Strips from everyone, appearing in realtime.</p>
+                </div>
+                <span class="pb-live-badge"><span class="pb-live-dot"></span> LIVE</span>
+            </div>
+            <div class="pb-live-grid" id="liveGrid">
+                <div class="pb-live-empty">Loading live strips…</div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Lightbox for gallery images -->
+    <div class="pb-lightbox pb-hidden" id="lightbox">
+        <img id="lightboxImg" alt="Full strip preview">
+    </div>
+
+    <script type="module">
+        import { auth, handleNavbarAuth, db, storage } from './assets/database/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { ref as dbRef, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+        if (typeof handleNavbarAuth === 'function') handleNavbarAuth('auth-status');
+
+        /* ---------- Navbar ---------- */
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        const $ = (id) => document.getElementById(id);
+        const FORM_SUBMIT_URL = 'https://formsubmit.co/ajax/a1e63f151d76e68502b50191e9ef4195';
+        const LS_DRAFT = 'keepicsPhotoboothDraft';
+        const LS_HISTORY = 'keepicsPhotoboothHistory';
+
+        /* ==========================================================
+           State
+           ========================================================== */
+        let currentAuthUser = null;
+        let stream = null;
+        let videoReady = false;
+        let capturedFrames = [];   // Array of HTMLCanvasElement (3:4 portrait cells)
+        let crop = null;           // { sw, sh, sx, sy } center 3:4 portrait crop of video
+        let cellH = 0;             // zone height within the crop region
+        let capturing = false;
+
+        // Customize state
+        let state = {
+            layout: '1x4',
+            theme: '#ff8fa3',
+            film: 'classic',
+            filter: 'none',
+            caption: '',
+            captionStyle: 'hand',
+            stickers: []           // { emoji, x, y, size, rotation }
+        };
+
+        const THEMES = [
+            { name: 'Blush Pink',  color: '#ff8fa3' },
+            { name: 'Baby Blue',   color: '#7fb8e6' },
+            { name: 'Mint',        color: '#6ee7b7' },
+            { name: 'Lavender',    color: '#c4b5fd' },
+            { name: 'Sunshine',    color: '#fcd34d' },
+            { name: 'Peach',       color: '#fdba74' },
+            { name: 'Navy',        color: '#1e3a8a' },
+            { name: 'Black',       color: '#1f2937' }
+        ];
+
+        const STICKERS = ['💗','⭐','✨','🌸','🧸','💫','🍒','🎀','☁️','🌈','🦋','🐰','💖','😎','🥰','🎉','🥳','💌','🍭','🧁','💍','🔥'];
+
+        const FILTERS = {
+            none:  'none',
+            bw:    'grayscale(1) contrast(1.05)',
+            sepia: 'sepia(0.55) contrast(1.05) brightness(1.05)',
+            vivid: 'saturate(1.5) contrast(1.1)',
+            soft:  'brightness(1.08) contrast(0.92) saturate(1.05) blur(0.4px)'
+        };
+
+        const CAP_STYLES = {
+            hand:   { font: 'italic 900 42px Segoe UI, sans-serif', color: '#8f1d2c' },
+            modern: { font: '800 44px Segoe UI, sans-serif', color: '#1e3a8a' },
+            mono:   { font: '700 38px Consolas, monospace', color: '#334155' }
+        };
+
+        /* ==========================================================
+           Steps navigation
+           ========================================================== */
+        const steps = {
+            welcome: $('stepWelcome'),
+            shoot:   $('stepShoot'),
+            customize: $('stepCustomize'),
+            save:    $('stepSave'),
+            success: $('stepSuccess')
+        };
+
+        function showStep(name) {
+            Object.values(steps).forEach(s => s.classList.add('pb-hidden'));
+            steps[name].classList.remove('pb-hidden');
+            const activeMap = { shoot: 1, customize: 2, save: 3, success: 3 };
+            [1, 2, 3].forEach(i => {
+                const dot = $('pbStep' + i);
+                dot.classList.remove('active', 'done');
+                if (activeMap[name] === undefined || i < activeMap[name]) dot.classList.add('done');
+                if (i === activeMap[name]) dot.classList.add('active');
+            });
+            if (name === 'customize') {
+                setTimeout(renderPreview, 60);
+                syncCustomControls();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ==========================================================
+           Camera boot
+           ========================================================== */
+        async function startCamera(keepFrames = false) {
+            const errBox = $('camError');
+            errBox.classList.add('pb-hidden');
+            try {
+                stopCamera();
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } },
+                    audio: false
+                });
+                const video = $('cameraFeed');
+                video.srcObject = stream;
+                await video.play();
+                videoReady = true;
+                computeCrop();
+                $('shutterBtn').disabled = false;
+                if (!keepFrames) {
+                    capturedFrames = [];
+                }
+                renderThumbs();
+                updateShootUI();
+                requestAnimationFrame(drawGuides);
+            } catch (err) {
+                console.error('Camera error:', err);
+                errBox.classList.remove('pb-hidden');
+                $('camErrorText').textContent =
+                    err && err.name === 'NotAllowedError'
+                        ? 'Camera permission was denied. Allow camera access in your browser (or site settings) and try again.'
+                        : 'Could not start your camera. Try again or use a different browser/device.';
+                $('shutterBtn').disabled = true;
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(t => t.stop());
+                stream = null;
+            }
+            videoReady = false;
+        }
+
+        $('retryCamBtn').addEventListener('click', startCamera);
+
+        function computeCrop() {
+            const video = $('cameraFeed');
+            const vw = video.videoWidth;
+            const vh = video.videoHeight;
+            if (!vw || !vh) return;
+            // Center a 3:4 portrait region inside the video.
+            const targetRatio = 3 / 4;
+            let sw, sh;
+            if (vw / vh > targetRatio) {
+                sh = vh;
+                sw = vh * targetRatio;
+            } else {
+                sw = vw;
+                sh = vw / targetRatio;
+            }
+            crop = {
+                sw, sh,
+                sx: (vw - sw) / 2,
+                sy: (vh - sh) / 2
+            };
+            cellH = sh / 4;
+        }
+
+        /* ---------- Guide overlay: accurate life-cut framing ---------- */
+        function drawGuides() {
+            const canvas = $('guideCanvas');
+            const stage = $('boothStage');
+            if (!videoReady || !crop) {
+                requestAnimationFrame(drawGuides);
+                return;
+            }
+            // Match canvas to displayed stage size (CSS 3:4 stage).
+            const dpr = window.devicePixelRatio || 1;
+            const rect = stage.getBoundingClientRect();
+            const W = rect.width;
+            const H = rect.height;
+            if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
+                canvas.width = W * dpr;
+                canvas.height = H * dpr;
+            }
+            const ctx = canvas.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, W, H);
+
+            const shotIndex = Math.min(capturedFrames.length, 3);
+            const zoneH = H / 4;
+
+            // Dim outside + inside the capture area slightly; highlight the active zone.
+            ctx.fillStyle = 'rgba(10, 12, 20, 0.45)';
+            ctx.fillRect(0, 0, W, H);
+
+            // Cut lines between zones (life-cut cell dividers)
+            ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            for (let i = 1; i < 4; i++) {
+                const y = i * zoneH;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(W, y);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+
+            // Corner brackets on the whole capture window
+            const pad = 8;
+            ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+            ctx.lineWidth = 2.5;
+            const bracket = 22;
+            const corners = [
+                [pad, pad, 1, 1], [W - pad, pad, -1, 1],
+                [pad, H - pad, 1, -1], [W - pad, H - pad, -1, -1]
+            ];
+            corners.forEach(([cx, cy, dx, dy]) => {
+                ctx.beginPath();
+                ctx.moveTo(cx + dx * bracket, cy);
+                ctx.lineTo(cx, cy);
+                ctx.lineTo(cx, cy + dy * bracket);
+                ctx.stroke();
+            });
+
+            // Active zone highlight + face guide oval
+            const zoneY = shotIndex * zoneH;
+            ctx.fillStyle = 'rgba(255, 143, 163, 0.10)';
+            ctx.fillRect(0, zoneY, W, zoneH);
+
+            const ox = W / 2;
+            const oy = zoneY + zoneH * 0.52;
+            const rw = W * 0.52;
+            const rh = zoneH * 0.62;
+
+            // Glow
+            ctx.shadowColor = 'rgba(255, 143, 163, 0.9)';
+            ctx.shadowBlur = 18;
+            ctx.strokeStyle = 'rgba(255, 216, 222, 0.95)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.ellipse(ox, oy, rw, rh, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Static face hint
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.ellipse(ox, oy, rw * 0.72, rh * 0.7, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            requestAnimationFrame(drawGuides);
+        }
+
+        /* ---------- Capture a cut ---------- */
+        const CD_NUM = ['3', '2', '1'];
+
+        function countdown(seconds) {
+            return new Promise((resolve) => {
+                const overlay = $('countdownOverlay');
+                const numEl = $('countdownNum');
+                overlay.classList.add('show');
+                let i = 0;
+                numEl.textContent = String(seconds);
+                const iv = setInterval(() => {
+                    i++;
+                    if (i >= seconds) {
+                        clearInterval(iv);
+                        overlay.classList.remove('show');
+                        resolve();
+                    } else {
+                        numEl.textContent = CD_NUM[i];
+                    }
+                }, 1000);
+            });
+        }
+
+        async function captureShot() {
+            if (!videoReady || !crop || capturing) return;
+            if (capturedFrames.length >= 4) return;
+
+            capturing = true;
+            $('shutterBtn').disabled = true;
+            $('shootNextBtn').disabled = true;
+            $('restartShotsBtn').disabled = true;
+
+            const shotIndex = capturedFrames.length;
+            $('shotStatus').textContent = `Get ready — Cut ${shotIndex + 1}…`;
+            await new Promise(r => setTimeout(r, 400));
+            await countdown(3);
+
+            const video = $('cameraFeed');
+            const cellCanvas = document.createElement('canvas');
+            const Z = 400; // cell height svg pixels (3:4 -> 300x400)
+            cellCanvas.width = Math.round(Z * 3 / 4);
+            cellCanvas.height = Z;
+            const cctx = cellCanvas.getContext('2d');
+            // Accurate cut: draw only this shot's zone from the centered 3:4 crop region.
+            // Mirrored horizontally so the saved strip matches the live (selfie) preview.
+            cctx.save();
+            cctx.translate(cellCanvas.width, 0);
+            cctx.scale(-1, 1);
+            cctx.drawImage(
+                video,
+                crop.sx, crop.sy + shotIndex * cellH,
+                crop.sw, cellH,
+                0, 0, cellCanvas.width, cellCanvas.height
+            );
+            cctx.restore();
+
+            capturedFrames.push(cellCanvas);
+            renderThumbs();
+            updateShootUI();
+
+            if (capturedFrames.length === 4) {
+                $('shotStatus').textContent = 'All cuts done! ✨';
+            } else {
+                $('shotStatus').textContent = `Press the shutter for Cut ${capturedFrames.length + 1}`;
+            }
+            capturing = false;
+        }
+
+        $('shutterBtn').addEventListener('click', captureShot);
+
+        $('restartShotsBtn').addEventListener('click', () => {
+            capturedFrames = [];
+            renderThumbs();
+            updateShootUI();
+            $('shotStatus').textContent = 'Press the shutter for Cut 1';
+        });
+
+        $('shootNextBtn').addEventListener('click', () => {
+            if (capturedFrames.length !== 4) return;
+            showStep('customize');
+            persistDraft();
+        });
+
+        $('backToShootBtn').addEventListener('click', () => showStep('shoot'));
+        $('backToCustomBtn').addEventListener('click', () => showStep('customize'));
+
+        /* ---------- Thumbnails ---------- */
+        function renderThumbs() {
+            const grid = $('thumbGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 4; i++) {
+                const div = document.createElement('div');
+                div.className = 'pb-thumb' + (capturedFrames[i] ? ' filled' : '');
+                div.innerHTML = `<span class="pb-thumb-num">${i + 1}</span>`;
+                if (capturedFrames[i]) {
+                    div.appendChild(capturedFrames[i]);
+                }
+                grid.appendChild(div);
+            }
+        }
+
+        function updateShootUI() {
+            $('shootNextBtn').disabled = capturedFrames.length !== 4;
+            $('restartShotsBtn').disabled = capturedFrames.length === 0;
+            $('shutterBtn').disabled = !videoReady || capturedFrames.length >= 4;
+        }
+
+        /* ==========================================================
+           Customize
+           ========================================================== */
+        function syncCustomControls() {
+            // Layout chips
+            document.querySelectorAll('#layoutChips .pb-chip').forEach(c => {
+                c.classList.toggle('selected', c.dataset.layout === state.layout);
+            });
+            // Film chips
+            document.querySelectorAll('#filmChips .pb-chip').forEach(c => {
+                c.classList.toggle('selected', c.dataset.film === state.film);
+            });
+            // Filter chips
+            document.querySelectorAll('#filterChips .pb-chip').forEach(c => {
+                c.classList.toggle('selected', c.dataset.filter === state.filter);
+            });
+            // Caption style chips
+            document.querySelectorAll('#captionStyleChips .pb-chip').forEach(c => {
+                c.classList.toggle('selected', c.dataset.capstyle === state.captionStyle);
+            });
+            // Swatches
+            document.querySelectorAll('#themeSwatches .pb-swatch').forEach(s => {
+                s.classList.toggle('selected', s.dataset.color === state.theme);
+            });
+            $('captionInput').value = state.caption;
+        }
+
+        function buildThemeSwatches() {
+            const wrap = $('themeSwatches');
+            wrap.innerHTML = '';
+            THEMES.forEach(t => {
+                const sw = document.createElement('button');
+                sw.type = 'button';
+                sw.className = 'pb-swatch' + (state.theme === t.color ? ' selected' : '');
+                sw.dataset.color = t.color;
+                sw.style.background = t.color;
+                sw.title = t.name;
+                sw.addEventListener('click', () => {
+                    state.theme = t.color;
+                    syncCustomControls();
+                    renderPreview();
+                });
+                wrap.appendChild(sw);
+            });
+        }
+
+        function buildStickerGrid() {
+            const wrap = $('stickerGrid');
+            wrap.innerHTML = '';
+            STICKERS.forEach(emoji => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'pb-sticker-btn';
+                b.textContent = emoji;
+                b.addEventListener('click', () => addSticker(emoji));
+                wrap.appendChild(b);
+            });
+        }
+
+        function addSticker(emoji) {
+            state.stickers.push({
+                emoji,
+                x: 300,
+                y: 360,
+                size: 56,
+                rotation: (Math.random() * 30 - 15)
+            });
+            renderPreview();
+        }
+
+        $('clearStickersBtn').addEventListener('click', () => {
+            state.stickers = [];
+            renderPreview();
+        });
+
+        document.querySelectorAll('#layoutChips .pb-chip').forEach(c => {
+            c.addEventListener('click', () => {
+                state.layout = c.dataset.layout;
+                syncCustomControls();
+                renderPreview();
+            });
+        });
+
+        document.querySelectorAll('#filmChips .pb-chip').forEach(c => {
+            c.addEventListener('click', () => {
+                state.film = c.dataset.film;
+                syncCustomControls();
+                renderPreview();
+            });
+        });
+
+        document.querySelectorAll('#filterChips .pb-chip').forEach(c => {
+            c.addEventListener('click', () => {
+                state.filter = c.dataset.filter;
+                syncCustomControls();
+                renderPreview();
+            });
+        });
+
+        document.querySelectorAll('#captionStyleChips .pb-chip').forEach(c => {
+            c.addEventListener('click', () => {
+                state.captionStyle = c.dataset.capstyle;
+                syncCustomControls();
+                renderPreview();
+            });
+        });
+
+        $('captionInput').addEventListener('input', () => {
+            state.caption = $('captionInput').value;
+            renderPreview();
+        });
+
+        /* ---------- Preview interactions (drag stickers) ---------- */
+        const previewCanvas = $('previewCanvas');
+        let dragTarget = null;
+        let dragOffset = { x: 0, y: 0 };
+
+        function previewPoint(e) {
+            const rect = previewCanvas.getBoundingClientRect();
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            const cy = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (cx - rect.left) / rect.width * previewCanvas.width,
+                y: (cy - rect.top) / rect.height * previewCanvas.height
+            };
+        }
+
+        previewCanvas.addEventListener('mousedown', (e) => {
+            const p = previewPoint(e);
+            for (let i = state.stickers.length - 1; i >= 0; i--) {
+                const s = state.stickers[i];
+                const half = s.size * 0.6;
+                if (Math.abs(p.x - s.x) < half && Math.abs(p.y - s.y) < half) {
+                    dragTarget = state.stickers[i];
+                    dragOffset = { x: p.x - s.x, y: p.y - s.y };
+                    break;
+                }
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!dragTarget) return;
+            const p = previewPoint(e);
+            dragTarget.x = p.x - dragOffset.x;
+            dragTarget.y = p.y - dragOffset.y;
+            renderPreview();
+        });
+
+        window.addEventListener('mouseup', () => {
+            dragTarget = null;
+            persistDraft();
+        });
+
+        previewCanvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const p = previewPoint(e);
+            for (let i = state.stickers.length - 1; i >= 0; i--) {
+                const s = state.stickers[i];
+                const half = s.size * 0.6;
+                if (Math.abs(p.x - s.x) < half && Math.abs(p.y - s.y) < half) {
+                    dragTarget = state.stickers[i];
+                    dragOffset = { x: p.x - s.x, y: p.y - s.y };
+                    break;
+                }
+            }
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!dragTarget) return;
+            e.preventDefault();
+            const p = previewPoint(e);
+            dragTarget.x = p.x - dragOffset.x;
+            dragTarget.y = p.y - dragOffset.y;
+            renderPreview();
+        }, { passive: false });
+
+        window.addEventListener('touchend', () => {
+            dragTarget = null;
+            persistDraft();
+        });
+
+        // Double-tap sticker to remove
+        previewCanvas.addEventListener('dblclick', (e) => {
+            const p = previewPoint(e);
+            for (let i = state.stickers.length - 1; i >= 0; i--) {
+                const s = state.stickers[i];
+                const half = s.size * 0.6;
+                if (Math.abs(p.x - s.x) < half && Math.abs(p.y - s.y) < half) {
+                    state.stickers.splice(i, 1);
+                    renderPreview();
+                    persistDraft();
+                    break;
+                }
+            }
+        });
+
+        /* ---------- Compose the final strip ---------- */
+        const STRIP_W = 600;
+
+        function composeCanvas() {
+            const canvas = document.createElement('canvas');
+            const vertical = state.layout === '1x4';
+            const cellW = vertical ? STRIP_W : STRIP_W / 2;
+            const cellHpx = Math.round(cellW * 4 / 3);
+
+            const paddingPolaroid = state.film === 'polaroid' ? 46 : 28;
+            const paddingTop = state.film === 'polaroid' ? 56 : 28;
+
+            canvas.width = STRIP_W;
+            canvas.height = STRIP_W * 4 / 3 + paddingTop + paddingPolaroid;
+
+            const ctx = canvas.getContext('2d');
+
+            // Frame background
+            ctx.fillStyle = state.film === 'black' ? '#111827' : (state.film === 'classic' ? '#ffffff' : '#fdf8f1');
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Accent bar behind cells
+            ctx.fillStyle = state.theme;
+            ctx.globalAlpha = 0.16;
+            ctx.fillRect(0, paddingTop - 10, canvas.width, canvas.height - paddingTop - paddingPolaroid + 10);
+            ctx.globalAlpha = 1;
+
+            // Draw each captured cut
+            for (let i = 0; i < 4; i++) {
+                const frame = capturedFrames[i];
+                if (!frame) continue;
+                const cx = vertical ? 0 : (i % 2) * cellW;
+                const cy = paddingTop + Math.floor(i / (vertical ? 1 : 2)) * cellHpx;
+
+                ctx.save();
+                ctx.shadowColor = 'rgba(0,0,0,0.28)';
+                ctx.shadowBlur = 14;
+                ctx.shadowOffsetY = 5;
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(cx + 6, cy + 6, cellW - 12, cellHpx - 12);
+                ctx.restore();
+
+                ctx.save();
+                ctx.filter = FILTERS[state.filter] || 'none';
+                ctx.beginPath();
+                ctx.rect(cx + 6, cy + 6, cellW - 12, cellHpx - 12);
+                ctx.clip();
+                ctx.drawImage(frame, cx + 6, cy + 6, cellW - 12, cellHpx - 12);
+                ctx.restore();
+
+                // Thin film edge
+                ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(cx + 6, cy + 6, cellW - 12, cellHpx - 12);
+            }
+
+            // Stickers
+            state.stickers.forEach(s => {
+                ctx.save();
+                ctx.translate(s.x, s.y);
+                ctx.rotate(s.rotation * Math.PI / 180);
+                ctx.font = `${s.size}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = 'rgba(0,0,0,0.18)';
+                ctx.shadowBlur = 6;
+                ctx.fillText(s.emoji, 0, 0);
+                ctx.restore();
+            });
+
+            // Caption
+            if (state.caption.trim()) {
+                const cs = CAP_STYLES[state.captionStyle] || CAP_STYLES.hand;
+                ctx.save();
+                ctx.font = cs.font;
+                ctx.fillStyle = cs.color;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = 'rgba(0,0,0,0.10)';
+                ctx.shadowBlur = 4;
+                ctx.fillText(state.caption.trim(), canvas.width / 2, canvas.height - paddingPolaroid / 2 + 2, canvas.width - 40);
+                ctx.restore();
+            }
+
+            return canvas;
+        }
+
+        function renderPreview() {
+            const canvas = composeCanvas();
+            previewCanvas.width = canvas.width;
+            previewCanvas.height = canvas.height;
+            const previewCtx = previewCanvas.getContext('2d');
+            previewCtx.clearRect(0, 0, canvas.width, canvas.height);
+            previewCtx.drawImage(canvas, 0, 0);
+        }
+
+        $('downloadBtn').addEventListener('click', () => {
+            const canvas = composeCanvas();
+            const a = document.createElement('a');
+            a.download = `keepics-lifecut-${Date.now()}.png`;
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+        });
+
+        /* ==========================================================
+           Save flow
+           ========================================================== */
+        $('customNextBtn').addEventListener('click', () => {
+            const canvas = composeCanvas();
+            $('savePreviewImg').src = canvas.toDataURL('image/png');
+            $('customerEmailInput').value = (currentAuthUser && currentAuthUser.email) || '';
+            $('customerNameInput').value = (currentAuthUser && (currentAuthUser.displayName || currentAuthUser.email.split('@')[0])) || '';
+            showStep('save');
+        });
+
+        const saveBtn = $('saveBtn');
+
+        saveBtn.addEventListener('click', async () => {
+            const name = $('customerNameInput').value.trim();
+            const email = $('customerEmailInput').value.trim();
+
+            if (!name) {
+                $('customerNameInput').focus();
+                $('customerNameInput').style.borderColor = '#ff8fa3';
+                setTimeout(() => { $('customerNameInput').style.borderColor = ''; }, 1800);
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="pb-spinner"></span> Saving & sending…';
+
+            try {
+                const canvas = composeCanvas();
+                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+
+                /* --- 1. Local history (private on this device) --- */
+                try {
+                    const history = JSON.parse(localStorage.getItem(LS_HISTORY) || '[]');
+                    history.unshift({ dataUrl: canvas.toDataURL('image/png'), caption: state.caption, theme: state.theme, layout: state.layout, date: Date.now() });
+                    localStorage.setItem(LS_HISTORY, JSON.stringify(history.slice(0, 20)));
+                } catch (e) { /* private mode */ }
+
+                /* --- 2. Realtime database + storage (live gallery) --- */
+                let publicUrl = null;
+                const uid = (currentAuthUser && currentAuthUser.uid) || 'guest';
+                try {
+                    const fileRef = storageRef(storage, `photobooth/${uid}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}.png`);
+                    const snap = await uploadBytes(fileRef, blob);
+                    publicUrl = await getDownloadURL(snap.ref);
+                    await push(dbRef(db, 'photoboothStrips'), {
+                        imageUrl: publicUrl,
+                        author: name,
+                        email: email || null,
+                        caption: state.caption.trim() || null,
+                        theme: state.theme,
+                        layout: state.layout,
+                        filter: state.filter,
+                        timestamp: Date.now()
+                    });
+                } catch (fbErr) {
+                    console.error('Realtime save failed:', fbErr);
+                }
+
+                /* --- 3. FormSubmit (email to KeePics team, image attachment) --- */
+                const formData = new FormData();
+                formData.append('_subject', `New Life Cut Photo Strip from ${name}`);
+                formData.append('_captcha', 'false');
+                formData.append('_template', 'table');
+                formData.append('Name', name);
+                formData.append('Email', email || 'Not provided');
+                formData.append('Photo Strip File', new File([blob], 'keepics-lifecut-strip.png', { type: 'image/png' }));
+                formData.append('Caption', state.caption.trim() || 'None');
+                formData.append('Theme', THEMES.find(t => t.color === state.theme)?.name || state.theme);
+                formData.append('Layout', state.layout === '1x4' ? 'Vertical 1x4' : 'Grid 2x2');
+                formData.append('Filter', state.filter);
+                formData.append('Date', new Date().toLocaleString());
+
+                try {
+                    const res = await fetch(FORM_SUBMIT_URL, {
+                        method: 'POST',
+                        headers: { 'Accept': 'application/json' },
+                        body: formData
+                    });
+                    if (!res.ok) throw new Error('FormSubmit ' + res.status);
+                } catch (mailErr) {
+                    console.error('FormSubmit failed:', mailErr);
+                }
+
+                /* --- Success --- */
+                clearDraft();
+                showStep('success');
+            } catch (err) {
+                console.error('Save failed:', err);
+                alert('Something went wrong while saving. Please try again.');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save & Send 📬';
+            }
+        });
+
+        $('newSessionBtn').addEventListener('click', () => {
+            capturedFrames = [];
+            state.stickers = [];
+            state.caption = '';
+            state.layout = '1x4';
+            state.theme = '#ff8fa3';
+            state.film = 'classic';
+            state.filter = 'none';
+            state.captionStyle = 'hand';
+            $('captionInput').value = '';
+            $('customerNameInput').value = '';
+            $('customerEmailInput').value = '';
+            clearDraft();
+            renderThumbs();
+            updateShootUI();
+            syncCustomControls();
+            showStep('shoot');
+            $('shotStatus').textContent = 'Press the shutter for Cut 1';
+        });
+
+        $('viewGalleryBtn').addEventListener('click', () => {
+            $('liveGallery').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        /* ==========================================================
+           Live gallery (realtime)
+           ========================================================== */
+        const liveGrid = $('liveGrid');
+        let lastSnapshot = null;
+
+        onValue(dbRef(db, 'photoboothStrips'), (snap) => {
+            const data = snap.val();
+            if (!data) {
+                liveGrid.innerHTML = '<div class="pb-live-empty">No strips yet — be the first to save one! 📸</div>';
+                return;
+            }
+            const strips = Object.entries(data)
+                .map(([key, v]) => ({ id: key, ...v }))
+                .filter(s => s.imageUrl)
+                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                .slice(0, 24);
+
+            if (lastSnapshot && JSON.stringify(strips.map(s => s.id)) === JSON.stringify(lastSnapshot.map(s => s.id))) {
+                return;
+            }
+            lastSnapshot = strips;
+
+            if (strips.length === 0) {
+                liveGrid.innerHTML = '<div class="pb-live-empty">No strips yet — be the first to save one! 📸</div>';
+                return;
+            }
+
+            liveGrid.innerHTML = '';
+            strips.forEach((s) => {
+                const card = document.createElement('div');
+                card.className = 'pb-live-card';
+                const time = s.timestamp
+                    ? new Date(s.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+                    : 'just now';
+                const author = escapeHtml(s.author || 'Anonymous');
+                const capText = escapeHtml(s.caption);
+                const caption = s.caption ? `<span style="color:#64748b; font-size:0.72rem; display:block; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">“${capText}”</span>` : '';
+                const imgUrl = escapeHtml(s.imageUrl);
+                card.innerHTML = `
+                    <img src="${imgUrl}" alt="Photo strip by ${author}" loading="lazy">
+                    <div class="pb-live-meta">
+                        <div class="pb-live-author">${author}</div>
+                        <div class="pb-live-time">🕐 ${time}</div>
+                        ${caption}
+                    </div>
+                `;
+                card.querySelector('img').addEventListener('click', () => openLightbox(s.imageUrl));
+                liveGrid.appendChild(card);
+            });
+        }, (err) => {
+            console.error('Live gallery failed:', err);
+            liveGrid.innerHTML = '<div class="pb-live-empty">Could not load live gallery.</div>';
+        });
+
+        function escapeHtml(str) {
+            const AMP = '\u0026';
+            return String(str == null ? '' : str)
+                .replace(/&/g, AMP + 'amp;')
+                .replace(/</g, AMP + 'lt;')
+                .replace(/>/g, AMP + 'gt;')
+                .replace(/"/g, AMP + 'quot;')
+                .replace(/'/g, AMP + '#39;');
+        }
+
+        function openLightbox(src) {
+            const lb = $('lightbox');
+            $('lightboxImg').src = src;
+            lb.classList.remove('pb-hidden');
+        }
+
+        $('lightbox').addEventListener('click', () => {
+            $('lightbox').classList.add('pb-hidden');
+        });
+
+        /* ==========================================================
+           Draft persistence (localStorage)
+           ========================================================== */
+        function persistDraft() {
+            try {
+                const frames = capturedFrames.map(c => c.toDataURL('image/png'));
+                localStorage.setItem(LS_DRAFT, JSON.stringify({ state, frames }));
+            } catch (e) { /* quota exceeded — draft skipped */ }
+        }
+
+        function clearDraft() {
+            try { localStorage.removeItem(LS_DRAFT); } catch (e) {}
+        }
+
+        function loadDraft() {
+            let loaded = false;
+            try {
+                const raw = localStorage.getItem(LS_DRAFT);
+                if (!raw) return false;
+                const draft = JSON.parse(raw);
+                if (draft.state) {
+                    Object.assign(state, draft.state);
+                    if (!Array.isArray(state.stickers)) state.stickers = [];
+                    loaded = true;
+                }
+                if (draft.frames && draft.frames.length === 4) {
+                    let pending = draft.frames.length;
+                    capturedFrames = draft.frames.map((dataUrl, i) => {
+                        const img = new Image();
+                        img.src = dataUrl;
+                        const c = document.createElement('canvas');
+                        c.width = 300;
+                        c.height = 400;
+                        const ctx = c.getContext('2d');
+                        img.onload = () => {
+                            ctx.drawImage(img, 0, 0, 300, 400);
+                            pending--;
+                            if (pending === 0) renderPreview();
+                        };
+                        return c;
+                    });
+                    loaded = true;
+                }
+            } catch (e) { /* corrupt draft */ }
+            return loaded;
+        }
+
+        /* ==========================================================
+           Auth
+           ========================================================== */
+        onAuthStateChanged(auth, (user) => {
+            currentAuthUser = user;
+            $('customerEmailInput').value = (user && user.email) || '';
+            $('customerNameInput').value = (user && (user.displayName || user.email.split('@')[0])) || '';
+        });
+
+        /* ==========================================================
+           Init
+           ========================================================== */
+        buildThemeSwatches();
+        buildStickerGrid();
+        liveGrid.innerHTML = '<div class="pb-live-empty">Loading live strips…</div>';
+
+        $('startBtn').addEventListener('click', () => {
+            showStep('shoot');
+            startCamera();
+        });
+
+        $('resumeBtn').addEventListener('click', async () => {
+            showStep('shoot');
+            await startCamera(true);
+            renderThumbs();
+            updateShootUI();
+            if (capturedFrames.length === 4) {
+                $('shotStatus').textContent = 'All cuts done! ✨';
+            } else {
+                $('shotStatus').textContent = `Press the shutter for Cut ${capturedFrames.length + 1}`;
+            }
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (capturedFrames.length > 0) persistDraft();
+            stopCamera();
+        });
+
+        // Warm-up load any saved draft so refresh never loses work.
+        if (loadDraft()) {
+            $('resumeBtn').classList.remove('pb-hidden');
+        }
+    </script>
+</body>
+</html>
