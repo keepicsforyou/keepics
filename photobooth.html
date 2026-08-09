@@ -1,736 +1,175 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/image/website/logo.png">
     <link rel="stylesheet" href="styles/styles.css">
-    <title>KeePics - Life Cut Photo Booth</title>
+    <title>KeePics - Photo Booth</title>
     <style>
-        /* ==========================================================
-           KeePics Photo Booth — Life Cut style
-           ========================================================== */
         body.photobooth-page {
             background-image: linear-gradient(135deg, #fff1f4 0%, #ffe4e6 25%, #eef6ff 55%, #fff1f4 100%);
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            background-size: cover; background-repeat: no-repeat; background-attachment: fixed;
         }
-
         body.photobooth-page .pb-hidden { display: none !important; }
-
-        /* ---------- Shared layout ---------- */
-        body.photobooth-page .pb-shell {
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 30px 20px 60px;
-        }
-
-        body.photobooth-page .pb-head {
-            text-align: center;
-            margin-bottom: 26px;
-        }
-
         body.photobooth-page .pb-head .pb-eyebrow {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(255, 182, 193, 0.8);
-            color: #b73b49;
-            font-weight: 800;
-            font-size: 0.68rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            padding: 6px 16px;
-            border-radius: 30px;
-            margin-bottom: 12px;
+            display: inline-block; background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(255,182,193,0.8); color: #b73b49;
+            font-weight: 800; font-size: 0.68rem; letter-spacing: 2px;
+            text-transform: uppercase; padding: 6px 16px; border-radius: 30px; margin-bottom: 12px;
         }
-
-        body.photobooth-page .pb-head h1 {
-            font-size: clamp(1.8rem, 4.5vw, 2.6rem);
-            color: var(--navy);
-            letter-spacing: -0.5px;
-        }
-
-        body.photobooth-page .pb-head h1 span { background: linear-gradient(120deg, #4C154F, #B73B49 45%, #295778 85%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-
-        body.photobooth-page .pb-head p {
-            color: #64748b;
-            font-size: 0.92rem;
-            margin-top: 6px;
-        }
-
-        /* ---------- Steps progress ---------- */
-        body.photobooth-page .pb-steps {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
+        body.photobooth-page .pb-head h1 { font-size: clamp(1.8rem,4.5vw,2.4rem); color: var(--navy); letter-spacing: -0.5px; }
+        body.photobooth-page .pb-head h1 span { background: linear-gradient(120deg,#4C154F,#B73B49 45%,#295778 85%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        body.photobooth-page .pb-head p { color: #64748b; font-size: 0.92rem; margin-top: 6px; }
+        body.photobooth-page .pb-steps { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
         body.photobooth-page .pb-step-dot {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1.5px solid #e2e8f0;
-            border-radius: 30px;
-            padding: 7px 14px;
-            font-size: 0.72rem;
-            font-weight: 800;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.25s ease;
+            display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.8);
+            border: 1.5px solid #e2e8f0; border-radius: 30px; padding: 7px 14px;
+            font-size: 0.72rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; transition: all 0.25s;
         }
-
-        body.photobooth-page .pb-step-dot .pb-num {
-            width: 22px; height: 22px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            background: #e2e8f0;
-            color: #64748b;
-            font-size: 0.68rem;
-            flex: none;
-        }
-
-        body.photobooth-page .pb-step-dot.active {
-            border-color: #ff8fa3;
-            background: linear-gradient(135deg, #ffe4e6, #ffb6c1);
-            color: #b73b49;
-        }
-
-        body.photobooth-page .pb-step-dot.active .pb-num { background: #ff8fa3; color: #fff; }
-
-        body.photobooth-page .pb-step-dot.done { border-color: #a7f3d0; color: #137333; }
-        body.photobooth-page .pb-step-dot.done .pb-num { background: #a7f3d0; color: #137333; }
-
-        body.photobooth-page .pb-step-arrow { color: #ffb6c1; font-weight: 800; font-size: 0.9rem; }
-
-        /* ---------- Generic panel ---------- */
+        body.photobooth-page .pb-step-dot .pb-num { width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e2e8f0;color:#64748b;font-size:0.68rem;flex:none; }
+        body.photobooth-page .pb-step-dot.active { border-color:#ff8fa3;background:linear-gradient(135deg,#ffe4e6,#ffb6c1);color:#b73b49; }
+        body.photobooth-page .pb-step-dot.active .pb-num { background:#ff8fa3;color:#fff; }
+        body.photobooth-page .pb-step-dot.done { border-color:#a7f3d0;color:#137333; }
+        body.photobooth-page .pb-step-dot.done .pb-num { background:#a7f3d0;color:#137333; }
+        body.photobooth-page .pb-step-arrow { color:#ffb6c1;font-weight:800;font-size:0.9rem; }
         body.photobooth-page .pb-panel {
-            background: rgba(255, 255, 255, 0.92);
-            border: 1.5px solid #f1dfe4;
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 20px 45px rgba(183, 59, 73, 0.12);
-            animation: pbFadeUp 0.4s ease both;
+            background:rgba(255,255,255,0.92);border:1.5px solid #f1dfe4;border-radius:24px;padding:24px;
+            box-shadow:0 20px 45px rgba(183,59,73,0.12);animation:pbFadeUp 0.4s ease both;
         }
-
-        @keyframes pbFadeUp {
-            from { opacity: 0; transform: translateY(14px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ---------- Welcome ---------- */
-        body.photobooth-page .pb-welcome {
-            text-align: center;
-            max-width: 620px;
-            margin: 0 auto;
-        }
-
-        body.photobooth-page .pb-welcome-logo {
-            width: 86px;
-            height: 86px;
-            margin: 0 auto 10px;
-            filter: drop-shadow(0 10px 18px rgba(255, 143, 163, 0.35));
-        }
-
-        body.photobooth-page .pb-welcome-logo svg { width: 100%; height: 100%; display: block; }
-
-        body.photobooth-page .pb-welcome h2 { color: var(--navy); font-size: 1.5rem; margin-bottom: 8px; }
-        body.photobooth-page .pb-welcome p { color: #64748b; font-size: 0.92rem; line-height: 1.6; margin-bottom: 18px; }
-
-        body.photobooth-page .pb-feature-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin: 0 0 22px;
-        }
-
-        body.photobooth-page .pb-feature-chip {
-            background: #fff9fb;
-            border: 1.5px solid #ffe4e6;
-            border-radius: 14px;
-            padding: 12px 10px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #475569;
-        }
-
-        body.photobooth-page .pb-feature-chip .pb-chip-ico { display: block; font-size: 1.3rem; margin-bottom: 6px; }
-
-        /* ---------- Big buttons ---------- */
+        @keyframes pbFadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+        body.photobooth-page .pb-welcome { text-align:center;max-width:620px;margin:0 auto; }
+        body.photobooth-page .pb-welcome-logo { width:86px;height:86px;margin:0 auto 10px;filter:drop-shadow(0 10px 18px rgba(255,143,163,0.35)); }
+        body.photobooth-page .pb-welcome-logo svg { width:100%;height:100%;display:block; }
+        body.photobooth-page .pb-welcome h2 { color:var(--navy);font-size:1.5rem;margin-bottom:8px; }
+        body.photobooth-page .pb-welcome p { color:#64748b;font-size:0.92rem;line-height:1.6;margin-bottom:18px; }
         body.photobooth-page .pb-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: none;
-            border-radius: 50px;
-            padding: 14px 28px;
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: #fff;
-            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
-            box-shadow: 0 8px 22px rgba(255, 143, 163, 0.4);
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-            font-family: inherit;
+            display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;
+            border-radius:50px;padding:14px 28px;font-size:0.95rem;font-weight:800;color:#fff;
+            background:linear-gradient(135deg,#ffb6c1,#ff8fa3);box-shadow:0 8px 22px rgba(255,143,163,0.4);
+            cursor:pointer;transition:transform 0.2s,box-shadow 0.2s,opacity 0.2s;font-family:inherit;
         }
-
-        body.photobooth-page .pb-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255, 143, 163, 0.5); }
-        body.photobooth-page .pb-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-
-        body.photobooth-page .pb-btn.ghost {
-            background: #fff;
-            color: #64748b;
-            border: 1.5px solid #e2e8f0;
-            box-shadow: none;
-        }
-
-        body.photobooth-page .pb-btn.ghost:hover { border-color: #ffb6c1; color: #b73b49; }
-
-        body.photobooth-page .pb-btn.green { background: linear-gradient(135deg, #a7f3d0, #34d399); box-shadow: 0 8px 22px rgba(52, 211, 153, 0.3); color: #064e3b; }
-        body.photobooth-page .pb-btn.blue { background: linear-gradient(135deg, #bfe3fe, #60a5fa); box-shadow: 0 8px 22px rgba(96, 165, 250, 0.3); color: #1e3a8a; }
-
-        body.photobooth-page .pb-btn svg { width: 17px; height: 17px; flex: none; }
-        body.photobooth-page .pb-err-ico { width: 54px; height: 54px; }
-        body.photobooth-page .pb-err-ico svg { width: 100%; height: 100%; display: block; }
-
-        /* ---------- Booth ---------- */
-        body.photobooth-page .pb-booth-wrap {
-            display: grid;
-            grid-template-columns: 1fr 220px;
-            gap: 18px;
-            align-items: start;
-        }
-
-        @media (max-width: 780px) {
-            body.photobooth-page .pb-booth-wrap { grid-template-columns: 1fr; }
-        }
-
+        body.photobooth-page .pb-btn:hover { transform:translateY(-2px);box-shadow:0 12px 28px rgba(255,143,163,0.5); }
+        body.photobooth-page .pb-btn:disabled { opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none; }
+        body.photobooth-page .pb-btn.ghost { background:#fff;color:#64748b;border:1.5px solid #e2e8f0;box-shadow:none; }
+        body.photobooth-page .pb-btn.ghost:hover { border-color:#ffb6c1;color:#b73b49; }
+        body.photobooth-page .pb-btn.green { background:linear-gradient(135deg,#a7f3d0,#34d399);box-shadow:0 8px 22px rgba(52,211,153,0.3);color:#064e3b; }
+        body.photobooth-page .pb-btn svg { width:17px;height:17px;flex:none; }
+        body.photobooth-page .pb-booth-wrap { display:grid;grid-template-columns:1fr 220px;gap:18px;align-items:start; }
+        @media(max-width:780px){ body.photobooth-page .pb-booth-wrap{grid-template-columns:1fr;} }
         body.photobooth-page .pb-booth-stage {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            max-height: 62vh;
-            border-radius: 20px;
-            overflow: hidden;
-            background: #111827;
-            box-shadow: inset 0 0 0 3px rgba(255,255,255,0.08), 0 20px 40px rgba(0,0,0,0.25);
+            position:relative;width:100%;aspect-ratio:4/3;max-height:62vh;border-radius:20px;overflow:hidden;
+            background:#111827;box-shadow:inset 0 0 0 3px rgba(255,255,255,0.08),0 20px 40px rgba(0,0,0,0.25);
         }
-
-        body.photobooth-page #cameraFeed {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: #111827;
-            transform: scaleX(-1);
+        body.photobooth-page #cameraFeed { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#111827;transform:scaleX(-1); }
+        body.photobooth-page .pb-mini-countdown {
+            position:absolute;top:12px;right:12px;z-index:4;display:flex;align-items:center;gap:6px;
+            background:rgba(0,0,0,0.55);color:#fff;font-size:0.85rem;font-weight:800;letter-spacing:1px;
+            padding:6px 14px;border-radius:30px;opacity:0;transition:opacity 0.3s;pointer-events:none;
         }
-
-        body.photobooth-page #guideCanvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+        body.photobooth-page .pb-mini-countdown.show { opacity:1; }
+        body.photobooth-page .pb-mini-countdown .pb-mcd-num {
+            width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.2);
+            display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:900;
         }
-
-        body.photobooth-page .pb-countdown {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.35);
-            backdrop-filter: blur(2px);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-            z-index: 5;
-        }
-
-        body.photobooth-page .pb-countdown.show { opacity: 1; pointer-events: auto; }
-
-        body.photobooth-page .pb-countdown .pb-cd-num {
-            font-size: clamp(4rem, 16vw, 8rem);
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 8px 30px rgba(255, 143, 163, 0.8);
-            animation: pbPulse 0.9s ease infinite;
-        }
-
-        @keyframes pbPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.12); }
-        }
-
-        body.photobooth-page .pb-shot-status {
-            position: absolute;
-            top: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255,255,255,0.92);
-            color: #b73b49;
-            font-weight: 800;
-            font-size: 0.72rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 7px 16px;
-            border-radius: 30px;
-            z-index: 4;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-            white-space: nowrap;
-        }
-
-        body.photobooth-page .pb-booth-controls {
-            margin-top: 14px;
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
+        body.photobooth-page .pb-mini-countdown .pb-mcd-num.flash { background:#ff8fa3;animation:pbMiniPulse 0.3s ease; }
+        @keyframes pbMiniPulse { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+        body.photobooth-page .pb-mini-countdown .pb-mcd-label { font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;opacity:0.8; }
+        body.photobooth-page .pb-booth-controls { margin-top:14px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap; }
         body.photobooth-page .pb-shutter {
-            width: 78px;
-            height: 78px;
-            border-radius: 50%;
-            border: none;
-            background: radial-gradient(circle at 30% 30%, #ffffff, #ffd1da 45%, #ff8fa3 90%);
-            box-shadow: 0 8px 24px rgba(255, 143, 163, 0.55), inset 0 -4px 10px rgba(183,59,73,0.25);
-            cursor: pointer;
-            transition: transform 0.15s ease;
-            flex: none;
+            width:78px;height:78px;border-radius:50%;border:none;
+            background:radial-gradient(circle at 30% 30%,#ffffff,#ffd1da 45%,#ff8fa3 90%);
+            box-shadow:0 8px 24px rgba(255,143,163,0.55),inset 0 -4px 10px rgba(183,59,73,0.25);
+            cursor:pointer;transition:transform 0.15s;flex:none;
         }
-
-        body.photobooth-page .pb-shutter:hover { transform: scale(1.06); }
-        body.photobooth-page .pb-shutter:active { transform: scale(0.94); }
-        body.photobooth-page .pb-shutter:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-        body.photobooth-page .pb-shutter .pb-shutter-inner {
-            width: 58px; height: 58px;
-            margin: auto;
-            border-radius: 50%;
-            border: 4px solid #fff;
-            background: radial-gradient(circle at 35% 35%, #ffe4e6, #ff8fa3 80%);
+        body.photobooth-page .pb-shutter:hover { transform:scale(1.06); }
+        body.photobooth-page .pb-shutter:active { transform:scale(0.94); }
+        body.photobooth-page .pb-shutter:disabled { opacity:0.45;cursor:not-allowed;transform:none; }
+        body.photobooth-page .pb-shutter .pb-shutter-inner { width:58px;height:58px;margin:auto;border-radius:50%;border:4px solid #fff;background:radial-gradient(circle at 35% 35%,#ffe4e6,#ff8fa3 80%); }
+        body.photobooth-page .pb-thumbs { background:#fff9fb;border:1.5px solid #ffe4e6;border-radius:18px;padding:14px; }
+        body.photobooth-page .pb-thumbs h3 { font-size:0.8rem;text-transform:uppercase;letter-spacing:1.2px;color:#94a3b8;text-align:center;margin-bottom:12px; }
+        body.photobooth-page .pb-thumb-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:8px; }
+        @media(max-width:780px){ body.photobooth-page .pb-thumb-grid{grid-template-columns:repeat(4,1fr);} }
+        body.photobooth-page .pb-thumb { position:relative;aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:#f1f5f9;border:2px dashed #e2e8f0; }
+        body.photobooth-page .pb-thumb.filled { border-style:solid;border-color:#ff8fa3; }
+        body.photobooth-page .pb-thumb .pb-thumb-num { position:absolute;top:4px;left:6px;font-size:0.6rem;font-weight:900;color:#94a3b8;background:rgba(255,255,255,0.85);border-radius:6px;padding:2px 6px; }
+        body.photobooth-page .pb-thumb.filled .pb-thumb-num { color:#b73b49;background:#ffe4e6; }
+        body.photobooth-page .pb-thumb img,body.photobooth-page .pb-thumb canvas { width:100%;height:100%;object-fit:cover;display:block; }
+        body.photobooth-page .pb-pick-header { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap; }
+        body.photobooth-page .pb-pick-counter { display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #ffb6c1;color:#b73b49;font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:7px 14px;border-radius:30px; }
+        body.photobooth-page .pb-pick-counter.ok { border-color:#a7f3d0;color:#137333; }
+        body.photobooth-page .pb-pick-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:12px; }
+        @media(max-width:780px){ body.photobooth-page .pb-pick-grid{grid-template-columns:repeat(2,1fr);} }
+        body.photobooth-page .pb-pick-card { position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:transform 0.15s,border-color 0.15s;background:#f1f5f9; }
+        body.photobooth-page .pb-pick-card:hover { transform:translateY(-2px); }
+        body.photobooth-page .pb-pick-card.selected { border-color:#ff8fa3; }
+        body.photobooth-page .pb-pick-card img,body.photobooth-page .pb-pick-card canvas { width:100%;height:100%;object-fit:cover;display:block; }
+        body.photobooth-page .pb-pick-card .pb-pick-num { position:absolute;top:6px;left:8px;font-size:0.62rem;font-weight:900;color:#94a3b8;background:rgba(255,255,255,0.9);border-radius:6px;padding:2px 6px; }
+        body.photobooth-page .pb-pick-card.selected .pb-pick-num { color:#b73b49;background:#ffe4e6; }
+        body.photobooth-page .pb-pick-card .pb-pick-check { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,143,163,0.28);opacity:0;transition:opacity 0.15s;pointer-events:none; }
+        body.photobooth-page .pb-pick-card .pb-pick-check svg { width:42px;height:42px;color:#fff;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.4)); }
+        body.photobooth-page .pb-pick-card.selected .pb-pick-check { opacity:1; }
+        body.photobooth-page .pb-pick-foot { display:flex;justify-content:center;gap:12px;margin-top:20px;flex-wrap:wrap; }
+        body.photobooth-page .pb-custom-layout { display:grid;grid-template-columns:minmax(240px,420px) 1fr;gap:20px;align-items:start; }
+        @media(max-width:780px){ body.photobooth-page .pb-custom-layout{grid-template-columns:1fr;} }
+        body.photobooth-page .pb-preview-wrap { position:sticky;top:90px;display:flex;flex-direction:column;align-items:center;gap:12px; }
+        @media(max-width:780px){ body.photobooth-page .pb-preview-wrap{position:static;} }
+        body.photobooth-page .pb-preview-frame { position:relative;background:#fff;border-radius:14px;box-shadow:0 18px 40px rgba(30,58,138,0.2);overflow:hidden;touch-action:none;max-width:100%; }
+        body.photobooth-page #previewCanvas { display:block;width:100%;height:auto; }
+        body.photobooth-page #previewCanvasStyle { display:block;width:100%;height:auto; }
+        body.photobooth-page .pb-custom-controls { display:flex;flex-direction:column;gap:14px;min-width:0; }
+        body.photobooth-page .pb-ctrl-group { background:#fff9fb;border:1.5px solid #ffe4e6;border-radius:16px;padding:14px; }
+        body.photobooth-page .pb-ctrl-group h4 { font-size:0.74rem;text-transform:uppercase;letter-spacing:1.3px;color:#94a3b8;margin-bottom:10px; }
+        body.photobooth-page .pb-swatches { display:flex;flex-wrap:wrap;gap:8px; }
+        body.photobooth-page .pb-swatch { width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:transform 0.15s,border-color 0.15s;box-shadow:0 3px 8px rgba(0,0,0,0.12); }
+        body.photobooth-page .pb-swatch:hover { transform:scale(1.1); }
+        body.photobooth-page .pb-swatch.selected { border-color:#1e3a8a;transform:scale(1.14); }
+        body.photobooth-page .pb-chips { display:flex;flex-wrap:wrap;gap:8px; }
+        body.photobooth-page .pb-chip { border:1.5px solid #e2e8f0;background:#fff;border-radius:30px;padding:8px 14px;font-size:0.78rem;font-weight:700;color:#475569;cursor:pointer;transition:all 0.18s;font-family:inherit; }
+        body.photobooth-page .pb-chip:hover { border-color:#ffb6c1;color:#b73b49; }
+        body.photobooth-page .pb-chip.selected { background:linear-gradient(135deg,#ffe4e6,#ffb6c1);border-color:#ff8fa3;color:#b73b49; }
+        body.photobooth-page .pb-sticker-grid { display:grid;grid-template-columns:repeat(8,1fr);gap:6px; }
+        @media(max-width:780px){ body.photobooth-page .pb-sticker-grid{grid-template-columns:repeat(8,1fr);} }
+        body.photobooth-page .pb-sticker-btn { aspect-ratio:1;border:none;background:#fff;border-radius:10px;font-size:1.25rem;cursor:pointer;transition:transform 0.15s;box-shadow:0 2px 6px rgba(0,0,0,0.06);padding:0; }
+        body.photobooth-page .pb-sticker-btn:hover { transform:scale(1.18) rotate(-6deg); }
+        body.photobooth-page .pb-text-input { width:100%;box-sizing:border-box;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:0.9rem;color:#1e293b;background:#fff;margin-bottom:10px;font-family:inherit;outline:none;transition:border-color 0.2s; }
+        body.photobooth-page .pb-text-input:focus { border-color:#ff8fa3;box-shadow:0 0 0 3px rgba(255,143,163,0.18); }
+        body.photobooth-page .pb-caption-info { font-size:0.72rem;color:#94a3b8;font-weight:600;margin-top:6px; }
+        body.photobooth-page .pb-tools-row { display:flex;gap:10px;flex-wrap:wrap; }
+        body.photobooth-page .pb-save-layout { display:grid;grid-template-columns:minmax(240px,360px) 1fr;gap:20px;align-items:start; }
+        @media(max-width:780px){ body.photobooth-page .pb-save-layout{grid-template-columns:1fr;} }
+        body.photobooth-page .pb-save-img { width:100%;border-radius:14px;box-shadow:0 18px 40px rgba(30,58,138,0.22); }
+        body.photobooth-page .pb-save-downloads { display:flex;gap:10px;flex-wrap:wrap;margin-top:14px; }
+        body.photobooth-page .pb-save-downloads .pb-dl-btn {
+            display:inline-flex;align-items:center;gap:6px;border:none;border-radius:30px;
+            padding:10px 18px;font-size:0.82rem;font-weight:800;color:#fff;cursor:pointer;
+            transition:transform 0.15s;font-family:inherit;
         }
-
-        /* ---------- Thumbnails ---------- */
-        body.photobooth-page .pb-thumbs {
-            background: #fff9fb;
-            border: 1.5px solid #ffe4e6;
-            border-radius: 18px;
-            padding: 14px;
-        }
-
-        body.photobooth-page .pb-thumbs h3 {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: #94a3b8;
-            text-align: center;
-            margin-bottom: 12px;
-        }
-
-        body.photobooth-page .pb-thumb-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
-        @media (max-width: 780px) {
-            body.photobooth-page .pb-thumb-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-
-        body.photobooth-page .pb-thumb {
-            position: relative;
-            aspect-ratio: 4 / 3;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #f1f5f9;
-            border: 2px dashed #e2e8f0;
-        }
-
-        body.photobooth-page .pb-thumb.filled { border-style: solid; border-color: #ff8fa3; }
-
-        body.photobooth-page .pb-thumb .pb-thumb-num {
-            position: absolute;
-            top: 4px; left: 6px;
-            font-size: 0.6rem;
-            font-weight: 900;
-            color: #94a3b8;
-            background: rgba(255,255,255,0.85);
-            border-radius: 6px;
-            padding: 2px 6px;
-        }
-
-        body.photobooth-page .pb-thumb.filled .pb-thumb-num { color: #b73b49; background: #ffe4e6; }
-        body.photobooth-page .pb-thumb img,
-        body.photobooth-page .pb-thumb canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-        /* ---------- Customize ---------- */
-        body.photobooth-page .pb-custom-layout {
-            display: grid;
-            grid-template-columns: minmax(260px, 420px) 1fr;
-            gap: 20px;
-            align-items: start;
-        }
-
-        @media (max-width: 780px) {
-            body.photobooth-page .pb-custom-layout { grid-template-columns: 1fr; }
-        }
-
-        body.photobooth-page .pb-preview-wrap {
-            position: sticky;
-            top: 90px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        @media (max-width: 780px) {
-            body.photobooth-page .pb-preview-wrap { position: static; }
-        }
-
-        body.photobooth-page .pb-preview-frame {
-            position: relative;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 18px 40px rgba(30, 58, 138, 0.2);
-            overflow: hidden;
-            touch-action: none;
-        }
-
-        body.photobooth-page #previewCanvas {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-
-        body.photobooth-page .pb-custom-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            min-width: 0;
-        }
-
-        body.photobooth-page .pb-ctrl-group {
-            background: #fff9fb;
-            border: 1.5px solid #ffe4e6;
-            border-radius: 16px;
-            padding: 14px;
-        }
-
-        body.photobooth-page .pb-ctrl-group h4 {
-            font-size: 0.74rem;
-            text-transform: uppercase;
-            letter-spacing: 1.3px;
-            color: #94a3b8;
-            margin-bottom: 10px;
-        }
-
-        body.photobooth-page .pb-swatches {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        body.photobooth-page .pb-swatch {
-            width: 34px; height: 34px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            cursor: pointer;
-            transition: transform 0.15s ease, border-color 0.15s ease;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-        }
-
-        body.photobooth-page .pb-swatch:hover { transform: scale(1.1); }
-        body.photobooth-page .pb-swatch.selected { border-color: #1e3a8a; transform: scale(1.14); }
-
-        body.photobooth-page .pb-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        body.photobooth-page .pb-chip {
-            border: 1.5px solid #e2e8f0;
-            background: #fff;
-            border-radius: 30px;
-            padding: 8px 14px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #475569;
-            cursor: pointer;
-            transition: all 0.18s ease;
-            font-family: inherit;
-        }
-
-        body.photobooth-page .pb-chip:hover { border-color: #ffb6c1; color: #b73b49; }
-        body.photobooth-page .pb-chip.selected { background: linear-gradient(135deg, #ffe4e6, #ffb6c1); border-color: #ff8fa3; color: #b73b49; }
-
-        body.photobooth-page .pb-sticker-grid {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 6px;
-        }
-
-        @media (max-width: 780px) {
-            body.photobooth-page .pb-sticker-grid { grid-template-columns: repeat(8, 1fr); }
-        }
-
-        body.photobooth-page .pb-sticker-btn {
-            aspect-ratio: 1;
-            border: none;
-            background: #fff;
-            border-radius: 10px;
-            font-size: 1.25rem;
-            cursor: pointer;
-            transition: transform 0.15s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            padding: 0;
-        }
-
-        body.photobooth-page .pb-sticker-btn:hover { transform: scale(1.18) rotate(-6deg); }
-
-        body.photobooth-page .pb-text-input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px 14px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            color: #1e293b;
-            background: #fff;
-            margin-bottom: 10px;
-            font-family: inherit;
-            outline: none;
-            transition: border-color 0.2s ease;
-        }
-
-        body.photobooth-page .pb-text-input:focus { border-color: #ff8fa3; box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.18); }
-
-        body.photobooth-page .pb-caption-info {
-            font-size: 0.72rem;
-            color: #94a3b8;
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
-        body.photobooth-page .pb-tools-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        /* ---------- Save ---------- */
-        body.photobooth-page .pb-save-layout {
-            display: grid;
-            grid-template-columns: minmax(240px, 360px) 1fr;
-            gap: 20px;
-            align-items: start;
-        }
-
-        @media (max-width: 780px) {
-            body.photobooth-page .pb-save-layout { grid-template-columns: 1fr; }
-        }
-
-        body.photobooth-page .pb-save-img {
-            width: 100%;
-            border-radius: 14px;
-            box-shadow: 0 18px 40px rgba(30, 58, 138, 0.22);
-        }
-
-        body.photobooth-page .pb-success {
-            text-align: center;
-            padding: 30px 20px;
-        }
-
-        body.photobooth-page .pb-success .pb-succ-ico {
-            width: 76px; height: 76px;
-            margin: 0 auto 16px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #d3fde9, #a7f3d0);
-            box-shadow: 0 10px 26px rgba(19, 115, 51, 0.2);
-        }
-
-        body.photobooth-page .pb-success .pb-succ-ico svg { width: 42px; height: 42px; display: block; }
-
-        /* ---------- Live gallery ---------- */
-        body.photobooth-page .pb-live-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        body.photobooth-page .pb-live-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #fff;
-            border: 1.5px solid #a7f3d0;
-            color: #137333;
-            font-size: 0.72rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 7px 14px;
-            border-radius: 30px;
-        }
-
-        body.photobooth-page .pb-live-badge .pb-live-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: #34d399;
-            animation: pbBlink 1.4s ease infinite;
-        }
-
-        @keyframes pbBlink {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.8); }
-        }
-
-        body.photobooth-page .pb-live-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 14px;
-        }
-
-        body.photobooth-page .pb-live-card {
-            background: #fff;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 26px rgba(30, 58, 138, 0.12);
-            border: 1.5px solid #f1dfe4;
-            transition: transform 0.2s ease;
-            animation: pbFadeUp 0.4s ease both;
-        }
-
-        body.photobooth-page .pb-live-card:hover { transform: translateY(-3px) rotate(-0.5deg); }
-
-        body.photobooth-page .pb-live-card img {
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            object-fit: cover;
-            display: block;
-            cursor: pointer;
-        }
-
-        body.photobooth-page .pb-live-meta {
-            padding: 10px 12px;
-        }
-
-        body.photobooth-page .pb-live-meta .pb-live-author {
-            font-size: 0.78rem;
-            font-weight: 800;
-            color: #1e3a8a;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        body.photobooth-page .pb-live-meta .pb-live-time {
-            font-size: 0.68rem;
-            color: #94a3b8;
-            font-weight: 600;
-            margin-top: 2px;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-
-        body.photobooth-page .pb-live-meta .pb-live-time svg { width: 11px; height: 11px; flex: none; }
-
-        body.photobooth-page .pb-live-empty {
-            grid-column: 1 / -1;
-            text-align: center;
-            color: #94a3b8;
-            font-size: 0.88rem;
-            padding: 36px 0;
-            font-weight: 600;
-        }
-
-        /* ---------- Lightbox ---------- */
-        body.photobooth-page .pb-lightbox {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.75);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 3000;
-            backdrop-filter: blur(6px);
-            padding: 20px;
-            cursor: pointer;
-        }
-
-        body.photobooth-page .pb-lightbox img {
-            max-width: min(420px, 90vw);
-            max-height: 85vh;
-            border-radius: 16px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-        }
-
-        /* ---------- Error / permission ---------- */
-        body.photobooth-page .pb-cam-error {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-align: center;
-            color: #cbd5e1;
-            background: #111827;
-            border-radius: 20px;
-            padding: 30px;
-        }
-
-        body.photobooth-page .pb-cam-error p { font-size: 0.88rem; line-height: 1.5; max-width: 380px; }
-
-        /* Loader */
-        body.photobooth-page .pb-spinner {
-            width: 18px; height: 18px;
-            border: 3px solid rgba(255,255,255,0.35);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: pbSpin 0.7s linear infinite;
-        }
-
-        @keyframes pbSpin { to { transform: rotate(360deg); } }
-
-        body.photobooth-page .pb-save-notes {
-            background: #fff9fb;
-            border: 1.5px dashed #ffb6c1;
-            border-radius: 14px;
-            padding: 12px 14px;
-            font-size: 0.78rem;
-            color: #64748b;
-            line-height: 1.6;
-            margin-top: 10px;
-        }
+        body.photobooth-page .pb-save-downloads .pb-dl-btn:hover { transform:translateY(-1px); }
+        body.photobooth-page .pb-save-downloads .pb-dl-btn.photo-dl { background:linear-gradient(135deg,#ffb6c1,#ff8fa3); }
+        body.photobooth-page .pb-save-downloads .pb-dl-btn.video-dl { background:linear-gradient(135deg,#7fb8e6,#4C8BF5); }
+        body.photobooth-page .pb-save-downloads .pb-dl-btn svg { width:15px;height:15px;flex:none; }
+        body.photobooth-page .pb-success { text-align:center;padding:30px 20px; }
+        body.photobooth-page .pb-success .pb-succ-ico { width:76px;height:76px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#d3fde9,#a7f3d0);box-shadow:0 10px 26px rgba(19,115,51,0.2); }
+        body.photobooth-page .pb-success .pb-succ-ico svg { width:42px;height:42px;display:block; }
+        body.photobooth-page .pb-cam-error { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;color:#cbd5e1;background:#111827;border-radius:20px;padding:30px; }
+        body.photobooth-page .pb-cam-error p { font-size:0.88rem;line-height:1.5;max-width:380px; }
+        body.photobooth-page .pb-spinner { width:18px;height:18px;border:3px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:pbSpin 0.7s linear infinite; }
+        body.photobooth-page .pb-spinner-dark { width:34px;height:34px;border:4px solid rgba(183,59,73,0.2);border-top-color:#b73b49;border-radius:50%;animation:pbSpin 0.7s linear infinite;display:inline-block; }
+        @keyframes pbSpin { to{transform:rotate(360deg)} }
+        body.photobooth-page .pb-save-notes { background:#fff9fb;border:1.5px dashed #ffb6c1;border-radius:14px;padding:12px 14px;font-size:0.78rem;color:#64748b;line-height:1.6;margin-top:10px; }
+        body.photobooth-page .pb-err-ico { width:54px;height:54px; }
+        body.photobooth-page .pb-err-ico svg { width:100%;height:100%;display:block; }
+        body.photobooth-page .pb-feature-row { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 22px; }
+        body.photobooth-page .pb-feature-chip { background:#fff9fb;border:1.5px solid #ffe4e6;border-radius:14px;padding:12px 10px;font-size:0.78rem;font-weight:700;color:#475569; }
+        body.photobooth-page .pb-feature-chip .pb-chip-ico { display:block;font-size:1.3rem;margin-bottom:6px; }
     </style>
 </head>
 <body class="photobooth-page">
 
     <nav class="navbar">
         <div class="logo">KeePics<span class="logo-dot"></span></div>
-        <div class="hamburger" id="hamburger-menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </div>
+        <div class="hamburger" id="hamburger-menu"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
         <ul class="nav-links" id="nav-menu">
             <li><a href="index.html">Home</a></li>
             <li><a href="photobooth.html" class="active">Photo Booth</a></li>
@@ -741,28 +180,27 @@
     </nav>
 
     <div class="pb-shell">
-
-        <!-- ===== Steps progress ===== -->
         <div class="pb-steps" id="pbSteps">
             <span class="pb-step-dot active" id="pbStep1"><span class="pb-num">1</span> Shoot</span>
             <span class="pb-step-arrow">→</span>
-            <span class="pb-step-dot" id="pbStep2"><span class="pb-num">2</span> Customize</span>
+            <span class="pb-step-dot" id="pbStep2"><span class="pb-num">2</span> Pick</span>
             <span class="pb-step-arrow">→</span>
-            <span class="pb-step-dot" id="pbStep3"><span class="pb-num">3</span> Save</span>
+            <span class="pb-step-dot" id="pbStep3"><span class="pb-num">3</span> Frame</span>
+            <span class="pb-step-arrow">→</span>
+            <span class="pb-step-dot" id="pbStep4"><span class="pb-num">4</span> Style</span>
+            <span class="pb-step-arrow">→</span>
+            <span class="pb-step-dot" id="pbStep5"><span class="pb-num">5</span> Save</span>
         </div>
 
-        <!-- ===== KeePics SVG logo mark (shared gradient) ===== -->
         <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
             <defs>
                 <linearGradient id="kpGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stop-color="#4C154F"/>
-                    <stop offset="0.45" stop-color="#B73B49"/>
-                    <stop offset="1" stop-color="#295778"/>
+                    <stop offset="0" stop-color="#4C154F"/><stop offset="0.45" stop-color="#B73B49"/><stop offset="1" stop-color="#295778"/>
                 </linearGradient>
             </defs>
         </svg>
 
-        <!-- ===== STEP 0: WELCOME ===== -->
+        <!-- STEP 0: WELCOME -->
         <section class="pb-panel pb-welcome" id="stepWelcome">
             <div class="pb-welcome-logo">
                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="KeePics">
@@ -774,80 +212,82 @@
                 </svg>
             </div>
             <h2>Photo Booth</h2>
-            <p>Snap 4 full-frame cuts with your friends, then decorate your strip with frames, stickers and filters — real photobooth style. Your strip is saved live and sent straight to the KeePics team.</p>
             <button class="pb-btn" id="startBtn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M12 4v3M8 3h8"/></svg>
-                Start Photo Session
+                <span id="startBtnLabel">Start Photo Session</span>
             </button>
-            <button class="pb-btn ghost pb-hidden" id="resumeBtn" style="margin-top:10px;" type="button">Resume saved draft</button>
-            <p style="margin-top:12px; font-size:0.75rem; color:#94a3b8; font-weight:600;">Camera access is required. Photos are never stored on your device automatically — only when you save.</p>
+            <p style="margin-top:12px;font-size:0.75rem;color:#94a3b8;font-weight:600;"></p>
         </section>
 
-        <!-- ===== STEP 1: CAMERA / SHOOT ===== -->
+        <!-- STEP 1: SHOOT (8 pictures, auto 10s countdown) -->
         <section class="pb-panel pb-hidden" id="stepShoot">
             <div class="pb-head">
                 <span class="pb-eyebrow">Step 1 · Shoot</span>
-                <h1>Strike a <span>pose</span></h1>
-                <p>Bring your friends, fill the frame, and strike a pose. 4 shots, 1 strip.</p>
+                <h1>1.. 2.. 3... <span>kanya kanyang pose na</span></h1>
             </div>
-
             <div class="pb-booth-wrap">
                 <div>
                     <div class="pb-booth-stage" id="boothStage">
                         <video id="cameraFeed" autoplay playsinline muted></video>
-                        <canvas id="guideCanvas"></canvas>
-                        <div class="pb-shot-status" id="shotStatus">Press the shutter for Shot 1</div>
-                        <div class="pb-countdown" id="countdownOverlay"><span class="pb-cd-num" id="countdownNum">3</span></div>
+                        <div class="pb-mini-countdown" id="miniCountdown">
+                            <span class="pb-mcd-label" id="mcdLabel">Get ready</span>
+                            <span class="pb-mcd-num" id="mcdNum">3</span>
+                        </div>
                         <div class="pb-cam-error pb-hidden" id="camError">
-                            <span class="pb-err-ico">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>
-                            </span>
+                            <span class="pb-err-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg></span>
                             <p id="camErrorText">Camera is not available.</p>
                             <button class="pb-btn ghost" id="retryCamBtn" type="button">Try again</button>
                         </div>
                     </div>
-
                     <div class="pb-booth-controls">
-                        <button class="pb-btn ghost" id="restartShotsBtn" type="button" disabled>Restart shots</button>
+                        <button class="pb-btn ghost" id="restartShotsBtn" type="button" disabled>Restart</button>
                         <button class="pb-shutter" id="shutterBtn" type="button" disabled title="Capture shot"><span class="pb-shutter-inner"></span></button>
-                        <button class="pb-btn" id="shootNextBtn" type="button" disabled>Customize Strip</button>
+                        <button class="pb-btn" id="shootNextBtn" type="button" disabled>Next: Pick Photos →</button>
                     </div>
                 </div>
-
                 <div class="pb-thumbs">
-                    <h3>Your 4 shots</h3>
-                    <div class="pb-thumb-grid" id="thumbGrid">
-                        <div class="pb-thumb"><span class="pb-thumb-num">1</span></div>
-                        <div class="pb-thumb"><span class="pb-thumb-num">2</span></div>
-                        <div class="pb-thumb"><span class="pb-thumb-num">3</span></div>
-                        <div class="pb-thumb"><span class="pb-thumb-num">4</span></div>
-                    </div>
-                    <div class="pb-save-notes" style="margin-top:12px;">
-                        Tip: gather everyone in the frame, then press the shutter. Every shot captures the full camera view — just like a real photo booth.
-                    </div>
+                    <h3>Your 8 shots</h3>
+                    <div class="pb-thumb-grid" id="thumbGrid"></div>
+                    <div class="pb-save-notes" style="margin-top:12px;">You can not retry your shots, so make sure use your shots well!</div>
                 </div>
             </div>
         </section>
 
-        <!-- ===== STEP 2: CUSTOMIZE ===== -->
-        <section class="pb-panel pb-hidden" id="stepCustomize">
+        <!-- STEP 2: PICK -->
+        <section class="pb-panel pb-hidden" id="stepPick">
             <div class="pb-head">
-                <span class="pb-eyebrow">Step 2 · Customize</span>
-                <h1>Make it <span>yours</span></h1>
-                <p>Pick a frame, slap on stickers, add a filter and a caption.</p>
+                <span class="pb-eyebrow">Step 2 · Pick</span>
+                <h1>Choose your best <span>4</span></h1>
+                <p>Tap 4 pictures to place on your strip.</p>
             </div>
+            <div class="pb-pick-header">
+                <span class="pb-pick-counter" id="pickCounter">Selected 0 / 4</span>
+                <button class="pb-btn ghost" id="clearPickBtn" type="button">Clear selection</button>
+            </div>
+            <div class="pb-pick-grid" id="pickGrid"></div>
+            <div class="pb-pick-foot">
+                <button class="pb-btn ghost" id="backToShootBtn" type="button">← Back to Camera</button>
+                <button class="pb-btn" id="pickNextBtn" type="button" disabled>Next: Choose Frame →</button>
+            </div>
+        </section>
 
+        <!-- STEP 3: FRAME -->
+        <section class="pb-panel pb-hidden" id="stepFrame">
+            <div class="pb-head">
+                <span class="pb-eyebrow">Step 3 · Frame</span>
+                <h1>Pick a <span>frame</span></h1>
+                <p>Choose your layout, film style and frame color.</p>
+            </div>
             <div class="pb-custom-layout">
                 <div class="pb-preview-wrap">
-                    <div class="pb-preview-frame" id="previewFrame" style="width: min(320px, 100%);">
-                        <canvas id="previewCanvas" width="600" height="800"></canvas>
+                    <div class="pb-preview-frame" id="previewFrame" style="width:min(380px,100%);">
+                        <canvas id="previewCanvas" width="600" height="900"></canvas>
                     </div>
                     <div class="pb-tools-row">
-                        <button class="pb-btn ghost" id="backToShootBtn" type="button">← Back</button>
-                        <button class="pb-btn" id="customNextBtn" type="button">Save Strip →</button>
+                        <button class="pb-btn ghost" id="backToPickBtn" type="button">← Back</button>
+                        <button class="pb-btn" id="frameNextBtn" type="button">Next: Add Style →</button>
                     </div>
                 </div>
-
                 <div class="pb-custom-controls">
                     <div class="pb-ctrl-group">
                         <h4>Layout</h4>
@@ -856,12 +296,6 @@
                             <button class="pb-chip" data-layout="2x2" type="button">Grid · 2 × 2</button>
                         </div>
                     </div>
-
-                    <div class="pb-ctrl-group">
-                        <h4>Frame theme</h4>
-                        <div class="pb-swatches" id="themeSwatches"></div>
-                    </div>
-
                     <div class="pb-ctrl-group">
                         <h4>Film style</h4>
                         <div class="pb-chips" id="filmChips">
@@ -870,34 +304,46 @@
                             <button class="pb-chip" data-film="black" type="button">Black frame</button>
                         </div>
                     </div>
-
                     <div class="pb-ctrl-group">
-                        <h4>Filter</h4>
-                        <div class="pb-chips" id="filterChips">
-                            <button class="pb-chip selected" data-filter="none" type="button">Original</button>
-                            <button class="pb-chip" data-filter="bw" type="button">Mono</button>
-                            <button class="pb-chip" data-filter="sepia" type="button">Vintage</button>
-                            <button class="pb-chip" data-filter="vivid" type="button">Vivid</button>
-                            <button class="pb-chip" data-filter="soft" type="button">Soft</button>
-                        </div>
+                        <h4>Frame theme</h4>
+                        <div class="pb-swatches" id="themeSwatches"></div>
                     </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- STEP 4: STYLE / DECORATE -->
+        <section class="pb-panel pb-hidden" id="stepStyle">
+            <div class="pb-head">
+                <span class="pb-eyebrow">Step 4 · Style</span>
+                <h1>Make it <span>yours</span></h1>
+                <p>Add stickers and a caption, then save your strip.</p>
+            </div>
+            <div class="pb-custom-layout">
+                <div class="pb-preview-wrap">
+                    <div class="pb-preview-frame" id="previewFrameStyle" style="width:min(380px,100%);">
+                        <canvas id="previewCanvasStyle" width="600" height="900"></canvas>
+                    </div>
+                    <div class="pb-tools-row">
+                        <button class="pb-btn ghost" id="backToFrameBtn" type="button">← Back</button>
+                        <button class="pb-btn" id="styleNextBtn" type="button">Next: Save Strip →</button>
+                    </div>
+                </div>
+                <div class="pb-custom-controls">
                     <div class="pb-ctrl-group">
-                        <h4>Stickers <span style="text-transform:none; font-weight:600; color:#94a3b8;">(tap to add · drag to move · double-tap to remove)</span></h4>
+                        <h4>Stickers <span style="text-transform:none;font-weight:600;color:#94a3b8;">(tap to add · drag to move · double-tap to remove)</span></h4>
                         <div class="pb-sticker-grid" id="stickerGrid"></div>
                     </div>
-
                     <div class="pb-ctrl-group">
                         <h4>Caption</h4>
                         <input class="pb-text-input" id="captionInput" type="text" maxlength="40" placeholder="e.g. KeePics 2026" autocomplete="off">
                         <div class="pb-chips" id="captionStyleChips">
-                            <button class="pb-chip selected" data-capstyle="hand" type="button">Hand</button>
+                            <button class="pb-chip selected" data-capstyle="hand" type="button">Handwritten</button>
                             <button class="pb-chip" data-capstyle="modern" type="button">Modern</button>
                             <button class="pb-chip" data-capstyle="mono" type="button">Typewriter</button>
                         </div>
-                        <div class="pb-caption-info">Shown at the bottom of your strip.</div>
+                        <div class="pb-caption-info">Shown at the bottom-left of your strip.</div>
                     </div>
-
                     <div class="pb-ctrl-group">
                         <h4>Actions</h4>
                         <div class="pb-tools-row">
@@ -912,102 +358,139 @@
             </div>
         </section>
 
-        <!-- ===== STEP 3: SAVE / SEND ===== -->
+        <!-- STEP 5: SAVE / UPLOAD (automatic) -->
         <section class="pb-panel pb-hidden" id="stepSave">
             <div class="pb-head">
-                <span class="pb-eyebrow">Step 3 · Save & Send</span>
-                <h1>Finish your <span>strip</span></h1>
-                <p>Add your details — the strip is live-saved and emailed to the KeePics team.</p>
+                <span class="pb-eyebrow">Saving</span>
+                <h1>Processing please wait...</h1>
             </div>
-
-            <div class="pb-save-layout">
-                <div>
-                    <img class="pb-save-img" id="savePreviewImg" alt="Your photo strip preview">
-                </div>
-
-                <div>
-                    <div class="pb-ctrl-group">
-                        <h4>Who are we sharing this with?</h4>
-                        <input class="pb-text-input" id="customerNameInput" type="text" maxlength="60" placeholder="Your name or ID" autocomplete="off">
-                        <input class="pb-text-input" id="customerEmailInput" type="email" maxlength="80" placeholder="Email (optional — for your receipt)" autocomplete="off">
-                        <div class="pb-save-notes">
-                            Your strip is uploaded to the <strong>live gallery</strong> in realtime and emailed to the KeePics team so it can be printed into your <strong>2×6 photobooth strips</strong> product.
-                        </div>
-                    </div>
-
-                    <div class="pb-tools-row" style="margin-top:14px;">
-                        <button class="pb-btn ghost" id="backToCustomBtn" type="button">← Back</button>
-                        <button class="pb-btn green" id="saveBtn" type="button">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-                            Save & Send
-                        </button>
+            <div class="pb-save-layout" style="grid-template-columns:minmax(240px,360px) 1fr;align-items:start;">
+                <img class="pb-save-img" id="savePreviewImg" alt="Your photo strip preview">
+                <div style="text-align:center;padding-top:30px;">
+                    <span class="pb-spinner-dark"></span>
+                    <p id="uploadStatusText" style="margin-top:16px;color:#64748b;font-size:0.9rem;font-weight:600;">Processing Photobooth... please wait...</p>
+                    <div class="pb-tools-row" style="justify-content:center;margin-top:22px;">
+                        <button class="pb-btn ghost" id="backToStyleBtn" type="button">← Back</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ===== SUCCESS ===== -->
+        <!-- SUCCESS -->
         <section class="pb-panel pb-hidden" id="stepSuccess">
             <div class="pb-success">
-                <div class="pb-succ-ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                </div>
-                <h2 style="color:var(--navy); margin-bottom:8px;">Strip saved!</h2>
-                <p style="color:#64748b; font-size:0.92rem; line-height:1.6; max-width:440px; margin:0 auto 18px;">
-                    Your photo strip is now in the live gallery and on its way to the KeePics team.
-                    You can download a copy from the previous step anytime.
+                <div class="pb-succ-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <h2 style="color:var(--navy);margin-bottom:8px;">One last step.</h2>
+                <p style="color:#64748b;font-size:0.92rem;line-height:1.6;max-width:440px;margin:0 auto 18px;">
+                    Your photobooth has been processed successfully. Scan the QR code to download your photo.
                 </p>
-                <div class="pb-tools-row" style="justify-content:center;">
+                <div class="pb-tools-row" style="justify-content:center;margin-bottom:16px;">
+                    <button class="pb-btn" id="generateQrBtn" type="button" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM14 17h3v3h-3zM17 17h3v3h-3z"/></svg>
+                        Generate QR Code
+                    </button>
+                </div>
+                <div id="qrResultSection" style="margin:16px auto;max-width:260px;text-align:center;" class="pb-hidden">
+                    <img id="qrResultImg" alt="QR code — scan to download" width="200" height="200" style="border-radius:12px;border:2px solid #e2e8f0;background:#fff;display:block;margin:0 auto;">
+                    <p style="font-size:0.72rem;color:#b73b49;font-weight:700;margin-top:10px;">Scan to download</p>
+                </div>
+                <div class="pb-save-downloads" id="downloadSection" style="justify-content:center;">
+                    <button class="pb-dl-btn photo-dl" id="dlPhotoBtn" type="button" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                        Photo Download
+                    </button>
+                    <button class="pb-dl-btn video-dl" id="dlVideoBtn" type="button" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 9v6a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2zM5 8v8a2 2 0 0 1-2 2h0M7 12H3M7 16H3"/><path d="M12 10v4M10 12h4"/></svg>
+                        Video Download
+                    </button>
+                </div>
+                <div class="pb-tools-row" style="justify-content:center;margin-top:18px;">
                     <button class="pb-btn" id="newSessionBtn" type="button">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M12 4v3M8 3h8"/></svg>
                         Take another
                     </button>
-                    <button class="pb-btn ghost" id="viewGalleryBtn" type="button">View live gallery</button>
                 </div>
             </div>
         </section>
-
-        <!-- ===== LIVE GALLERY ===== -->
-        <section class="pb-panel" id="liveGallery" style="margin-top:26px;">
-            <div class="pb-live-head">
-                <div>
-                    <h2 style="color:var(--navy); font-size:1.35rem;">Live Gallery</h2>
-                    <p style="color:#64748b; font-size:0.85rem;">Strips from everyone, appearing in realtime.</p>
-                </div>
-                <span class="pb-live-badge"><span class="pb-live-dot"></span> LIVE</span>
-            </div>
-            <div class="pb-live-grid" id="liveGrid">
-                <div class="pb-live-empty">Loading live strips…</div>
-            </div>
-        </section>
-
     </div>
 
-    <!-- Lightbox for gallery images -->
-    <div class="pb-lightbox pb-hidden" id="lightbox">
-        <img id="lightboxImg" alt="Full strip preview">
-    </div>
+    <!-- QR code library (qrcode — canvas renderer) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- mp4-muxer (MP4/H.264 muxing for the recap video) -->
+    <script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.0/build/mp4-muxer.min.js"></script>
+    <!-- GIF.js for animated GIF generation -->
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
 
     <script type="module">
-        import { auth, handleNavbarAuth, db, storage } from './assets/database/firebase-config.js';
+        import { auth, handleNavbarAuth } from './assets/database/firebase-config.js';
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { ref as dbRef, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-        import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
         if (typeof handleNavbarAuth === 'function') handleNavbarAuth('auth-status');
 
         /* ---------- Navbar ---------- */
-        const hamburger = document.getElementById('hamburger-menu');
-        const navMenu = document.getElementById('nav-menu');
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
+        document.getElementById('hamburger-menu').addEventListener('click', () => {
+            document.getElementById('hamburger-menu').classList.toggle('active');
+            document.getElementById('nav-menu').classList.toggle('active');
         });
 
         const $ = (id) => document.getElementById(id);
-        const FORM_SUBMIT_URL = 'https://formsubmit.co/ajax/a1e63f151d76e68502b50191e9ef4195';
         const LS_DRAFT = 'keepicsPhotoboothDraft';
-        const LS_HISTORY = 'keepicsPhotoboothHistory';
+        const TOTAL_SHOTS = 8;
+        const PICK_COUNT = 4;
+        const SHOT_INTERVAL_MS = 10000; // 10 seconds per shot
+        const DIGICAM_FILTER = 'saturate(1.18) contrast(1.1) brightness(1.03)';
+
+        /* ==========================================================
+           Dropbox upload
+           ========================================================== */
+        const DROPBOX_TOKEN = 'sl.u.AGrVtlYOVXPNK8KPpepFVfpSp4KjXExRJdDrvQ-fYDcOcbAhI5l1ZHIBqtz-xazpuai2KnyGfv8yGtkZz4J0R9d14PgGODf_ScAWSeHpMnVkmy5OsJSGG0gBY5_fqK6M__G2i_AH84BJz_KU_sEXfYQkNR1cDsAZOb4pfpWfJ4Owz1kT8UsRB77LkdqIbN3ZBQyIykXRjXjQqq5xX8TY69mRaZqwqwjRWd7FgGFSqz1ZeEQmFBTBd9UKngZUtosIqzk72B-edWXfaMYz-AfhL-Se0o9BP9vk81p9XHu_6_z0637ZOHpav5OD7h4GH47HbSIvKM0gbHeJkM7Ut2tehAC55aI0zvMHYEV_4-1qavm78cwM8nMGDZ9VWVC7Nep_CFlpf9GC2TmDHIRsloJH_1THMF4YkqRKP-rhiQjfSE8q16wyxdifyWzrC6r-R6_KkiYHqdYS6W-1p4SJ0sdrEIN64ed4K2MJ1FDRwCX-T9wdeupy0uxKg0qRGJU1O33q-gB5e6-DPmP3ZRXUCWLCsLYCYD1gueQQgHzU8xTF1XUgX0mYGGBCWXrvPYBOVHNm95a8t0GIN50GwT4EzjbZPAaQKVJvyaWYF1e8yVNT-o1ij-f5Q99E9QcRMw6kClV7qKOZdxrO0xD0rjQtxC6cL4_XF0ptZ1i6x1YwD7m2qBeLZAKMxkjFRwQqqafJevKelbxOnU5s2N5yVhijR7swJjNO5GhUou8U9D-JagnJfIsvF3MQ9nQGF2OizxMMq40tTVRadRhRY2g9mTvBXqGV_3rY9esuffJ18dRAIBlPi5bfidF7NNGQmEmuEba2xMxCaRR_-KtF81O88ASGpXjojg5nNuDsfHKMD5eSL_CUX6FKPUSJcR-uiF6pdnmJslRpIMWpKwZNxOjlGNQ35r1NJMzGPwtppzWbjg_YEzcuRtOAcp5PE3Dc1I98nt2CjnH9YA5ksFz6PFtpTHZY1fzuC8cAEslEZe80USv9WwGBQczR_YOYkfrDb396dS5V6lD2_cbA3mX9Y7fFQ_6U5JMzdUDyl2doFzWtut68MR1eXuDCCciigLP8cia_yEaIZfeQRKoYaz4ltyHWBO7NKwVzS9E_K0X-_kf6OBYt2ZeuGN4Ou_0Z2GhtUlKYnxiSzXJ9U-sjSRTc_P5oXFCN2CK6yJGUBNkcgDjq5xSIL_1ovvG441Eztl52dUYoLDjkbnOW8WG191_lYRinKbriIIg_EjuIXPuJ_5jXIRDpzTZTPFiDF2cc72pwgwR94OYq2iBqHGqMUe83eCi9humDNzvQm65BvfGL8JL9XkELuZ-Op5eHXF2pHhqer1rtlPvYV8l7Fs4_aU8Q-MvSFGWyn9grB-ib--HkFpJOA1sGGjtUJbBE65gRgOPKigpnz0KKaR-m5GI5dxrYBbS0wM_bzv5oaPl70uiGu0z4UmJ7_sI5bDPucw';
+        const DROPBOX_FOLDER = '/Photobooth_KeePIcs';
+
+        async function uploadToDropbox(blob, filename) {
+            const res = await fetch('https://content.dropboxapi.com/2/files/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + DROPBOX_TOKEN,
+                    'Content-Type': 'application/octet-stream',
+                    'Dropbox-API-Arg': JSON.stringify({ path: DROPBOX_FOLDER + '/' + filename, mode: 'add', autorename: true, mute: false })
+                },
+                body: blob
+            });
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error('Dropbox upload failed: ' + (errData.error_summary || res.status));
+            }
+            return res.json();
+        }
+
+        async function createDropboxSharedLink(path) {
+            try {
+                const res = await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + DROPBOX_TOKEN, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: path, settings: { requested_visibility: 'public', allow_download: true } })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    return data.url.replace('dl=0', 'dl=1');
+                }
+                // If link already exists, fetch it
+                const listRes = await fetch('https://api.dropboxapi.com/2/sharing/list_shared_links', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + DROPBOX_TOKEN, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: path, direct_only: true })
+                });
+                if (listRes.ok) {
+                    const listData = await listRes.json();
+                    if (listData.links && listData.links.length > 0) {
+                        return listData.links[0].url.replace('dl=0', 'dl=1');
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not create shared link:', e);
+            }
+            return null;
+        }
 
         /* ==========================================================
            State
@@ -1015,335 +498,397 @@
         let currentAuthUser = null;
         let stream = null;
         let videoReady = false;
-        let capturedFrames = [];   // Array of HTMLCanvasElement (4:3 landscape frames)
-        let crop = null;           // { sw, sh, sx, sy } center 4:3 landscape crop of video
+        let capturedFrames = [];    // Canvas elements (4:3 landscape), up to 8
+        let selectedIndices = [];   // 4 chosen indices
+        let videoClips = [];        // Blob URLs for recording clips
+        let recordingChunks = [];   // MediaRecorder chunks for current clip
+        let recorder = null;
+        let recordingActive = false;
+        let mediaStreamDest = null;
+        let autoTimerId = null;     // setTimeout chain for auto capture
+        let autoCountdown = 0;
+        let autoRunning = false;
+        let crop = null;
         let capturing = false;
+        let lastUploadedStripPath = null;
+        let lastUploadedVideoPath = null;
+        let lastSharedLink = null;
+        let lastDownloadVideoBlob = null;  // Blob for the Video Download button
+        let lastDownloadVideoExt = 'webm'; // Container extension of the recap video
+        let audioCtx = null;        // Web Audio context for beeps
 
-        // Customize state
         let state = {
-            layout: '1x4',
-            theme: '#ff8fa3',
-            film: 'classic',
-            filter: 'none',
-            caption: '',
-            captionStyle: 'hand',
-            stickers: []           // { emoji, x, y, size, rotation }
+            layout: '1x4', theme: '#ff8fa3', film: 'classic',
+            caption: '', captionStyle: 'hand', stickers: []
         };
 
         const THEMES = [
-            { name: 'Blush Pink',  color: '#ff8fa3' },
-            { name: 'Baby Blue',   color: '#7fb8e6' },
-            { name: 'Mint',        color: '#6ee7b7' },
-            { name: 'Lavender',    color: '#c4b5fd' },
-            { name: 'Sunshine',    color: '#fcd34d' },
-            { name: 'Peach',       color: '#fdba74' },
-            { name: 'Navy',        color: '#1e3a8a' },
-            { name: 'Black',       color: '#1f2937' }
+            { name: 'Blush Pink', color: '#ff8fa3' }, { name: 'Baby Blue', color: '#7fb8e6' },
+            { name: 'Mint', color: '#6ee7b7' }, { name: 'Lavender', color: '#c4b5fd' },
+            { name: 'Sunshine', color: '#fcd34d' }, { name: 'Peach', color: '#fdba74' },
+            { name: 'Navy', color: '#1e3a8a' }, { name: 'Black', color: '#1f2937' }
         ];
-
-        const STICKERS = ['💗','⭐','✨','🌸','🧸','💫','🍒','🎀','☁️','🌈','🦋','🐰','💖','😎','🥰','🎉','🥳','💌','🍭','🧁','💍','🔥'];
-
-        const FILTERS = {
-            none:  'none',
-            bw:    'grayscale(1) contrast(1.05)',
-            sepia: 'sepia(0.55) contrast(1.05) brightness(1.05)',
-            vivid: 'saturate(1.5) contrast(1.1)',
-            soft:  'brightness(1.08) contrast(0.92) saturate(1.05) blur(0.4px)'
-        };
-
+        const STICKERS = ['💖','⭐','✨','🌸','🧸','💫','🍒','🎀','☁️','🌈','🦋','🐰','💗','😎','🥰','🎉','🥳','💌','🍭','🧁','💍','🔥'];
         const CAP_STYLES = {
-            hand:   { font: 'italic 900 42px Segoe UI, sans-serif', color: '#8f1d2c' },
-            modern: { font: '800 44px Segoe UI, sans-serif', color: '#1e3a8a' },
-            mono:   { font: '700 38px Consolas, monospace', color: '#334155' }
+            hand:   { font: 'italic 700 36px "Segoe Script","Comic Sans MS",cursive', color: '#8f1d2c' },
+            modern: { font: '800 40px "Segoe UI",Arial,sans-serif', color: '#1e3a8a' },
+            mono:   { font: '700 34px "Courier New",monospace', color: '#334155' }
         };
 
         /* ==========================================================
            Steps navigation
            ========================================================== */
-        const steps = {
-            welcome: $('stepWelcome'),
-            shoot:   $('stepShoot'),
-            customize: $('stepCustomize'),
-            save:    $('stepSave'),
-            success: $('stepSuccess')
-        };
-
+        const steps = { welcome: $('stepWelcome'), shoot: $('stepShoot'), pick: $('stepPick'), frame: $('stepFrame'), style: $('stepStyle'), save: $('stepSave'), success: $('stepSuccess') };
         function showStep(name) {
             Object.values(steps).forEach(s => s.classList.add('pb-hidden'));
             steps[name].classList.remove('pb-hidden');
-            const activeMap = { shoot: 1, customize: 2, save: 3, success: 3 };
-            [1, 2, 3].forEach(i => {
-                const dot = $('pbStep' + i);
-                dot.classList.remove('active', 'done');
-                if (activeMap[name] === undefined || i < activeMap[name]) dot.classList.add('done');
-                if (i === activeMap[name]) dot.classList.add('active');
+            const activeMap = { shoot:1, pick:2, frame:3, style:4, save:5, success:5 };
+            [1,2,3,4,5].forEach(i => {
+                const d = $('pbStep'+i);
+                d.classList.remove('active','done');
+                if (activeMap[name] === undefined || i < activeMap[name]) d.classList.add('done');
+                if (i === activeMap[name]) d.classList.add('active');
             });
-            if (name === 'customize') {
-                setTimeout(renderPreview, 60);
-                syncCustomControls();
-            }
+            if (name === 'shoot') { renderThumbs(); updateShootUI(); }
+            if (name === 'frame' || name === 'style' || name === 'save') { setTimeout(renderPreview, 60); syncCustomControls(); }
+            if (name === 'pick') { renderPickGrid(); updatePickUI(); }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         /* ==========================================================
-           Camera boot
+           Camera
            ========================================================== */
+        function applyLiveFilter() { $('cameraFeed').style.filter = DIGICAM_FILTER; }
+
         async function startCamera(keepFrames = false) {
-            const errBox = $('camError');
-            errBox.classList.add('pb-hidden');
+            $('camError').classList.add('pb-hidden');
             try {
                 stopCamera();
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } },
-                    audio: false
-                });
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false });
                 const video = $('cameraFeed');
                 video.srcObject = stream;
                 await video.play();
                 videoReady = true;
+                applyLiveFilter();
                 computeCrop();
                 $('shutterBtn').disabled = false;
-                if (!keepFrames) {
-                    capturedFrames = [];
-                }
+                if (!keepFrames) { capturedFrames = []; selectedIndices = []; videoClips = []; }
                 renderThumbs();
                 updateShootUI();
-                requestAnimationFrame(drawGuides);
             } catch (err) {
                 console.error('Camera error:', err);
-                errBox.classList.remove('pb-hidden');
-                $('camErrorText').textContent =
-                    err && err.name === 'NotAllowedError'
-                        ? 'Camera permission was denied. Allow camera access in your browser (or site settings) and try again.'
-                        : 'Could not start your camera. Try again or use a different browser/device.';
+                $('camError').classList.remove('pb-hidden');
+                $('camErrorText').textContent = err?.name === 'NotAllowedError'
+                    ? 'Camera permission was denied. Allow camera access and try again.'
+                    : 'Could not start your camera. Try again or use a different browser.';
                 $('shutterBtn').disabled = true;
             }
         }
 
         function stopCamera() {
-            if (stream) {
-                stream.getTracks().forEach(t => t.stop());
-                stream = null;
-            }
+            if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
             videoReady = false;
         }
 
         $('retryCamBtn').addEventListener('click', startCamera);
 
         function computeCrop() {
-            const video = $('cameraFeed');
-            const vw = video.videoWidth;
-            const vh = video.videoHeight;
+            const v = $('cameraFeed');
+            const vw = v.videoWidth, vh = v.videoHeight;
             if (!vw || !vh) return;
-            // Center a 4:3 landscape region inside the video — the full visible frame.
-            const targetRatio = 4 / 3;
+            const target = 4/3;
             let sw, sh;
-            if (vw / vh > targetRatio) {
-                sh = vh;
-                sw = vh * targetRatio;
-            } else {
-                sw = vw;
-                sh = vw / targetRatio;
-            }
-            crop = {
-                sw, sh,
-                sx: (vw - sw) / 2,
-                sy: (vh - sh) / 2
-            };
+            if (vw/vh > target) { sh = vh; sw = vh * target; } else { sw = vw; sh = vw / target; }
+            crop = { sw, sh, sx: (vw - sw)/2, sy: (vh - sh)/2 };
         }
 
-        /* ---------- Guide overlay: clean full-frame framing ---------- */
-        function drawGuides() {
-            const canvas = $('guideCanvas');
+
+        /* ==========================================================
+           Sound (Web Audio API — soft beeps)
+           ========================================================== */
+        function getAudioCtx() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
+
+        function playBeep(freq, duration, volume = 0.3) {
+            try {
+                const ctx = getAudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(volume, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) { /* audio not supported, skip */ }
+        }
+
+        function playCountdownBeep() { playBeep(660, 0.15, 0.25); }  // soft tick
+        function playShootBeep()    { playBeep(880, 0.25, 0.35); }  // higher for capture
+
+        /* ==========================================================
+           Mini countdown (top-right corner of camera stage)
+           ========================================================== */
+        function showMiniCountdown(num, label) {
+            const el = $('miniCountdown');
+            $('mcdNum').textContent = num;
+            $('mcdLabel').textContent = label || 'Get ready';
+            el.classList.add('show');
+            $('mcdNum').classList.add('flash');
+            setTimeout(() => $('mcdNum').classList.remove('flash'), 300);
+        }
+
+        function hideMiniCountdown() {
+            $('miniCountdown').classList.remove('show');
+        }
+
+        /* ==========================================================
+           Recording (MediaRecorder on offscreen canvas stream)
+           ========================================================== */
+        let recordingDrawInterval = null;
+
+        function startRecordingClip() {
+            try {
+                // The frame index this clip belongs to is `capturedFrames.length`
+                // at record-start time (0-based). Bind it now so the async
+                // onstop handler can never pick up a later shot's index — this
+                // is what keeps all 4 selected clips discoverable for the recap.
+                const clipShotIndex = capturedFrames.length;
+                recordingChunks = [];
+                const fps = 24;
+                const offscreen = document.createElement('canvas');
+                offscreen.width = 640;
+                offscreen.height = 480;
+                const offCtx = offscreen.getContext('2d');
+                recordingDrawInterval = setInterval(() => {
+                    if (!videoReady || !crop) return;
+                    offCtx.save();
+                    offCtx.filter = DIGICAM_FILTER;
+                    offCtx.translate(offscreen.width, 0);
+                    offCtx.scale(-1, 1);
+                    offCtx.drawImage($('cameraFeed'), crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, offscreen.width, offscreen.height);
+                    offCtx.restore();
+                }, 1000 / fps);
+
+                const recStream = offscreen.captureStream(fps);
+                recorder = new MediaRecorder(recStream, { mimeType: 'video/webm;codecs=vp8' });
+                recorder.ondataavailable = (e) => { if (e.data.size > 0) recordingChunks.push(e.data); };
+                recorder.onstop = () => {
+                    if (recordingDrawInterval) { clearInterval(recordingDrawInterval); recordingDrawInterval = null; }
+                    if (recordingChunks.length > 0) {
+                        const blob = new Blob(recordingChunks, { type: 'video/webm' });
+                        const url = URL.createObjectURL(blob);
+                        videoClips.push({ blob, url, shotIndex: clipShotIndex });
+                    }
+                    recordingChunks = [];
+                    recordingActive = false;
+                };
+                recorder.start(100);
+                recordingActive = true;
+            } catch (e) {
+                console.warn('MediaRecorder not available:', e);
+                recordingActive = false;
+            }
+        }
+
+        function stopRecordingClip() {
+            if (recorder && recordingActive) {
+                try { recorder.stop(); } catch (e) { recordingActive = false; }
+            }
+        }
+
+        /* ==========================================================
+           Capture a single frame from camera
+           ========================================================== */
+        function captureFrame() {
+            const video = $('cameraFeed');
+            const c = document.createElement('canvas');
+            c.width = 640;
+            c.height = 480;
+            const ctx = c.getContext('2d');
+            ctx.save();
+            ctx.translate(c.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, c.width, c.height);
+            ctx.restore();
+            return c;
+        }
+
+        /* ==========================================================
+           Flash effect on camera stage
+           ========================================================== */
+        function flashStage() {
             const stage = $('boothStage');
-            if (!videoReady || !crop) {
-                requestAnimationFrame(drawGuides);
+            const flash = document.createElement('div');
+            flash.style.cssText = 'position:absolute;inset:0;background:#fff;z-index:10;pointer-events:none;transition:opacity 0.25s ease-out;opacity:0.6;';
+            stage.appendChild(flash);
+            requestAnimationFrame(() => { requestAnimationFrame(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 250); }); });
+        }
+
+        /* ==========================================================
+           Per-shot sequence (10-second visible countdown):
+           1) Start recording video clip
+           2) 10-second countdown visible in top-right (10→1)
+           3) Capture photo at 0 + flash + beep
+           4) Stop recording
+           5) Next shot
+           ========================================================== */
+        async function runShotSequence() {
+            if (!autoRunning || capturedFrames.length >= TOTAL_SHOTS) {
+                autoRunning = false;
+                hideMiniCountdown();
+                updateShootUI();
                 return;
             }
-            // Match canvas to displayed stage size (CSS 4:3 stage).
-            const dpr = window.devicePixelRatio || 1;
-            const rect = stage.getBoundingClientRect();
-            const W = rect.width;
-            const H = rect.height;
-            if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
-                canvas.width = W * dpr;
-                canvas.height = H * dpr;
+
+            const shotNum = capturedFrames.length + 1;
+
+            // Start recording this clip
+            startRecordingClip();
+
+            // 10-second countdown — visible the whole time
+            for (let i = 10; i >= 1; i--) {
+                if (!autoRunning) return;
+                showMiniCountdown(i, `Shot ${shotNum}`);
+                if (i <= 3) playCountdownBeep(); // beeps only on last 3
+                await sleep(1000);
             }
-            const ctx = canvas.getContext('2d');
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            ctx.clearRect(0, 0, W, H);
 
-            const shotIndex = Math.min(capturedFrames.length, 3);
+            // Capture!
+            if (!autoRunning || !videoReady || !crop) return;
+            showMiniCountdown('📸', 'Snap!');
+            playShootBeep();
+            flashStage();
 
-            // Subtle dim so the brackets pop, but the full frame stays visible.
-            ctx.fillStyle = 'rgba(10, 12, 20, 0.08)';
-            ctx.fillRect(0, 0, W, H);
-
-            // Corner brackets on the whole capture window
-            const pad = 10;
-            ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-            ctx.lineWidth = 3;
-            const bracket = 26;
-            const corners = [
-                [pad, pad, 1, 1], [W - pad, pad, -1, 1],
-                [pad, H - pad, 1, -1], [W - pad, H - pad, -1, -1]
-            ];
-            corners.forEach(([cx, cy, dx, dy]) => {
-                ctx.beginPath();
-                ctx.moveTo(cx + dx * bracket, cy);
-                ctx.lineTo(cx, cy);
-                ctx.lineTo(cx, cy + dy * bracket);
-                ctx.stroke();
-            });
-
-            // Shot counter pill
-            ctx.fillStyle = 'rgba(0,0,0,0.55)';
-            const pillW = 54;
-            const pillH = 26;
-            const pillX = W - pad - pillW - 4;
-            const pillY = 10;
-            ctx.beginPath();
-            ctx.roundRect(pillX, pillY, pillW, pillH, 13);
-            ctx.fill();
-            ctx.fillStyle = '#fff';
-            ctx.font = '700 12px Segoe UI, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(`${shotIndex + 1} / 4`, pillX + pillW / 2, pillY + pillH / 2 + 1);
-
-            requestAnimationFrame(drawGuides);
-        }
-
-        /* ---------- Capture a cut ---------- */
-        const CD_NUM = ['3', '2', '1'];
-
-        function countdown(seconds) {
-            return new Promise((resolve) => {
-                const overlay = $('countdownOverlay');
-                const numEl = $('countdownNum');
-                overlay.classList.add('show');
-                let i = 0;
-                numEl.textContent = String(seconds);
-                const iv = setInterval(() => {
-                    i++;
-                    if (i >= seconds) {
-                        clearInterval(iv);
-                        overlay.classList.remove('show');
-                        resolve();
-                    } else {
-                        numEl.textContent = CD_NUM[i];
-                    }
-                }, 1000);
-            });
-        }
-
-        async function captureShot() {
-            if (!videoReady || !crop || capturing) return;
-            if (capturedFrames.length >= 4) return;
-
-            capturing = true;
-            $('shutterBtn').disabled = true;
-            $('shootNextBtn').disabled = true;
-            $('restartShotsBtn').disabled = true;
-
-            const shotIndex = capturedFrames.length;
-            $('shotStatus').textContent = `Get ready — Shot ${shotIndex + 1}...`;
-            await new Promise(r => setTimeout(r, 400));
-            await countdown(3);
-
-            const video = $('cameraFeed');
-            const cellCanvas = document.createElement('canvas');
-            const ZW = 640; // full landscape frame width
-            cellCanvas.width = ZW;
-            cellCanvas.height = Math.round(ZW * 3 / 4); // 480 (4:3)
-            const cctx = cellCanvas.getContext('2d');
-            // Capture the entire visible frame — no cropping, no zone slicing.
-            // Mirrored horizontally so the saved strip matches the live (selfie) preview.
-            cctx.save();
-            cctx.translate(cellCanvas.width, 0);
-            cctx.scale(-1, 1);
-            cctx.drawImage(
-                video,
-                crop.sx, crop.sy, crop.sw, crop.sh,
-                0, 0, cellCanvas.width, cellCanvas.height
-            );
-            cctx.restore();
-
-            capturedFrames.push(cellCanvas);
+            const frame = captureFrame();
+            capturedFrames.push(frame);
             renderThumbs();
             updateShootUI();
 
-            if (capturedFrames.length === 4) {
-                $('shotStatus').textContent = 'All 4 shots taken!';
+            // Stop recording this clip
+            stopRecordingClip();
+
+            await sleep(500);
+            hideMiniCountdown();
+
+            if (capturedFrames.length >= TOTAL_SHOTS) {
+                autoRunning = false;
+                updateShootUI();
             } else {
-                $('shotStatus').textContent = `Press the shutter for Shot ${capturedFrames.length + 1}`;
+                await sleep(800);
+                runShotSequence();
             }
-            capturing = false;
         }
 
-        $('shutterBtn').addEventListener('click', captureShot);
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        /* ==========================================================
+           Start auto-capture (called by shutter button)
+           ========================================================== */
+        function startAutoCapture() {
+            if (autoRunning) return;
+            autoRunning = true;
+            $('shutterBtn').disabled = true;
+            runShotSequence();
+        }
+
+        function stopAutoCapture() {
+            autoRunning = false;
+            if (autoTimerId) { clearTimeout(autoTimerId); autoTimerId = null; }
+            stopRecordingClip();
+            hideMiniCountdown();
+        }
+
+        /* ---------- Shutter / controls ---------- */
+        $('shutterBtn').addEventListener('click', () => {
+            if (autoRunning) return;
+            if (capturedFrames.length < TOTAL_SHOTS) startAutoCapture();
+        });
 
         $('restartShotsBtn').addEventListener('click', () => {
-            capturedFrames = [];
-            renderThumbs();
-            updateShootUI();
-            $('shotStatus').textContent = 'Press the shutter for Shot 1';
+            stopAutoCapture();
+            capturedFrames = []; selectedIndices = [];
+            videoClips.forEach(c => URL.revokeObjectURL(c.url));
+            videoClips = [];
+            renderThumbs(); updateShootUI();
         });
 
         $('shootNextBtn').addEventListener('click', () => {
-            if (capturedFrames.length !== 4) return;
-            showStep('customize');
+            if (capturedFrames.length !== TOTAL_SHOTS) return;
+            stopAutoCapture();
+            showStep('pick');
             persistDraft();
         });
-
-        $('backToShootBtn').addEventListener('click', () => showStep('shoot'));
-        $('backToCustomBtn').addEventListener('click', () => showStep('customize'));
 
         /* ---------- Thumbnails ---------- */
         function renderThumbs() {
             const grid = $('thumbGrid');
             grid.innerHTML = '';
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < TOTAL_SHOTS; i++) {
                 const div = document.createElement('div');
                 div.className = 'pb-thumb' + (capturedFrames[i] ? ' filled' : '');
-                div.innerHTML = `<span class="pb-thumb-num">${i + 1}</span>`;
-                if (capturedFrames[i]) {
-                    div.appendChild(capturedFrames[i]);
-                }
+                div.innerHTML = `<span class="pb-thumb-num">${i+1}</span>`;
+                if (capturedFrames[i]) div.appendChild(capturedFrames[i]);
                 grid.appendChild(div);
             }
         }
 
         function updateShootUI() {
-            $('shootNextBtn').disabled = capturedFrames.length !== 4;
+            $('shootNextBtn').disabled = capturedFrames.length !== TOTAL_SHOTS;
             $('restartShotsBtn').disabled = capturedFrames.length === 0;
-            $('shutterBtn').disabled = !videoReady || capturedFrames.length >= 4;
+            if (!autoRunning) $('shutterBtn').disabled = !videoReady || capturedFrames.length >= TOTAL_SHOTS;
         }
 
         /* ==========================================================
-           Customize
+           Pick step
+           ========================================================== */
+        function renderPickGrid() {
+            const grid = $('pickGrid');
+            grid.innerHTML = '';
+            capturedFrames.forEach((frame, i) => {
+                const card = document.createElement('div');
+                card.className = 'pb-pick-card' + (selectedIndices.includes(i) ? ' selected' : '');
+                card.innerHTML = `<span class="pb-pick-num">${i+1}</span><span class="pb-pick-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>`;
+                card.prepend(frame);
+                card.addEventListener('click', () => togglePick(i));
+                grid.appendChild(card);
+            });
+        }
+
+        function togglePick(index) {
+            const pos = selectedIndices.indexOf(index);
+            if (pos !== -1) { selectedIndices.splice(pos, 1); }
+            else { if (selectedIndices.length >= PICK_COUNT) { selectedIndices.pop(); selectedIndices.push(index); } else { selectedIndices.push(index); } }
+            renderPickGrid(); updatePickUI(); persistDraft();
+        }
+
+        function updatePickUI() {
+            const c = $('pickCounter');
+            c.textContent = `Selected ${selectedIndices.length} / ${PICK_COUNT}`;
+            c.classList.toggle('ok', selectedIndices.length === PICK_COUNT);
+            $('pickNextBtn').disabled = selectedIndices.length !== PICK_COUNT;
+            $('clearPickBtn').disabled = selectedIndices.length === 0;
+        }
+
+        $('clearPickBtn').addEventListener('click', () => { selectedIndices = []; renderPickGrid(); updatePickUI(); persistDraft(); });
+        $('backToShootBtn').addEventListener('click', () => showStep('shoot'));
+        $('backToPickBtn').addEventListener('click', () => { showStep('pick'); renderPickGrid(); updatePickUI(); });
+        $('backToFrameBtn').addEventListener('click', () => { showStep('frame'); setTimeout(renderPreview, 60); });
+        $('backToStyleBtn').addEventListener('click', () => { showStep('style'); setTimeout(renderPreview, 60); });
+        $('pickNextBtn').addEventListener('click', () => { if (selectedIndices.length !== PICK_COUNT) return; showStep('frame'); persistDraft(); });
+
+        /* ==========================================================
+           Customize controls
            ========================================================== */
         function syncCustomControls() {
-            // Layout chips
-            document.querySelectorAll('#layoutChips .pb-chip').forEach(c => {
-                c.classList.toggle('selected', c.dataset.layout === state.layout);
-            });
-            // Film chips
-            document.querySelectorAll('#filmChips .pb-chip').forEach(c => {
-                c.classList.toggle('selected', c.dataset.film === state.film);
-            });
-            // Filter chips
-            document.querySelectorAll('#filterChips .pb-chip').forEach(c => {
-                c.classList.toggle('selected', c.dataset.filter === state.filter);
-            });
-            // Caption style chips
-            document.querySelectorAll('#captionStyleChips .pb-chip').forEach(c => {
-                c.classList.toggle('selected', c.dataset.capstyle === state.captionStyle);
-            });
-            // Swatches
-            document.querySelectorAll('#themeSwatches .pb-swatch').forEach(s => {
-                s.classList.toggle('selected', s.dataset.color === state.theme);
-            });
+            document.querySelectorAll('#layoutChips .pb-chip').forEach(c => c.classList.toggle('selected', c.dataset.layout === state.layout));
+            document.querySelectorAll('#filmChips .pb-chip').forEach(c => c.classList.toggle('selected', c.dataset.film === state.film));
+            document.querySelectorAll('#captionStyleChips .pb-chip').forEach(c => c.classList.toggle('selected', c.dataset.capstyle === state.captionStyle));
+            document.querySelectorAll('#themeSwatches .pb-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === state.theme));
             $('captionInput').value = state.caption;
         }
 
@@ -1357,11 +902,7 @@
                 sw.dataset.color = t.color;
                 sw.style.background = t.color;
                 sw.title = t.name;
-                sw.addEventListener('click', () => {
-                    state.theme = t.color;
-                    syncCustomControls();
-                    renderPreview();
-                });
+                sw.addEventListener('click', () => { state.theme = t.color; syncCustomControls(); renderPreview(); });
                 wrap.appendChild(sw);
             });
         }
@@ -1380,157 +921,219 @@
         }
 
         function addSticker(emoji) {
-            state.stickers.push({
-                emoji,
-                x: 300,
-                y: 360,
-                size: 56,
-                rotation: (Math.random() * 30 - 15)
-            });
+            // Start the sticker centered on the first photo so it never lands
+            // on the caption/QR footer, in either layout.
+            const geo = getStripGeometry();
+            const s = geo.slots[0];
+            state.stickers.push({ emoji, x: Math.round(s.imgX + s.imgW / 2), y: Math.round(s.imgY + s.imgH / 2), size: 52, rotation: Math.random()*20-10 });
             renderPreview();
         }
 
-        $('clearStickersBtn').addEventListener('click', () => {
-            state.stickers = [];
-            renderPreview();
+        $('clearStickersBtn').addEventListener('click', () => { state.stickers = []; renderPreview(); });
+        document.querySelectorAll('#layoutChips .pb-chip').forEach(c => c.addEventListener('click', () => { state.layout = c.dataset.layout; syncCustomControls(); renderPreview(); }));
+        document.querySelectorAll('#filmChips .pb-chip').forEach(c => c.addEventListener('click', () => { state.film = c.dataset.film; syncCustomControls(); renderPreview(); }));
+        document.querySelectorAll('#captionStyleChips .pb-chip').forEach(c => c.addEventListener('click', () => { state.captionStyle = c.dataset.capstyle; syncCustomControls(); renderPreview(); }));
+        $('captionInput').addEventListener('input', () => { state.caption = $('captionInput').value; renderPreview(); });
+
+        $('frameNextBtn').addEventListener('click', () => { showStep('style'); persistDraft(); });
+        $('styleNextBtn').addEventListener('click', () => {
+            const canvas = composeCanvas();
+            $('savePreviewImg').src = canvas.toDataURL('image/png');
+            $('uploadStatusText').textContent = 'Processing Photobooth... please wait...';
+            showStep('save');
+            persistDraft();
+            setTimeout(uploadAndFinish, 300);
         });
 
-        document.querySelectorAll('#layoutChips .pb-chip').forEach(c => {
-            c.addEventListener('click', () => {
-                state.layout = c.dataset.layout;
-                syncCustomControls();
-                renderPreview();
-            });
-        });
-
-        document.querySelectorAll('#filmChips .pb-chip').forEach(c => {
-            c.addEventListener('click', () => {
-                state.film = c.dataset.film;
-                syncCustomControls();
-                renderPreview();
-            });
-        });
-
-        document.querySelectorAll('#filterChips .pb-chip').forEach(c => {
-            c.addEventListener('click', () => {
-                state.filter = c.dataset.filter;
-                syncCustomControls();
-                renderPreview();
-            });
-        });
-
-        document.querySelectorAll('#captionStyleChips .pb-chip').forEach(c => {
-            c.addEventListener('click', () => {
-                state.captionStyle = c.dataset.capstyle;
-                syncCustomControls();
-                renderPreview();
-            });
-        });
-
-        $('captionInput').addEventListener('input', () => {
-            state.caption = $('captionInput').value;
-            renderPreview();
-        });
-
-        /* ---------- Preview interactions (drag stickers) ---------- */
-        const previewCanvas = $('previewCanvas');
-        let dragTarget = null;
-        let dragOffset = { x: 0, y: 0 };
+        /* ---------- Sticker drag ---------- */
+        const previewCanvas = $('previewCanvasStyle');
+        let dragTarget = null, dragOffset = { x:0, y:0 };
 
         function previewPoint(e) {
-            const rect = previewCanvas.getBoundingClientRect();
+            const r = previewCanvas.getBoundingClientRect();
             const cx = e.touches ? e.touches[0].clientX : e.clientX;
             const cy = e.touches ? e.touches[0].clientY : e.clientY;
-            return {
-                x: (cx - rect.left) / rect.width * previewCanvas.width,
-                y: (cy - rect.top) / rect.height * previewCanvas.height
-            };
+            return { x: (cx-r.left)/r.width*previewCanvas.width, y: (cy-r.top)/r.height*previewCanvas.height };
         }
 
         previewCanvas.addEventListener('mousedown', (e) => {
             const p = previewPoint(e);
-            for (let i = state.stickers.length - 1; i >= 0; i--) {
+            for (let i = state.stickers.length-1; i >= 0; i--) {
                 const s = state.stickers[i];
-                const half = s.size * 0.6;
-                if (Math.abs(p.x - s.x) < half && Math.abs(p.y - s.y) < half) {
-                    dragTarget = state.stickers[i];
-                    dragOffset = { x: p.x - s.x, y: p.y - s.y };
-                    break;
-                }
+                if (Math.abs(p.x-s.x) < s.size*0.6 && Math.abs(p.y-s.y) < s.size*0.6) { dragTarget = s; dragOffset = { x: p.x-s.x, y: p.y-s.y }; break; }
             }
         });
-
-        window.addEventListener('mousemove', (e) => {
-            if (!dragTarget) return;
-            const p = previewPoint(e);
-            dragTarget.x = p.x - dragOffset.x;
-            dragTarget.y = p.y - dragOffset.y;
-            renderPreview();
-        });
-
-        window.addEventListener('mouseup', () => {
-            dragTarget = null;
-            persistDraft();
-        });
-
-        previewCanvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const p = previewPoint(e);
-            for (let i = state.stickers.length - 1; i >= 0; i--) {
-                const s = state.stickers[i];
-                const half = s.size * 0.6;
-                if (Math.abs(p.x - s.x) < half && Math.abs(p.y - s.y) < half) {
-                    dragTarget = state.stickers[i];
-                    dragOffset = { x: p.x - s.x, y: p.y - s.y };
-                    break;
-                }
-            }
-        }, { passive: false });
-
-        window.addEventListener('touchmove', (e) => {
-            if (!dragTarget) return;
-            e.preventDefault();
-            const p = previewPoint(e);
-            dragTarget.x = p.x - dragOffset.x;
-            dragTarget.y = p.y - dragOffset.y;
-            renderPreview();
-        }, { passive: false });
-
-        window.addEventListener('touchend', () => {
-            dragTarget = null;
-            persistDraft();
-        });
-
-        // Double-tap sticker to remove
+        window.addEventListener('mousemove', (e) => { if (!dragTarget) return; const p = previewPoint(e); dragTarget.x = p.x-dragOffset.x; dragTarget.y = p.y-dragOffset.y; renderPreview(); });
+        window.addEventListener('mouseup', () => { dragTarget = null; });
+        previewCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); const p = previewPoint(e); for (let i = state.stickers.length-1; i >= 0; i--) { const s = state.stickers[i]; if (Math.abs(p.x-s.x)<s.size*0.6&&Math.abs(p.y-s.y)<s.size*0.6){dragTarget=s;dragOffset={x:p.x-s.x,y:p.y-s.y};break;} } }, {passive:false});
+        window.addEventListener('touchmove', (e) => { if(!dragTarget)return;e.preventDefault();const p=previewPoint(e);dragTarget.x=p.x-dragOffset.x;dragTarget.y=p.y-dragOffset.y;renderPreview(); }, {passive:false});
+        window.addEventListener('touchend', () => { dragTarget = null; });
         previewCanvas.addEventListener('dblclick', (e) => {
             const p = previewPoint(e);
-            for (let i = state.stickers.length - 1; i >= 0; i--) {
+            for (let i = state.stickers.length-1; i >= 0; i--) {
                 const s = state.stickers[i];
-                const half = s.size * 0.6;
-                if (Math.abs(p.x - s.x) < half && Math.abs(p.y - s.y) < half) {
-                    state.stickers.splice(i, 1);
-                    renderPreview();
-                    persistDraft();
-                    break;
-                }
+                if (Math.abs(p.x-s.x)<s.size*0.6&&Math.abs(p.y-s.y)<s.size*0.6){state.stickers.splice(i,1);renderPreview();persistDraft();break;}
             }
         });
 
-        /* ---------- Compose the final strip ---------- */
+        /* ==========================================================
+           QR code generation
+           Primary source: QRServer API (https://api.qrserver.com) —
+           the SAME service the KeePics Admin QR Maker uses and is
+           proven to work in this project. The locally-embedded qrcode
+           library is used only as an instant sync fallback while the
+           network QR image is loading.
+           ========================================================== */
+        let qrImageCache = {};
+
+        function qrServerUrl(data, size) {
+            return 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(data);
+        }
+
+        function loadQRImage(dataUrl, size) {
+            return new Promise((resolve) => {
+                const key = dataUrl;
+                if (qrImageCache[key]) { resolve(qrImageCache[key]); return; }
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => { qrImageCache[key] = img; resolve(img); };
+                img.onerror = () => resolve(null);
+                img.src = qrServerUrl(dataUrl, size);
+            });
+        }
+
+        // Returns a canvas with the QR fully painted — awaits the QRServer
+        // image (with the embedded qrcode lib as an instant local fallback).
+        // Used wherever the QR must be present before the canvas is
+        // serialized (final strip upload, recap video frames).
+        function getQRCanvas(dataUrl, size) {
+            return loadQRImage(dataUrl, size).then(img => {
+                const c = document.createElement('canvas');
+                c.width = size;
+                c.height = size;
+                const ctx = c.getContext('2d');
+                drawLocalQR(ctx, dataUrl, size);
+                if (img) {
+                    ctx.clearRect(0, 0, size, size);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, size, size);
+                    ctx.drawImage(img, 0, 0, size, size);
+                }
+                return c;
+            });
+        }
+
+        function drawLocalQR(ctx, dataUrl, size) {
+            let ok = false;
+            if (typeof QRCode !== 'undefined' && typeof QRCode.create === 'function') {
+                try {
+                    const qr = QRCode.create(dataUrl, { errorCorrectionLevel: 'M' });
+                    const modules = qr.modules;
+                    const n = modules.size;
+                    const margin = 2;
+                    const grid = n + margin * 2;
+                    const cellSize = Math.max(1, Math.floor(size / grid));
+                    const offset = Math.floor((size - cellSize * grid) / 2);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    ctx.fillStyle = '#1f2937';
+                    for (let row = 0; row < n; row++) {
+                        for (let col = 0; col < n; col++) {
+                            if (modules.get(row, col)) {
+                                ctx.fillRect(offset + (col + margin) * cellSize, offset + (row + margin) * cellSize, cellSize, cellSize);
+                            }
+                        }
+                    }
+                    ok = true;
+                } catch(e) { ok = false; }
+            }
+            return ok;
+        }
+
+        function generateQRCode(canvas, dataUrl, size) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1) Instant synchronous render if the embedded library is available
+            const renderedLocal = drawLocalQR(ctx, dataUrl, size);
+
+            // 2) QRServer API image — generated on the spot and drawn as soon
+            //    as it loads (also re-draws over the local fallback)
+            loadQRImage(dataUrl, size).then(img => {
+                if (!img) {
+                    if (!renderedLocal) {
+                        // Placeholder only if every QR source failed
+                        ctx.fillStyle = '#f1f5f9';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = '#94a3b8';
+                        ctx.font = '700 14px Segoe UI';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('QR', canvas.width/2, canvas.height/2);
+                    }
+                    return;
+                }
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            });
+        }
+
+        /* ==========================================================
+           Compose strip (with QR code, aesthetic fonts, spacing)
+           ========================================================== */
         const STRIP_W = 600;
 
-        function composeCanvas() {
-            const canvas = document.createElement('canvas');
+        // Shared grid geometry for the strip canvas, the live preview and
+        // the moving recap video. Each slot holds the card bounds (x, y,
+        // w, h) and the actual rounded photo bounds (imgX, imgY, imgW,
+        // imgH), so every renderer draws the exact same fair layout.
+        function getStripGeometry() {
             const vertical = state.layout === '1x4';
-            const cellW = vertical ? STRIP_W : STRIP_W / 2;
-            const cellHpx = Math.round(cellW * 3 / 4);   // 4:3 landscape cells
+            const gap = 18;
+            const padX = 24, padTop = 30;
+            const footerH = 70;
+            const gutter = 16; // 2x2 inner gutters — equal on both axes
+            const slots = [];
+            let canvasW = STRIP_W, canvasH;
 
-            const paddingPolaroid = state.film === 'polaroid' ? 46 : 28;
-            const paddingTop = state.film === 'polaroid' ? 56 : 28;
-            const rows = vertical ? 4 : 2;
+            if (vertical) {
+                // 1x4 classic vertical strip — unchanged proportions
+                const cellW = STRIP_W;
+                const cellH = Math.round(cellW * 3 / 4);
+                canvasH = padTop + 4 * cellH + 3 * gap + footerH;
+                for (let slot = 0; slot < 4; slot++) {
+                    const cy = padTop + slot * (cellH + gap);
+                    const innerW = cellW - padX * 2;
+                    const innerH = Math.round(innerW * 3 / 4);
+                    const innerX = padX;
+                    const innerY = cy + Math.floor((cellH - innerH) / 2);
+                    slots.push({ x: innerX - 4, y: innerY - 4, w: innerW + 8, h: innerH + 8, imgX: innerX, imgY: innerY, imgW: innerW, imgH: innerH });
+                }
+            } else {
+                // 2x2 equal grid — symmetric 24px outer margins and 16px
+                // gutters, so both columns and both rows are identical
+                const imgW = Math.floor((STRIP_W - padX * 2 - gutter) / 2);
+                const imgH = Math.floor(imgW * 3 / 4);
+                canvasH = padTop + imgH * 2 + gutter + footerH;
+                for (let slot = 0; slot < 4; slot++) {
+                    const col = slot % 2, row = Math.floor(slot / 2);
+                    const imgX = padX + col * (imgW + gutter);
+                    const imgY = padTop + row * (imgH + gutter);
+                    slots.push({ x: imgX - 4, y: imgY - 4, w: imgW + 8, h: imgH + 8, imgX, imgY, imgW, imgH });
+                }
+            }
 
-            canvas.width = STRIP_W;
-            canvas.height = paddingTop + rows * cellHpx + paddingPolaroid;
+            return { canvasW, canvasH, slots };
+        }
+
+        function composeCanvas(linkUrl) {
+            const canvas = document.createElement('canvas');
+            const geo = getStripGeometry();
+            const padX = 24;
+            canvas.width = geo.canvasW;
+            canvas.height = geo.canvasH;
 
             const ctx = canvas.getContext('2d');
 
@@ -1538,45 +1141,57 @@
             ctx.fillStyle = state.film === 'black' ? '#111827' : (state.film === 'classic' ? '#ffffff' : '#fdf8f1');
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Accent bar behind cells
-            ctx.fillStyle = state.theme;
-            ctx.globalAlpha = 0.16;
-            ctx.fillRect(0, paddingTop - 10, canvas.width, rows * cellHpx + 10);
-            ctx.globalAlpha = 1;
+            // Thin colored border
+            ctx.strokeStyle = state.theme;
+            ctx.lineWidth = 6;
+            ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
 
-            // Draw each captured shot — exact 4:3, no stretching
-            for (let i = 0; i < 4; i++) {
-                const frame = capturedFrames[i];
-                if (!frame) continue;
-                const cx = vertical ? 0 : (i % 2) * cellW;
-                const cy = paddingTop + Math.floor(i / (vertical ? 1 : 2)) * cellHpx;
+            // Draw each selected photo with generous spacing and rounded corners
+            selectedIndices.forEach((fi, slot) => {
+                const frame = capturedFrames[fi];
+                if (!frame) return;
+                const s = geo.slots[slot];
+                if (!s) return;
+                const r = 14; // corner radius
 
-                // Inner photo keeps the exact 4:3 ratio
-                const innerW = cellW - 12;
-                const innerH = Math.round(innerW * 3 / 4);
-                const innerX = cx + 6;
-                const innerY = cy + 6 + Math.floor((cellHpx - innerH) / 2);
-
+                // Photo card with shadow
                 ctx.save();
-                ctx.shadowColor = 'rgba(0,0,0,0.28)';
-                ctx.shadowBlur = 14;
-                ctx.shadowOffsetY = 5;
+                ctx.shadowColor = 'rgba(0,0,0,0.18)';
+                ctx.shadowBlur = 12;
+                ctx.shadowOffsetY = 4;
                 ctx.fillStyle = '#fff';
-                ctx.fillRect(innerX - 2, innerY - 2, innerW + 4, innerH + 4);
+                roundRect(ctx, s.x, s.y, s.w, s.h, r + 2);
+                ctx.fill();
                 ctx.restore();
 
+                // Draw photo clipped to rounded rect with digital cam filter
                 ctx.save();
-                ctx.filter = FILTERS[state.filter] || 'none';
-                ctx.beginPath();
-                ctx.rect(innerX, innerY, innerW, innerH);
+                ctx.filter = DIGICAM_FILTER;
+                roundRect(ctx, s.imgX, s.imgY, s.imgW, s.imgH, r);
                 ctx.clip();
-                ctx.drawImage(frame, innerX, innerY, innerW, innerH);
+                ctx.drawImage(frame, s.imgX, s.imgY, s.imgW, s.imgH);
                 ctx.restore();
+            });
 
-                // Thin film edge
-                ctx.strokeStyle = 'rgba(0,0,0,0.12)';
-                ctx.lineWidth = 1.5;
-                ctx.strokeRect(innerX, innerY, innerW, innerH);
+            // Caption (bottom left, aesthetic font)
+            if (state.caption.trim()) {
+                const cs = CAP_STYLES[state.captionStyle] || CAP_STYLES.hand;
+                ctx.save();
+                ctx.font = cs.font;
+                ctx.fillStyle = cs.color;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(state.caption.trim(), padX, canvas.height - 16, STRIP_W - 120);
+                ctx.restore();
+            } else {
+                // Default "KeePics Booth" branding
+                ctx.save();
+                ctx.font = 'italic 700 28px "Segoe Script","Comic Sans MS",cursive';
+                ctx.fillStyle = '#ffb6c1';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText('KeePics Booth', padX, canvas.height - 16);
+                ctx.restore();
             }
 
             // Stickers
@@ -1584,291 +1199,561 @@
                 ctx.save();
                 ctx.translate(s.x, s.y);
                 ctx.rotate(s.rotation * Math.PI / 180);
-                ctx.font = `${s.size}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+                ctx.font = `${s.size}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.shadowColor = 'rgba(0,0,0,0.18)';
-                ctx.shadowBlur = 6;
+                ctx.shadowColor = 'rgba(0,0,0,0.15)';
+                ctx.shadowBlur = 5;
                 ctx.fillText(s.emoji, 0, 0);
                 ctx.restore();
             });
 
-            // Caption
-            if (state.caption.trim()) {
-                const cs = CAP_STYLES[state.captionStyle] || CAP_STYLES.hand;
-                ctx.save();
-                ctx.font = cs.font;
-                ctx.fillStyle = cs.color;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.shadowColor = 'rgba(0,0,0,0.10)';
-                ctx.shadowBlur = 4;
-                ctx.fillText(state.caption.trim(), canvas.width / 2, canvas.height - paddingPolaroid / 2 + 2, canvas.width - 40);
-                ctx.restore();
-            }
+            // QR code (bottom right)
+            const qrSize = 56;
+            const qrX = STRIP_W - padX - qrSize;
+            const qrY = canvas.height - 16 - qrSize;
+            const qrCanvas = document.createElement('canvas');
+            qrCanvas.width = qrSize;
+            qrCanvas.height = qrSize;
+            const qrUrl = linkUrl || 'https://www.keepics.com';
+            generateQRCode(qrCanvas, qrUrl, qrSize);
+            ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
 
             return canvas;
         }
 
+        // Async variant used when the strip is about to be serialized —
+        // guarantees the real QR (Dropbox link) is painted before upload.
+        async function composeCanvasWithQR(linkUrl) {
+            const canvas = composeCanvas(linkUrl);
+            const qrSize = 56;
+            const qrCanvas = await getQRCanvas(linkUrl || 'https://www.keepics.com', qrSize);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(qrCanvas, STRIP_W - 24 - qrSize, canvas.height - 16 - qrSize, qrSize, qrSize);
+            return canvas;
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
         function renderPreview() {
-            const canvas = composeCanvas();
-            previewCanvas.width = canvas.width;
-            previewCanvas.height = canvas.height;
-            const previewCtx = previewCanvas.getContext('2d');
-            previewCtx.clearRect(0, 0, canvas.width, canvas.height);
-            previewCtx.drawImage(canvas, 0, 0);
+            if (selectedIndices.length !== PICK_COUNT) return;
+            const canvas = composeCanvas(lastSharedLink);
+            [$('previewCanvas'), $('previewCanvasStyle')].forEach(el => {
+                el.width = canvas.width;
+                el.height = canvas.height;
+                const pctx = el.getContext('2d');
+                pctx.clearRect(0, 0, canvas.width, canvas.height);
+                pctx.drawImage(canvas, 0, 0);
+            });
         }
 
         $('downloadBtn').addEventListener('click', () => {
-            const canvas = composeCanvas();
+            const canvas = composeCanvas(lastSharedLink);
             const a = document.createElement('a');
-            a.download = `keepics-lifecut-${Date.now()}.png`;
+            a.download = `keepics-strip-${Date.now()}.png`;
             a.href = canvas.toDataURL('image/png');
             a.click();
         });
 
         /* ==========================================================
-           Save flow
+           Moving photo strip video
+           Renders the strip layout with each cell playing its video
+           clip FORWARD then REVERSE (ping-pong), so every clip's
+           complete footage is shown. Playback is seek-driven: the
+           videos stay paused and are never `play()`ed. Output is MP4
+           (H.264 via WebCodecs + mp4-muxer) when the browser supports
+           it, otherwise WebM.
            ========================================================== */
-        $('customNextBtn').addEventListener('click', () => {
-            const canvas = composeCanvas();
-            $('savePreviewImg').src = canvas.toDataURL('image/png');
-            $('customerEmailInput').value = (currentAuthUser && currentAuthUser.email) || '';
-            $('customerNameInput').value = (currentAuthUser && (currentAuthUser.displayName || currentAuthUser.email.split('@')[0])) || '';
-            showStep('save');
-        });
+        function generateMovingStripVideo(linkUrl) {
+            return new Promise((resolve) => {
+                // Build the strip layout dimensions (shared with composeCanvas)
+                const geo = getStripGeometry();
+                const padX = 24; // outer padding — also anchors the QR corner
+                const stripW = geo.canvasW;
+                const stripH = geo.canvasH;
 
-        const saveBtn = $('saveBtn');
+                // Build clip URLs for selected indices
+                const clipUrls = selectedIndices.map(fi => {
+                    const clip = videoClips.find(c => c.shotIndex === fi);
+                    return clip ? clip.url : null;
+                });
 
-        saveBtn.addEventListener('click', async () => {
-            const name = $('customerNameInput').value.trim();
-            const email = $('customerEmailInput').value.trim();
+                // If no clips, resolve null
+                if (!clipUrls.some(u => u)) { resolve(null); return; }
 
-            if (!name) {
-                $('customerNameInput').focus();
-                $('customerNameInput').style.borderColor = '#ff8fa3';
-                setTimeout(() => { $('customerNameInput').style.borderColor = ''; }, 1800);
-                return;
-            }
+                // Create hidden video elements for each clip. Playback is
+                // seek-driven (forward then reverse), so videos stay paused.
+                const videos = clipUrls.map(url => {
+                    if (!url) return null;
+                    const v = document.createElement('video');
+                    v.src = url;
+                    v.muted = true;
+                    v.playsInline = true;
+                    v.preload = 'auto';
+                    try { v.pause(); } catch(e) {}
+                    return v;
+                });
 
-            saveBtn.disabled = true;
-            saveBtn.innerHTML = '<span class="pb-spinner"></span> Saving & sending…';
+                // Create the offscreen canvas for recording
+                const recordCanvas = document.createElement('canvas');
+                recordCanvas.width = stripW;
+                recordCanvas.height = stripH;
+                const rCtx = recordCanvas.getContext('2d');
+
+                // Pre-render the QR once (the link URL is fixed for this clip).
+                // Await the resolved QR before encoding so every frame shows it.
+                const qrSize = 56;
+                const qrX = stripW - padX - qrSize;
+                const qrY = stripH - 16 - qrSize;
+                const qrCanvas = document.createElement('canvas');
+                qrCanvas.width = qrSize;
+                qrCanvas.height = qrSize;
+                generateQRCode(qrCanvas, linkUrl || 'https://www.keepics.com', qrSize);
+                const qrReadyPromise = getQRCanvas(linkUrl || 'https://www.keepics.com', qrSize);
+                let qrReadyCanvas = null;
+                qrReadyPromise.then(c => { qrReadyCanvas = c; }).catch(() => { qrReadyCanvas = null; });
+
+                function drawStripFrame(elapsed) {
+                    // Draw strip background
+                    rCtx.fillStyle = state.film === 'black' ? '#111827' : (state.film === 'classic' ? '#ffffff' : '#fdf8f1');
+                    rCtx.fillRect(0, 0, stripW, stripH);
+                    rCtx.strokeStyle = state.theme;
+                    rCtx.lineWidth = 6;
+                    rCtx.strokeRect(3, 3, stripW - 6, stripH - 6);
+
+                    // Draw each video cell (2x2 grid: row = floor(slot / 2))
+                    videos.forEach((v, slot) => {
+                        if (!v) return;
+                        const s = geo.slots[slot];
+                        if (!s) return;
+                        const r = 14;
+
+                        // Seek this clip to its forward/reverse position.
+                        // Seeks are async; the next drawn frame picks them up.
+                        try {
+                            const target = clipTimeAt(elapsed, v);
+                            if (Math.abs(v.currentTime - target) > 0.06) v.currentTime = target;
+                        } catch(e) {}
+
+                        // Card shadow
+                        rCtx.save();
+                        rCtx.shadowColor = 'rgba(0,0,0,0.18)';
+                        rCtx.shadowBlur = 12;
+                        rCtx.shadowOffsetY = 4;
+                        rCtx.fillStyle = '#fff';
+                        roundRect(rCtx, s.x, s.y, s.w, s.h, r + 2);
+                        rCtx.fill();
+                        rCtx.restore();
+
+                        // Draw video frame clipped to rounded rect with filter
+                        rCtx.save();
+                        rCtx.filter = DIGICAM_FILTER;
+                        roundRect(rCtx, s.imgX, s.imgY, s.imgW, s.imgH, r);
+                        rCtx.clip();
+                        // Draw video centered and covering
+                        const vw = v.videoWidth || 640, vh = v.videoHeight || 480;
+                        const scale = Math.max(s.imgW / vw, s.imgH / vh);
+                        const dw = vw * scale, dh = vh * scale;
+                        rCtx.drawImage(v, s.imgX + (s.imgW - dw)/2, s.imgY + (s.imgH - dh)/2, dw, dh);
+                        rCtx.restore();
+                    });
+
+                    // Caption
+                    if (state.caption.trim()) {
+                        const cs = CAP_STYLES[state.captionStyle] || CAP_STYLES.hand;
+                        rCtx.save();
+                        rCtx.font = cs.font;
+                        rCtx.fillStyle = cs.color;
+                        rCtx.textAlign = 'left';
+                        rCtx.textBaseline = 'bottom';
+                        rCtx.fillText(state.caption.trim(), padX, stripH - 16, stripW - 120);
+                        rCtx.restore();
+                    } else {
+                        rCtx.save();
+                        rCtx.font = 'italic 700 28px "Segoe Script","Comic Sans MS",cursive';
+                        rCtx.fillStyle = '#ffb6c1';
+                        rCtx.textAlign = 'left';
+                        rCtx.textBaseline = 'bottom';
+                        rCtx.fillText('KeePics Booth', padX, stripH - 16);
+                        rCtx.restore();
+                    }
+
+                    // QR code (bottom right)
+                    rCtx.drawImage(qrReadyCanvas || qrCanvas, qrX, qrY, qrSize, qrSize);
+                }
+
+                // Wait for all videos to load
+                let started = false;  // Guard so startRecording() only runs once
+                const total = videos.filter(Boolean).length;
+                if (total === 0) { resolve(null); return; }
+
+                function maybeStartRecording() {
+                    if (started) return;
+                    started = true;
+                    startRecording();
+                }
+
+                videos.forEach((v, i) => {
+                    if (!v) return;
+                    v.onloadeddata = maybeStartRecording;
+                    v.onerror = maybeStartRecording;
+                });
+
+                // Fallback timeout
+                setTimeout(maybeStartRecording, 5000);
+
+                const fps = 24;
+                const durationMs = 8000; // 8-second recap (all 4 clips, full footage)
+                const FF_SPEED = 2.5;    // ~10s clip: forward (4s) + reverse (4s) = 8s
+
+                // A clip's real duration (fall back to ~10s when the recorded
+                // WebM reports Infinity, which some browsers do for blobs).
+                function getClipDuration(v) {
+                    const d = v.duration;
+                    return (isFinite(d) && d > 0) ? d : 10;
+                }
+
+                // Ping-pong position for a clip at `elapsed` ms:
+                // plays 0 → duration (forward), then duration → 0 (reverse),
+                // repeating. Returns the media time to seek to.
+                function clipTimeAt(elapsed, v) {
+                    const d = getClipDuration(v);
+                    const half = d / FF_SPEED;      // one direction, in seconds
+                    const cycle = half * 2;         // forward + reverse
+                    const t = (elapsed / 1000) % cycle;
+                    const media = t < half ? t * FF_SPEED : (cycle - t) * FF_SPEED;
+                    return Math.min(Math.max(media, 0), Math.max(d - 0.05, 0));
+                }
+
+                function stopVideos() {
+                    videos.forEach(v => { if (v) try { v.pause(); } catch(e){} });
+                }
+
+                async function startRecording() {
+                    // Wait for the QR to be ready (max ~4s) so every frame has it
+                    try { await Promise.race([qrReadyPromise, new Promise(r => setTimeout(r, 4000))]); } catch(e) {}
+
+                    // Rewind all clips to their first frame. Playback stays
+                    // paused; frames are pulled via seeks during encoding.
+                    videos.forEach(v => { if (v) { try { v.currentTime = 0; } catch(e){} } });
+
+                    // Prefer MP4 (H.264) via WebCodecs + mp4-muxer; fall back to WebM
+                    tryMp4Encode(durationMs).then(result => {
+                        if (result) { resolve(result); return; }
+                        startWebMRecording(durationMs);
+                    }).catch(() => startWebMRecording(durationMs));
+                }
+
+                async function tryMp4Encode(durationMs) {
+                    if (!window.Mp4Muxer || !window.VideoEncoder) return null;
+
+                    // Pick a supported H.264 codec string
+                    const codecOptions = ['avc1.42001f', 'avc1.42E01E', 'avc1.640028'];
+                    let chosen = null;
+                    for (const codec of codecOptions) {
+                        try {
+                            const cfg = { codec, width: stripW, height: stripH, bitrate: 2_500_000, framerate: fps };
+                            const support = await VideoEncoder.isConfigSupported(cfg);
+                            if (support.supported) { chosen = codec; break; }
+                        } catch(e) { /* try next codec */ }
+                    }
+                    if (!chosen) return null;
+
+                    return new Promise((resolveMp4, rejectMp4) => {
+                        let muxer;
+                        let encoder;
+                        let failed = false;
+
+                        try {
+                            muxer = new Mp4Muxer.Muxer({
+                                target: new Mp4Muxer.ArrayBufferTarget(),
+                                video: { codec: 'avc', width: stripW, height: stripH },
+                                fastStart: 'in-memory',
+                                firstTimestampBehavior: 'offset'
+                            });
+                            encoder = new VideoEncoder({
+                                output: (chunk, meta) => { if (!failed) muxer.addVideoChunk(chunk, meta); },
+                                error: (e) => { console.warn('VideoEncoder error:', e); failed = true; stopVideos(); rejectMp4('encoder'); }
+                            });
+                        } catch(e) { rejectMp4('init'); return; }
+
+                        encoder.configure({
+                            codec: chosen,
+                            width: stripW,
+                            height: stripH,
+                            bitrate: 2_500_000,
+                            framerate: fps,
+                            avc: { format: 'avc' }
+                        }).then(() => {
+                            if (failed) return;
+                            const startTime = performance.now();
+                            let lastFrame = -1;
+
+                            function encodeLoop() {
+                                if (failed) return;
+                                const elapsed = performance.now() - startTime;
+                                if (elapsed >= durationMs) {
+                                    encoder.flush().then(() => {
+                                        if (failed) return;
+                                        muxer.finalize();
+                                        stopVideos();
+                                        resolveMp4({ blob: new Blob([muxer.target.buffer], { type: 'video/mp4' }), ext: 'mp4', mime: 'video/mp4' });
+                                    }).catch(() => { failed = true; stopVideos(); rejectMp4('flush'); });
+                                    return;
+                                }
+
+                                const targetFrame = Math.floor(elapsed / (1000 / fps));
+                                if (targetFrame === lastFrame) { requestAnimationFrame(encodeLoop); return; }
+                                lastFrame = targetFrame;
+
+                                drawStripFrame(elapsed);
+
+                                let vf;
+                                try {
+                                    vf = new VideoFrame(recordCanvas, { timestamp: Math.round(targetFrame * 1e6 / fps) });
+                                } catch(e) { failed = true; stopVideos(); rejectMp4('vframe'); return; }
+
+                                encoder.encode(vf, { keyFrame: targetFrame % (fps * 2) === 0 });
+                                vf.close();
+                                requestAnimationFrame(encodeLoop);
+                            }
+
+                            requestAnimationFrame(encodeLoop);
+                        }).catch(() => {
+                            failed = true;
+                            stopVideos();
+                            rejectMp4('config');
+                        });
+                    });
+                }
+
+                function startWebMRecording(durationMs) {
+                    let recStream;
+                    const chunks = [];
+                    let rec;
+                    try {
+                        recStream = recordCanvas.captureStream(fps);
+                        rec = new MediaRecorder(recStream, { mimeType: 'video/webm;codecs=vp8' });
+                    } catch(e) {
+                        try {
+                            rec = new MediaRecorder(recordCanvas.captureStream(fps));
+                        } catch(e2) { stopVideos(); resolve(null); return; }
+                    }
+                    rec.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+                    rec.onstop = () => {
+                        stopVideos();
+                        resolve({ blob: new Blob(chunks, { type: 'video/webm' }), ext: 'webm', mime: 'video/webm' });
+                    };
+
+                    rec.start(100);
+                    const startTime = performance.now();
+                    function drawLoop() {
+                        const elapsed = performance.now() - startTime;
+                        if (elapsed >= durationMs) {
+                            stopVideos();
+                            try { rec.stop(); } catch(e) { resolve(null); }
+                            return;
+                        }
+                        drawStripFrame(elapsed);
+                        requestAnimationFrame(drawLoop);
+                    }
+                    requestAnimationFrame(drawLoop);
+                }
+            });
+        }
+
+        /* ==========================================================
+           Save flow (automatic upload after finishing the strip)
+           ========================================================== */
+        async function uploadAndFinish() {
+            const timestamp = Date.now();
+            const stripFilename = `keepics-strip-${timestamp}.png`;
 
             try {
-                const canvas = composeCanvas();
-                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+                $('uploadStatusText').textContent = 'Processing Photobooth... please wait...';
 
-                /* --- 1. Local history (private on this device) --- */
-                try {
-                    const history = JSON.parse(localStorage.getItem(LS_HISTORY) || '[]');
-                    history.unshift({ dataUrl: canvas.toDataURL('image/png'), caption: state.caption, theme: state.theme, layout: state.layout, date: Date.now() });
-                    localStorage.setItem(LS_HISTORY, JSON.stringify(history.slice(0, 20)));
-                } catch (e) { /* private mode */ }
+                // 1. Compose strip and upload it (QR is placeholder until the link exists)
+                const canvas = await composeCanvasWithQR(lastSharedLink);
+                const stripBlob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+                const stripRes = await uploadToDropbox(stripBlob, stripFilename);
+                lastUploadedStripPath = stripRes.path_display;
 
-                /* --- 2. Realtime database + storage (live gallery) --- */
-                let publicUrl = null;
-                const uid = (currentAuthUser && currentAuthUser.uid) || 'guest';
+                // 2. Create the public shared link for the picture
+                $('uploadStatusText').textContent = 'Creating download link…';
+                lastSharedLink = lastUploadedStripPath ? await createDropboxSharedLink(lastUploadedStripPath) : null;
+                if (!lastSharedLink) throw new Error('Could not create a shared link for the picture.');
+
+                // 3. Generate the moving recap video (MP4 preferred) — QR now points to the real link
+                let movingVideoBlob = null;
+                lastDownloadVideoExt = 'webm';
                 try {
-                    const fileRef = storageRef(storage, `photobooth/${uid}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}.png`);
-                    const snap = await uploadBytes(fileRef, blob);
-                    publicUrl = await getDownloadURL(snap.ref);
-                    await push(dbRef(db, 'photoboothStrips'), {
-                        imageUrl: publicUrl,
-                        author: name,
-                        email: email || null,
-                        caption: state.caption.trim() || null,
-                        theme: state.theme,
-                        layout: state.layout,
-                        filter: state.filter,
-                        timestamp: Date.now()
-                    });
-                } catch (fbErr) {
-                    console.error('Realtime save failed:', fbErr);
+                    const vid = await generateMovingStripVideo(lastSharedLink);
+                    if (vid) {
+                        movingVideoBlob = vid.blob;
+                        lastDownloadVideoExt = vid.ext || 'webm';
+                    }
+                } catch (e) { console.warn('Moving strip video generation failed:', e); }
+
+                // 4. Upload the recap video (optional)
+                if (movingVideoBlob) {
+                    const videoFilename = `keepics-recap-${timestamp}.${lastDownloadVideoExt}`;
+                    try {
+                        const vidRes = await uploadToDropbox(movingVideoBlob, videoFilename);
+                        lastUploadedVideoPath = vidRes.path_display;
+                        lastDownloadVideoBlob = movingVideoBlob;
+                    } catch(e) { console.error('Video upload failed:', e); }
                 }
 
-                /* --- 3. FormSubmit (email to KeePics team, image attachment) --- */
-                const formData = new FormData();
-                formData.append('_subject', `New Life Cut Photo Strip from ${name}`);
-                formData.append('_captcha', 'false');
-                formData.append('_template', 'table');
-                formData.append('Name', name);
-                formData.append('Email', email || 'Not provided');
-                formData.append('Photo Strip File', new File([blob], 'keepics-lifecut-strip.png', { type: 'image/png' }));
-                formData.append('Caption', state.caption.trim() || 'None');
-                formData.append('Theme', THEMES.find(t => t.color === state.theme)?.name || state.theme);
-                formData.append('Layout', state.layout === '1x4' ? 'Vertical 1x4' : 'Grid 2x2');
-                formData.append('Filter', state.filter);
-                formData.append('Date', new Date().toLocaleString());
+                // 5. Re-compose the strip so the QR points to the picture link, then upload
+                const finalCanvas = await composeCanvasWithQR(lastSharedLink);
+                const finalBlob = await new Promise(r => finalCanvas.toBlob(r, 'image/png'));
+                try { await uploadToDropbox(finalBlob, stripFilename.replace('.png', '-final.png')); } catch(e) {}
+                $('savePreviewImg').src = finalCanvas.toDataURL('image/png');
 
-                try {
-                    const res = await fetch(FORM_SUBMIT_URL, {
-                        method: 'POST',
-                        headers: { 'Accept': 'application/json' },
-                        body: formData
-                    });
-                    if (!res.ok) throw new Error('FormSubmit ' + res.status);
-                } catch (mailErr) {
-                    console.error('FormSubmit failed:', mailErr);
-                }
+                // 6. Enable direct download buttons on the ending screen
+                enableDownloadButtons();
 
-                /* --- Success --- */
+                // 7. The Dropbox link now exists — enable the "Generate QR Code"
+                //    button on the success screen. The QR itself is rendered
+                //    only when the user taps the button.
+                $('generateQrBtn').disabled = !lastSharedLink;
+
                 clearDraft();
                 showStep('success');
-            } catch (err) {
+            } catch(err) {
                 console.error('Save failed:', err);
+                $('uploadStatusText').textContent = 'Upload failed. Go back and try again.';
                 alert('Something went wrong while saving. Please try again.');
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = 'Save & Send';
+                showStep('style');
             }
+        }
+
+        /* ---------- Download buttons (Photo + Video) ---------- */
+        function enableDownloadButtons() {
+            $('dlPhotoBtn').disabled = false;
+            $('dlVideoBtn').disabled = !lastDownloadVideoBlob;
+        }
+
+        function resetDownloadButtons() {
+            $('dlPhotoBtn').disabled = true;
+            $('dlVideoBtn').disabled = true;
+        }
+
+        /* ---------- QR code on success screen ---------- */
+        function resetQrSection() {
+            $('generateQrBtn').disabled = true;
+            const section = $('qrResultSection');
+            section.classList.add('pb-hidden');
+            let qrImg = $('qrResultImg');
+            // Restore the <img> in case a previous fallback replaced it with a canvas
+            if (!qrImg) {
+                qrImg = document.createElement('img');
+                qrImg.id = 'qrResultImg';
+                qrImg.alt = 'QR code — scan to download';
+                qrImg.width = 200;
+                qrImg.height = 200;
+                qrImg.style.cssText = 'border-radius:12px;border:2px solid #e2e8f0;background:#fff;display:block;margin:0 auto;';
+                section.prepend(qrImg);
+            }
+            qrImg.removeAttribute('src');
+        }
+
+        function generateQrSuccess() {
+            if (!lastSharedLink) return;
+            $('qrResultSection').classList.remove('pb-hidden');
+            $('generateQrBtn').disabled = true;
+            const qrResult = $('qrResultImg');
+            qrResult.onerror = () => {
+                getQRCanvas(lastSharedLink, 300).then(c => {
+                    qrResult.replaceWith(c);
+                    c.width = 300; c.height = 300;
+                    c.style.cssText = 'border-radius:12px;border:2px solid #e2e8f0;background:#fff;display:block;margin:0 auto;';
+                });
+            };
+            qrResult.src = qrServerUrl(lastSharedLink, 300);
+        }
+
+        $('generateQrBtn').addEventListener('click', generateQrSuccess);
+
+        $('dlPhotoBtn').addEventListener('click', () => {
+            const canvas = composeCanvas(lastSharedLink);
+            const a = document.createElement('a');
+            a.download = `keepics-strip-${Date.now()}.png`;
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+        });
+
+        $('dlVideoBtn').addEventListener('click', () => {
+            if (!lastDownloadVideoBlob) return;
+            const url = URL.createObjectURL(lastDownloadVideoBlob);
+            const a = document.createElement('a');
+            a.download = `keepics-recap-${Date.now()}.${lastDownloadVideoExt || 'webm'}`;
+            a.href = url;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(url), 4000);
         });
 
         $('newSessionBtn').addEventListener('click', () => {
-            capturedFrames = [];
-            state.stickers = [];
-            state.caption = '';
-            state.layout = '1x4';
-            state.theme = '#ff8fa3';
-            state.film = 'classic';
-            state.filter = 'none';
-            state.captionStyle = 'hand';
+            resetDownloadButtons();
+            lastDownloadVideoBlob = null;
+            lastDownloadVideoExt = 'webm';
+            stopAutoCapture();
+            stopCamera();
+            capturedFrames = []; selectedIndices = [];
+            videoClips.forEach(c => URL.revokeObjectURL(c.url));
+            videoClips = [];
+            lastUploadedStripPath = null; lastUploadedVideoPath = null; lastSharedLink = null;
+            state = { layout:'1x4', theme:'#ff8fa3', film:'classic', caption:'', captionStyle:'hand', stickers:[] };
             $('captionInput').value = '';
-            $('customerNameInput').value = '';
-            $('customerEmailInput').value = '';
+            resetQrSection();
             clearDraft();
-            renderThumbs();
-            updateShootUI();
-            syncCustomControls();
+            renderThumbs(); updateShootUI(); syncCustomControls();
             showStep('shoot');
-            $('shotStatus').textContent = 'Press the shutter for Shot 1';
-        });
-
-        $('viewGalleryBtn').addEventListener('click', () => {
-            $('liveGallery').scrollIntoView({ behavior: 'smooth' });
+            startCamera();
         });
 
         /* ==========================================================
-           Live gallery (realtime)
-           ========================================================== */
-        const liveGrid = $('liveGrid');
-        let lastSnapshot = null;
-
-        onValue(dbRef(db, 'photoboothStrips'), (snap) => {
-            const data = snap.val();
-            if (!data) {
-                liveGrid.innerHTML = '<div class="pb-live-empty">No strips yet — be the first to save one!</div>';
-                return;
-            }
-            const strips = Object.entries(data)
-                .map(([key, v]) => ({ id: key, ...v }))
-                .filter(s => s.imageUrl)
-                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-                .slice(0, 24);
-
-            if (lastSnapshot && JSON.stringify(strips.map(s => s.id)) === JSON.stringify(lastSnapshot.map(s => s.id))) {
-                return;
-            }
-            lastSnapshot = strips;
-
-            if (strips.length === 0) {
-                liveGrid.innerHTML = '<div class="pb-live-empty">No strips yet — be the first to save one!</div>';
-                return;
-            }
-
-            liveGrid.innerHTML = '';
-            strips.forEach((s) => {
-                const card = document.createElement('div');
-                card.className = 'pb-live-card';
-                const time = s.timestamp
-                    ? new Date(s.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-                    : 'just now';
-                const author = escapeHtml(s.author || 'Anonymous');
-                const capText = escapeHtml(s.caption);
-                const caption = s.caption ? `<span style="color:#64748b; font-size:0.72rem; display:block; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">“${capText}”</span>` : '';
-                const imgUrl = escapeHtml(s.imageUrl);
-                card.innerHTML = `
-                    <img src="${imgUrl}" alt="Photo strip by ${author}" loading="lazy">
-                    <div class="pb-live-meta">
-                        <div class="pb-live-author">${author}</div>
-                        <div class="pb-live-time">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                            ${time}
-                        </div>
-                        ${caption}
-                    </div>
-                `;
-                card.querySelector('img').addEventListener('click', () => openLightbox(s.imageUrl));
-                liveGrid.appendChild(card);
-            });
-        }, (err) => {
-            console.error('Live gallery failed:', err);
-            liveGrid.innerHTML = '<div class="pb-live-empty">Could not load live gallery.</div>';
-        });
-
-        function escapeHtml(str) {
-            const AMP = '\u0026';
-            return String(str == null ? '' : str)
-                .replace(/&/g, AMP + 'amp;')
-                .replace(/</g, AMP + 'lt;')
-                .replace(/>/g, AMP + 'gt;')
-                .replace(/"/g, AMP + 'quot;')
-                .replace(/'/g, AMP + '#39;');
-        }
-
-        function openLightbox(src) {
-            const lb = $('lightbox');
-            $('lightboxImg').src = src;
-            lb.classList.remove('pb-hidden');
-        }
-
-        $('lightbox').addEventListener('click', () => {
-            $('lightbox').classList.add('pb-hidden');
-        });
-
-        /* ==========================================================
-           Draft persistence (localStorage)
+           Draft persistence
            ========================================================== */
         function persistDraft() {
             try {
                 const frames = capturedFrames.map(c => c.toDataURL('image/png'));
-                localStorage.setItem(LS_DRAFT, JSON.stringify({ state, frames }));
-            } catch (e) { /* quota exceeded — draft skipped */ }
+                localStorage.setItem(LS_DRAFT, JSON.stringify({ state, frames, selectedIndices }));
+            } catch(e) {}
         }
-
-        function clearDraft() {
-            try { localStorage.removeItem(LS_DRAFT); } catch (e) {}
-        }
-
+        function clearDraft() { try { localStorage.removeItem(LS_DRAFT); } catch(e) {} }
         function loadDraft() {
             let loaded = false;
             try {
                 const raw = localStorage.getItem(LS_DRAFT);
                 if (!raw) return false;
                 const draft = JSON.parse(raw);
-                if (draft.state) {
-                    Object.assign(state, draft.state);
-                    if (!Array.isArray(state.stickers)) state.stickers = [];
-                    loaded = true;
-                }
-                if (draft.frames && draft.frames.length === 4) {
+                if (draft.state) { Object.assign(state, draft.state); if (!Array.isArray(state.stickers)) state.stickers = []; loaded = true; }
+                if (Array.isArray(draft.selectedIndices)) selectedIndices = draft.selectedIndices.filter(i => i >= 0 && i < TOTAL_SHOTS).slice(0, PICK_COUNT);
+                if (draft.frames?.length > 0) {
                     let pending = draft.frames.length;
-                    capturedFrames = draft.frames.map((dataUrl, i) => {
-                        const img = new Image();
-                        img.src = dataUrl;
-                        const c = document.createElement('canvas');
-                        c.width = 640;
-                        c.height = 480;
+                    capturedFrames = draft.frames.map(dataUrl => {
+                        const img = new Image(); img.src = dataUrl;
+                        const c = document.createElement('canvas'); c.width = 640; c.height = 480;
                         const ctx = c.getContext('2d');
-                        img.onload = () => {
-                            ctx.drawImage(img, 0, 0, 640, 480);
-                            pending--;
-                            if (pending === 0) renderPreview();
-                        };
+                        img.onload = () => { ctx.drawImage(img, 0, 0, 640, 480); pending--; if (pending === 0) renderPreview(); };
                         return c;
                     });
                     loaded = true;
                 }
-            } catch (e) { /* corrupt draft */ }
+            } catch(e) {}
             return loaded;
         }
 
@@ -1877,43 +1762,21 @@
            ========================================================== */
         onAuthStateChanged(auth, (user) => {
             currentAuthUser = user;
-            $('customerEmailInput').value = (user && user.email) || '';
-            $('customerNameInput').value = (user && (user.displayName || user.email.split('@')[0])) || '';
         });
 
         /* ==========================================================
            Init
            ========================================================== */
-        buildThemeSwatches();
-        buildStickerGrid();
-        liveGrid.innerHTML = '<div class="pb-live-empty">Loading live strips…</div>';
+        buildThemeSwatches(); buildStickerGrid();
 
         $('startBtn').addEventListener('click', () => {
             showStep('shoot');
             startCamera();
         });
 
-        $('resumeBtn').addEventListener('click', async () => {
-            showStep('shoot');
-            await startCamera(true);
-            renderThumbs();
-            updateShootUI();
-            if (capturedFrames.length === 4) {
-                $('shotStatus').textContent = 'All 4 shots taken!';
-            } else {
-                $('shotStatus').textContent = `Press the shutter for Shot ${capturedFrames.length + 1}`;
-            }
-        });
+        window.addEventListener('beforeunload', () => { if (capturedFrames.length > 0) persistDraft(); stopAutoCapture(); stopCamera(); });
 
-        window.addEventListener('beforeunload', () => {
-            if (capturedFrames.length > 0) persistDraft();
-            stopCamera();
-        });
-
-        // Warm-up load any saved draft so refresh never loses work.
-        if (loadDraft()) {
-            $('resumeBtn').classList.remove('pb-hidden');
-        }
+        if (loadDraft()) { $('startBtnLabel').textContent = 'Continue Session'; }
     </script>
 </body>
 </html>
