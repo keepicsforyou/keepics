@@ -7,311 +7,487 @@
     <link rel="stylesheet" href="styles/styles.css">
     <title>KeePics - Order</title>
     <style>
-        /* ===== Order flow page-specific additions ===== */
-        body.order-page .hidden { display: none !important; }
-
-        body.order-page .product-emoji {
-            width: 100%;
-            height: 225px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4.4rem;
-            background: linear-gradient(135deg, #fff1f4, #eef6ff);
-            user-select: none;
+        /* ==========================================================
+           Order Page - Custom Keychain Ordering Form
+           ========================================================== */
+        body.order-page {
+            background-image: linear-gradient(135deg, #fff5f7 0%, #ffe4e6 30%, #fff1f4 65%, #fff5f7 100%);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
-        body.order-page .flow-head {
+        .order-shell {
+            max-width: 640px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .order-card {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1.5px solid #f1dfe4;
+            border-radius: 24px;
+            box-shadow: 0 20px 45px rgba(183, 59, 73, 0.12);
+            padding: 32px;
+        }
+
+        .order-card h1 {
+            font-family: var(--font-mc);
+            font-size: 1.85rem;
+            color: var(--navy);
             text-align: center;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .order-card .order-subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 28px;
+        }
+
+        .auth-required-box {
+            text-align: center;
+            padding: 40px 24px;
+        }
+
+        .auth-required-box h2 {
+            color: var(--navy);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .auth-required-box p {
+            color: #64748b;
+            font-size: 0.9rem;
             margin-bottom: 22px;
         }
 
-        body.order-page .flow-head .flow-eyebrow {
+        .auth-required-box .login-link-btn {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(191, 227, 254, 0.9);
-            color: #3b82c4;
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
+            color: #fff;
+            border-radius: 50px;
             font-weight: 800;
-            font-size: 0.68rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            padding: 6px 16px;
-            border-radius: 30px;
-            margin-bottom: 12px;
-        }
-
-        body.order-page .flow-head p {
-            color: #64748b;
             font-size: 0.9rem;
-            line-height: 1.55;
-            margin: 8px 0 0;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(255, 143, 163, 0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        body.order-page .flow-sub {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 10px;
+        .auth-required-box .login-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(255, 143, 163, 0.5);
         }
 
-        body.order-page .flow-option {
+        .order-form {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            text-align: left;
-            background: rgba(248, 250, 252, 0.92);
-            border: 1.5px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            font-family: inherit;
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: #1e3a8a;
-            cursor: pointer;
-            transition: all 0.22s ease;
+            flex-direction: column;
+            gap: 0;
         }
 
-        body.order-page .flow-option:hover {
-            border-color: #ffb6c1;
-            background: #ffffff;
-            box-shadow: 0 8px 20px rgba(255, 143, 163, 0.16);
-            transform: translateY(-1px);
-        }
-
-        body.order-page .flow-option .flow-ico {
-            flex: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            background: linear-gradient(135deg, #ffe4e6, #ffb6c1);
-            box-shadow: 0 4px 10px rgba(255, 143, 163, 0.25);
-        }
-
-        body.order-page .flow-option small {
+        .order-form label {
             display: block;
-            font-weight: 500;
-            color: #64748b;
-            font-size: 0.78rem;
-            margin-top: 2px;
-            line-height: 1.4;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 7px;
         }
 
-        body.order-page .flow-field {
+        .order-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .order-form .form-group small {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-top: 5px;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .order-form input[type="text"],
+        .order-form input[type="email"],
+        .order-form input[type="number"],
+        .order-form select {
             width: 100%;
             box-sizing: border-box;
             padding: 12px 14px;
             border: 1.5px solid #e2e8f0;
             border-radius: 12px;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             color: #1e293b;
-            background: #ffffff;
-            margin-bottom: 12px;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background: #fff;
+            font-family: inherit;
             outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        body.order-page .flow-field:focus {
+        .order-form input[type="text"]:focus,
+        .order-form input[type="email"]:focus,
+        .order-form input[type="number"]:focus,
+        .order-form select:focus {
             border-color: #ff8fa3;
-            box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.18);
+            box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.15);
         }
 
-        body.order-page .flow-btn {
+        .order-form input[readonly] {
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .product-box {
+            background: linear-gradient(135deg, #fff9fb, #ffe4e6);
+            border: 1.5px solid #ffb6c1;
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .product-box .product-info h3 {
+            font-size: 1rem;
+            color: var(--navy);
+            margin: 0 0 3px 0;
+        }
+
+        .product-box .product-info p {
+            font-size: 0.78rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .product-box .product-price {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #b73b49;
+            white-space: nowrap;
+        }
+
+        .file-upload-area {
+            position: relative;
+            border: 2px dashed #ffb6c1;
+            border-radius: 14px;
+            background: #fff9fb;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .file-upload-area:hover {
+            border-color: #ff8fa3;
+            background: #fff5f7;
+        }
+
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-area .upload-icon {
+            font-size: 1.6rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .file-upload-area .upload-text {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .file-upload-area .upload-hint {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+
+        .upload-preview {
+            display: none;
+            margin-top: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #ffb6c1;
+            background: #fff;
+        }
+
+        .upload-preview img {
+            width: 100%;
+            max-height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .upload-preview.show {
+            display: block;
+        }
+
+        .back-image-option {
+            margin-bottom: 20px;
+        }
+
+        .back-image-option label.checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--navy);
+            text-transform: none;
+            letter-spacing: 0;
+            padding: 12px 14px;
+            background: #fff9fb;
+            border: 1.5px solid #ffb6c1;
+            border-radius: 12px;
+            transition: background 0.2s, border-color 0.2s;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .back-image-option label.checkbox-label:hover {
+            background: #fff5f7;
+            border-color: #ff8fa3;
+        }
+
+        .back-image-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #ff8fa3;
+            cursor: pointer;
+            flex: none;
+        }
+
+        .back-image-option .plus-price {
+            margin-left: auto;
+            font-weight: 900;
+            color: #b73b49;
+            font-size: 0.9rem;
+        }
+
+        .back-image-fields {
+            display: none;
+            margin-top: 14px;
+        }
+
+        .back-image-fields.show {
+            display: block;
+        }
+
+        .total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #fff9fb, #ffe4e6);
+            border: 1.5px solid #ffb6c1;
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 22px;
+        }
+
+        .total-row .total-label {
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .total-row .total-amount {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #b73b49;
+        }
+
+        .submit-btn {
             width: 100%;
             border: none;
             border-radius: 50px;
-            padding: 14px 20px;
-            font-size: 0.95rem;
+            padding: 15px 24px;
+            font-size: 1rem;
             font-weight: 800;
-            color: #ffffff;
+            color: #fff;
             background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
             box-shadow: 0 8px 22px rgba(255, 143, 163, 0.4);
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            font-family: inherit;
         }
 
-        body.order-page .flow-btn:hover {
+        .submit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 28px rgba(255, 143, 163, 0.5);
         }
 
-        body.order-page .flow-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: none;
-            border: none;
-            color: #64748b;
-            font-weight: 700;
-            font-size: 0.82rem;
-            cursor: pointer;
-            padding: 8px 0;
-            margin-top: 4px;
-            transition: color 0.2s ease;
+        .submit-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
-        body.order-page .flow-back:hover { color: #b73b49; }
-
-        body.order-page .flow-lock {
+        .submit-status {
+            display: none;
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.84rem;
+            font-weight: 600;
             text-align: center;
-            padding: 10px 0 4px;
+            line-height: 1.5;
         }
 
-        body.order-page .flow-lock .lock-ico {
-            width: 64px;
-            height: 64px;
-            margin: 6px auto 14px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-            color: #64748b;
+        .submit-status.error {
+            display: block;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
         }
 
-        body.order-page .review-summary {
-            background: rgba(248, 250, 252, 0.9);
-            border: 1px solid #e9edf2;
-            border-radius: 16px;
-            padding: 14px 16px;
-            margin-bottom: 14px;
-        }
-
-        body.order-page .review-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            font-size: 0.86rem;
-            padding: 5px 0;
-            color: #475569;
-        }
-
-        body.order-page .review-row span:first-child { color: #94a3b8; font-weight: 600; }
-        body.order-page .review-row span:last-child { text-align: right; font-weight: 700; color: #1e3a8a; }
-
-        body.order-page .review-total {
-            border-top: 2px dashed rgba(255, 182, 193, 0.55);
-            margin-top: 8px;
-            padding-top: 10px;
-            font-size: 1rem;
-        }
-
-        body.order-page .review-total span:last-child { color: #b73b49; font-size: 1.08rem; }
-
-        body.order-page .delivery-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1.5px solid rgba(255, 182, 193, 0.5);
-            border-radius: 16px;
-            padding: 10px 14px;
-            margin-top: 12px;
-            box-shadow: 0 6px 18px rgba(255, 143, 163, 0.12);
-        }
-
-        body.order-page .delivery-pill .pill-ico {
-            width: 30px;
-            height: 30px;
-            flex: none;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #ffe4e6, #ffb6c1);
-            font-size: 0.9rem;
-        }
-
-        body.order-page .delivery-pill .pill-text { flex: 1; min-width: 0; }
-        body.order-page .delivery-pill .pill-title { font-size: 0.8rem; font-weight: 800; color: #1e3a8a; }
-        body.order-page .delivery-pill .pill-detail { font-size: 0.74rem; color: #64748b; line-height: 1.4; word-break: break-word; }
-
-        body.order-page .delivery-pill .change-btn {
-            flex: none;
-            background: #ffffff;
-            border: 1.5px solid #ffb6c1;
-            color: #b73b49;
-            font-weight: 800;
-            font-size: 0.72rem;
-            padding: 7px 14px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        body.order-page .delivery-pill .change-btn:hover {
-            background: linear-gradient(135deg, #ffe4e6, #ffb6c1);
-            border-color: #ff8fa3;
-        }
-
-        body.order-page .sent-banner {
-            position: relative;
-            z-index: 2;
-            max-width: 620px;
-            margin: 26px auto 0;
-            padding: 16px 22px;
-            background: linear-gradient(135deg, #d3fde9, #a7f3d0);
-            border: 1px solid rgba(19, 115, 51, 0.25);
-            border-radius: 18px;
+        .submit-status.success {
+            display: block;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
             color: #137333;
-            font-size: 0.9rem;
-            font-weight: 700;
-            text-align: center;
-            box-shadow: 0 10px 26px rgba(19, 115, 51, 0.14);
         }
 
-        body.order-page #summary-items-list { display: flex; flex-direction: column; }
-
-        body.order-page .order-form { display: none; }
-
-        /* Block page content only — keep the navbar visible & usable */
-        #orderOffModal {
-            top: 78px;
-            height: calc(100vh - 78px);
-            z-index: 999;
-            background: rgba(30, 58, 138, 0.45);
-            backdrop-filter: blur(4px);
+        .submit-status.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e3a8a;
         }
 
-        @media (max-width: 768px) {
-            #orderOffModal {
-                top: 60px;
-                height: calc(100vh - 60px);
+        .spinner {
+            width: 17px;
+            height: 17px;
+            border: 3px solid rgba(30, 58, 138, 0.2);
+            border-top-color: #1e3a8a;
+            border-radius: 50%;
+            animation: orderSpin 0.7s linear infinite;
+            flex: none;
+        }
+
+        @keyframes orderSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 20px;
+        }
+
+        .user-chip .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 900;
+            font-size: 1rem;
+            flex: none;
+            text-transform: uppercase;
+        }
+
+        .user-chip .user-meta {
+            min-width: 0;
+        }
+
+        .user-chip .user-meta .user-name {
+            font-weight: 800;
+            font-size: 0.88rem;
+            color: var(--navy);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-chip .user-meta .user-email {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-chip .user-badge {
+            margin-left: auto;
+            font-size: 0.65rem;
+            font-weight: 800;
+            background: #d3fde9;
+            color: #137333;
+            border-radius: 30px;
+            padding: 4px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            white-space: nowrap;
+            flex: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 560px) {
+            .order-card {
+                padding: 22px 18px;
+                border-radius: 18px;
             }
-        }
 
-        @media (max-width: 480px) {
-            body.order-page .product-emoji { height: 170px; font-size: 3.4rem; }
+            .order-card h1 {
+                font-size: 1.5rem;
+            }
+
+            .product-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .total-row {
+                flex-direction: column;
+                gap: 4px;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body class="order-page">
 
-    <!-- Decorative background art -->
-    <div class="op-bg-art" aria-hidden="true">
-        <div class="op-blob op-blob-1"></div>
-        <div class="op-blob op-blob-2"></div>
-        <div class="op-blob op-blob-3"></div>
-        <div class="op-dot-grid"></div>
-        <div class="op-ring op-ring-1"></div>
-        <div class="op-ring op-ring-2"></div>
-    </div>
-
     <nav class="navbar">
-        <div class="logo">KeePics<span class="logo-dot"></span></div>
+        <div class="logo">KeePics.</div>
+
         <div class="hamburger" id="hamburger-menu">
             <span class="bar"></span>
             <span class="bar"></span>
             <span class="bar"></span>
         </div>
+
         <ul class="nav-links" id="nav-menu">
             <li><a href="index.html">Home</a></li>
             <li><a href="order.html" class="active">Order</a></li>
@@ -322,526 +498,539 @@
         </ul>
     </nav>
 
-    <section class="op-hero">
-        <span class="op-hero-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            KeePics Store
-        </span>
-        <h1 class="op-hero-title">Online ordering is still unavailable due to the coder is hungry, He wants to be treated Jollibee before finishing</h1>
-        <p class="op-hero-subtitle">Anyways, checkout the new feature <a href="photobooth.html">Photobooth</a> </p>
-        <div class="op-hero-stats">
-            <div class="op-stat"><strong id="ownerName">Guest</strong><span>Account</span></div>
-            <div class="op-stat"><strong id="cartCountStat">0</strong><span>Items Chosen</span></div>
-            <div class="op-stat"><strong id="totalStat">₱0</strong><span>Estimated Total</span></div>
+    <div class="order-shell">
+        <div class="order-card">
+            <h1>Order Form</h1>
+            <p class="order-subtitle">Customize your KeePics keychain</p>
+
+            <!-- Logged-in user info chip -->
+            <div class="user-chip" id="user-chip" style="display:none;">
+                <div class="user-avatar" id="user-avatar">K</div>
+                <div class="user-meta">
+                    <div class="user-name" id="user-name">-</div>
+                    <div class="user-email" id="user-email">-</div>
+                </div>
+                <div class="user-badge">Verified</div>
+            </div>
+
+            <!-- Auth required state -->
+            <div class="auth-required-box" id="auth-required" style="display:none;">
+                <h2>Please log in to order</h2>
+                <p>Your name and email will be pulled automatically from your KeePics account.</p>
+                <a href="login.html" class="login-link-btn">Log In / Sign Up</a>
+            </div>
+
+            <!-- Order form -->
+            <form id="order-form" class="order-form" autocomplete="off" novalidate style="display:none;">
+
+                <!-- Customer info (readonly - pulled from Firebase) -->
+                <div class="form-group">
+                    <label for="name">Customer Name</label>
+                    <input type="text" id="name" name="name" required readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required readonly>
+                </div>
+
+                <!-- Product -->
+                <div class="form-group">
+                    <label for="product">Product</label>
+                    <div class="product-box">
+                        <div class="product-info">
+                            <h3>Keychain (Custom, #1)</h3>
+                            <p>Custom keychain with your photo - front image included</p>
+                        </div>
+                        <div class="product-price" id="base-price-display">P30.00</div>
+                    </div>
+                    <input type="hidden" id="product" name="Product" value="Keychain (Custom, #1)">
+                    <input type="hidden" id="product-price" name="Base_Price_PHP" value="30">
+                </div>
+
+                <!-- Quantity -->
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" name="Quantity" min="1" value="1" required>
+                </div>
+
+                <!-- Front image upload -->
+                <div class="form-group">
+                    <label for="front-image">Front Image <span style="color:#b73b49;">*</span></label>
+                    <div class="file-upload-area" id="front-upload-area">
+                        <span class="upload-icon">&#128444;&#65039;</span>
+                        <span class="upload-text" id="front-file-text">Click to choose your front photo</span>
+                        <span class="upload-hint">JPG, PNG or WEBP - Max 10MB</span>
+                        <input type="file" id="front-image" name="Front_Image" accept="image/jpeg,image/png,image/webp" required>
+                    </div>
+                    <div class="upload-preview" id="front-preview">
+                        <img id="front-preview-img" alt="Front image preview">
+                    </div>
+                </div>
+
+                <!-- Back image option -->
+                <div class="back-image-option">
+                    <label class="checkbox-label" for="back-image-toggle">
+                        <input type="checkbox" id="back-image-toggle" name="Add_Back_Image">
+                        <span>Add Back Image</span>
+                        <span class="plus-price">+P3.00</span>
+                    </label>
+                    <small style="display:block;color:#94a3b8;font-size:0.72rem;margin-top:6px;font-weight:500;text-transform:none;letter-spacing:0;">
+                        Add a design on the back of your keychain for an extra P3.
+                    </small>
+                </div>
+
+                <!-- Back image upload (revealed when checkbox is checked) -->
+                <div class="back-image-fields" id="back-image-fields">
+                    <div class="form-group">
+                        <label for="back-image">Back Image <span style="color:#b73b49;">*</span></label>
+                        <div class="file-upload-area" id="back-upload-area">
+                            <span class="upload-icon">&#128444;&#65039;</span>
+                            <span class="upload-text" id="back-file-text">Click to choose your back photo</span>
+                            <span class="upload-hint">JPG, PNG or WEBP - Max 10MB</span>
+                            <input type="file" id="back-image" name="Back_Image" accept="image/jpeg,image/png,image/webp">
+                        </div>
+                        <div class="upload-preview" id="back-preview">
+                            <img id="back-preview-img" alt="Back image preview">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total -->
+                <div class="total-row">
+                    <span class="total-label">Total</span>
+                    <span class="total-amount" id="total-amount">P30.00</span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn">Place Order</button>
+
+                <div class="submit-status" id="submit-status"></div>
+            </form>
         </div>
-    </section>
+    </div>
 
-    <script type="module">
-        import { auth, handleNavbarAuth, db } from './assets/database/firebase-config.js';
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-        if (typeof handleNavbarAuth === 'function') handleNavbarAuth('auth-status');
-
-        /* ---------- Navbar ---------- */
+    <script>
         const hamburger = document.getElementById('hamburger-menu');
         const navMenu = document.getElementById('nav-menu');
+
         hamburger.addEventListener('click', () => {
             hamburger.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
+    </script>
 
-        /* ---------- Success banner on return ---------- */
-        const urlParams = new URLSearchParams(window.location.search);
-        const sentBanner = document.getElementById('sentBanner');
-        if (urlParams.get('sent') === '1') {
-            sentBanner.classList.remove('hidden');
-            sessionStorage.removeItem('keepicsCart');
-            sessionStorage.removeItem('keepicsDelivery');
-            try { localStorage.removeItem('keepicsOrderDraft'); } catch (e) {}
-            setTimeout(() => {
-                sentBanner.classList.add('hidden');
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }, 6000);
-        }
+    <script type="module">
+        import { auth, db, handleNavbarAuth } from './assets/database/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        /* ---------- Catalog data ---------- */
-        const PRODUCTS = [
-            { id: 'sticker_pack',  name: 'KeePics Sticker Pack',   price: 50, emoji: '🏷️', tag: 'New'  },
-            { id: 'lanyard',       name: 'Lanyard + ID Sleeve',    price: 45, emoji: '📿' },
-            { id: 'sticker_sheet', name: 'Sticker Sheet ×3',       price: 35, emoji: '🎨' },
-            { id: 'phone_charm',   name: 'Phone Charm',            price: 30, emoji: '📱' },
-            { id: 'polaroid_pack', name: 'Polaroid Frame Pack',    price: 25, emoji: '🖼️' },
-            { id: 'acrylic_key',   name: 'Acrylic Keychain',       price: 60, emoji: '🔑', tag: 'New' }
-        ];
+        handleNavbarAuth('auth-status');
 
-        /* ---------- Cart state (local draft + Firebase cloud sync) ---------- */
-        let cart = [];
-        let deliveryPref = null;
-        let remoteLoaded = false;
+        /* ==========================================================
+           Pricing constants
+           ========================================================== */
+        const BASE_PRICE = 30;
+        const BACK_IMAGE_PRICE = 3;
 
-        const ORDER_DB = (uid) => ref(db, `orders/${uid}`);
-        const LS_DRAFT = 'keepicsOrderDraft';
+        /* ==========================================================
+           Dropbox - upload first, then send the download link
+           (storage-efficient: the actual file lives in Dropbox and
+           only the share link is emailed via FormSubmit).
+           ========================================================== */
+        const DROPBOX_TOKEN = 'sl.u.AGoF2NJSmz_LGr0SiYcbykXeM40FhmjlxQ0-7DF_MDQlkxC0kWFJcd9cAhoUlEFiVi0JBCu5CC7u3HFVxpFsp0XPq-AixpKyrbiezbhYCOxj4JdALTTy2Xsj8x7Kf3tGg0HMohryP8WT63CfTqud3JM_meWwEW2m4TSaCPGnvIpG448viYqLCjVpIMMbgU619x5g-Qf7SOm6BvfXD2geWyl5DT1CKtQMeqAHjoKr7x2qmbjnKq6N6KlMh3-nADzMDVndwtTnfl1OZQ-UcJMb65ivBP1OLedIBo2KXJXRvh3vuvsflAMoLelMk6fEniB37gYP_MU4BTS1Vh5jN99d2yqdO8R3UkeMDGVtSkVxNxf5mQX8_SD5mGtpSOoPXdXq4QhUtRfXnkKFGvoi2r5-I320lam00wn9uBDuiwbHW9eh9Ll5Qd6UGTew7UDizMZV7cjr5BTBGViiRi-zlLi6hXwEUCeumr3zrQ1o8EAevI6PwXwhsHdF9uIbjgyyMO-gHXdDlpspWmzjgQWP_Nw8NxtUnqy7GvGg2TusRer8P8iIc0Tqx1knLE-ARHf8w8czmi-SwTss_LjiB93b2m69d_EwX_zzLtFkBHlCbe90w-Mgw3MR7GQOe7_dnUIKTPLqf140kMV3MyOnpcZDW0QHiOGkelINMaGQ7qSkjhgTEqxma_3CQ6UwwGoKETMuuclKuyWPxtidLuHz6N-lnAPWIsECAGIvGS1RqKtrZcktHbvhUWnfoLY060qqfroar23UeaHQKvh5OiKkpVWTTtYN8-LnOvXZbi6bpuG258eEi55sJ6uMuMuzXvU81Gj-lFVBNyyivVr2M8IR6wI0GWTh3IB-cmtmb4nW3Ohv6s12ykAAtPmP-UgyVyNJeHFbgE5zWhdJROhna-9d87zEyTRcz3_gOsr9Yj53n1UFA5klscPnzzJRQHjMpy7CcBhJde9dREdEcwPb3tUIluNgwTA_B40bKBWJlfPz2CdO6R9CfT8l8zXqQPv-BaafFL8rJGF8seGvBPXXFilgbb98RpKao_MAzP3zT2bTqcJI8Y-4TESfv_prrZU95suCMqBEzK5fyj2yoY94AolJACsD4uBbDe-M6CAuTvET3NPKNO3rVRI99kpgC-iOoqNNInmjdR2Jl7FMScrSV7YNqdoUVbHDfIxmVBrT0328pZhPFerko3FByuT60kEVl6d4XwmeE9_77kBJulr4KtYJxScojhHY9gWQBQO_9W0cplQAqzRwi9LsxqtCPKWwh4PtkYpJLndGqW0yoYoQy7-raNCRCUt7Id5fbE6wu0vWbB2J52PtCZMFBIqV25pIhWPz0ajk8mW738IdPhlLJe5i-juxQC8H9GpRApvtJ3ewI2IP0Jk2Bje6ofE3u2sz8udZ0GYFyj11yeKnkMpiizgmoH63EwDAhprauCPPN5-ocf1jNdLOoEmNmQ';
+        const DROPBOX_FOLDER = '/Keychain_Orders_KeePics';
 
-        function loadLocalDraft() {
-            try {
-                const saved = localStorage.getItem(LS_DRAFT);
-                if (saved) {
-                    const draft = JSON.parse(saved);
-                    if (Array.isArray(draft.cart)) cart = draft.cart;
-                    if (draft.deliveryPref) deliveryPref = draft.deliveryPref;
-                }
-            } catch (e) { /* ignore corrupt draft */ }
-        }
-        loadLocalDraft();
-
-        let currentItem = null; // item being configured in product modal
-
-        const el = (id) => document.getElementById(id);
-
-        /* ---------- Render catalog ---------- */
-        const productGrid = el('productGrid');
-        productGrid.innerHTML = PRODUCTS.map(p => `
-            <div class="easy" data-tag="${p.tag || ''}">
-                <div class="picture-container">
-                    <div class="product-emoji">${p.emoji}</div>
-                    <div class="op-hover-overlay">
-                        <span class="op-configure-btn">＋ Add to Order</span>
-                    </div>
-                </div>
-                <div class="easy-details">
-                    <h3>${p.name}</h3>
-                    <span class="price">₱${p.price}.00</span>
-                    <span class="easy-sub">CGC Merch · KeePics</span>
-                </div>
-            </div>
-        `).join('');
-
-        productGrid.querySelectorAll('.easy').forEach((card, i) => {
-            card.addEventListener('click', () => openProductModal(PRODUCTS[i]));
-        });
-
-        /* ---------- Product modal ---------- */
-        const productModal = el('productModal');
-        let productQty = 1;
-
-        function openProductModal(item) {
-            currentItem = item;
-            productQty = 1;
-            el('pmName').textContent = item.name;
-            el('pmPrice').textContent = `₱${item.price}.00 each`;
-            el('pmQty').textContent = '1';
-            productModal.classList.remove('hidden');
-        }
-
-        el('closeProductModal').addEventListener('click', () => productModal.classList.add('hidden'));
-        productModal.addEventListener('click', (e) => { if (e.target === productModal) productModal.classList.add('hidden'); });
-
-        el('pmMinus').addEventListener('click', () => {
-            if (productQty > 1) { productQty--; el('pmQty').textContent = productQty; }
-        });
-        el('pmPlus').addEventListener('click', () => {
-            if (productQty < 99) { productQty++; el('pmQty').textContent = productQty; }
-        });
-        el('pmAddBtn').addEventListener('click', () => {
-            const existing = cart.find(c => c.id === currentItem.id);
-            if (existing) {
-                existing.qty = Math.min(99, existing.qty + productQty);
-            } else {
-                cart.push({ id: currentItem.id, name: currentItem.name, price: currentItem.price, emoji: currentItem.emoji, qty: productQty });
-            }
-            productModal.classList.add('hidden');
-            persistCart();
-            renderSummary();
-        });
-
-        /* ---------- Persistence: localStorage draft + Firebase cloud ---------- */
-        function persistLocalDraft() {
-            try {
-                localStorage.setItem(LS_DRAFT, JSON.stringify({ cart, deliveryPref }));
-            } catch (e) { /* storage full / private mode */ }
-        }
-
-        function persistCart() {
-            persistLocalDraft();
-            if (currentAuthUser && remoteLoaded) {
-                set(ORDER_DB(currentAuthUser.uid), { cart, deliveryPref: deliveryPref || null })
-                    .catch(err => console.error('Order sync failed:', err));
-            }
-        }
-        function persistDelivery() {
-            persistLocalDraft();
-            if (currentAuthUser && remoteLoaded) {
-                set(ORDER_DB(currentAuthUser.uid), { cart, deliveryPref: deliveryPref || null })
-                    .catch(err => console.error('Order sync failed:', err));
-            }
-        }
-
-        /* ---------- Summary render ---------- */
-        const summaryList = el('summary-items-list');
-
-        function renderSummary() {
-            summaryList.innerHTML = '';
-
-            if (cart.length === 0) {
-                summaryList.innerHTML = '<li style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:18px 0;">Your cart is empty. Pick something cute! 🍡</li>';
-                el('summaryCount').textContent = '0';
-                el('cartCountStat').textContent = '0';
-                el('summaryTotal').textContent = '₱0.00';
-                el('totalStat').textContent = '₱0';
-                updateCheckoutButton();
-                renderDeliveryPref();
-                return;
-            }
-
-            let total = 0;
-            let itemCount = 0;
-
-            cart.forEach(c => {
-                const subtotal = c.price * c.qty;
-                total += subtotal;
-                itemCount += c.qty;
-
-                const li = document.createElement('li');
-                li.className = 'summary-item';
-                li.style.display = 'flex';
-                li.style.alignItems = 'center';
-                li.style.gap = '10px';
-                li.innerHTML = `
-                    <span style="font-size:1.25rem; flex:none;">${c.emoji}</span>
-                    <div style="flex:1; min-width:0;">
-                        <div class="summary-item-title" style="font-size:0.86rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.name}</div>
-                        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-                            <button class="queue-btn" data-act="minus" data-id="${c.id}" style="width:24px; height:24px; border-radius:7px; font-weight:800; cursor:pointer; line-height:1;">−</button>
-                            <span style="font-size:0.8rem; font-weight:800; color:#1e3a8a; min-width:16px; text-align:center;">${c.qty}</span>
-                            <button class="queue-btn" data-act="plus" data-id="${c.id}" style="width:24px; height:24px; border-radius:7px; font-weight:800; cursor:pointer; line-height:1;">+</button>
-                        </div>
-                    </div>
-                    <div style="text-align:right; flex:none;">
-                        <div style="font-size:0.82rem; font-weight:800; color:#b73b49;">₱${subtotal.toFixed(2)}</div>
-                        <button class="remove-item-btn" data-act="remove" data-id="${c.id}" style="border:none; border-radius:7px; font-size:0.68rem; font-weight:800; padding:3px 8px; cursor:pointer; margin-top:4px;">Remove</button>
-                    </div>
-                `;
-                summaryList.appendChild(li);
+        async function uploadToDropbox(blob, filename) {
+            const res = await fetch('https://content.dropboxapi.com/2/files/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + DROPBOX_TOKEN,
+                    'Content-Type': 'application/octet-stream',
+                    'Dropbox-API-Arg': JSON.stringify({
+                        path: DROPBOX_FOLDER + '/' + filename,
+                        mode: 'add',
+                        autorename: true,
+                        mute: false
+                    })
+                },
+                body: blob
             });
-
-            el('summaryCount').textContent = String(itemCount);
-            el('cartCountStat').textContent = String(itemCount);
-            el('summaryTotal').textContent = `₱${total.toFixed(2)}`;
-            el('totalStat').textContent = `₱${total}`;
-
-            renderDeliveryPref();
-            updateCheckoutButton();
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error('Dropbox upload failed: ' + (errData.error_summary || res.status));
+            }
+            return res.json();
         }
 
-        summaryList.addEventListener('click', (e) => {
-            const btn = e.target.closest('[data-act]');
-            if (!btn) return;
-            const id = btn.dataset.id;
-            const item = cart.find(c => c.id === id);
-            if (!item) return;
-
-            if (btn.dataset.act === 'plus') item.qty = Math.min(99, item.qty + 1);
-            else if (btn.dataset.act === 'minus') {
-                item.qty--;
-                if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+        async function createDropboxSharedLink(path) {
+            try {
+                const res = await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + DROPBOX_TOKEN,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: path,
+                        settings: { requested_visibility: 'public', allow_download: true }
+                    })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    return data.url.replace('dl=0', 'dl=1');
+                }
+                // If a link already exists, fetch it
+                const listRes = await fetch('https://api.dropboxapi.com/2/sharing/list_shared_links', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + DROPBOX_TOKEN,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: path, direct_only: true })
+                });
+                if (listRes.ok) {
+                    const listData = await listRes.json();
+                    if (listData.links && listData.links.length > 0) {
+                        return listData.links[0].url.replace('dl=0', 'dl=1');
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not create shared link:', e);
             }
-            else if (btn.dataset.act === 'remove') cart = cart.filter(c => c.id !== id);
-
-            persistCart();
-            renderSummary();
-        });
-
-        /* ---------- Delivery preference display ---------- */
-        function renderDeliveryPref() {
-            const box = el('deliveryPrefBox');
-            if (!deliveryPref) { box.classList.add('hidden'); return; }
-
-            box.classList.remove('hidden');
-            const icons = {
-                'needs_room': '📬', 'get_to_us': '🏫',
-                'friend_pickup': '🤝', 'cannot_order': '🚫'
-            };
-            el('pillIco').textContent = icons[deliveryPref.kind] || '📦';
-
-            let title = '';
-            let detail = '';
-            if (deliveryPref.kind === 'needs_room') {
-                title = 'Deliver to me';
-                detail = `Room ${deliveryPref.room || '—'} · ${deliveryPref.building || '—'}`;
-            } else if (deliveryPref.kind === 'get_to_us') {
-                title = 'Get it to us';
-                detail = '12-HUMSS-3 · Old Building';
-            } else if (deliveryPref.kind === 'friend_pickup') {
-                title = 'Friend pickup';
-                detail = deliveryPref.friendName || '—';
-            } else if (deliveryPref.kind === 'cannot_order') {
-                title = 'Cannot order';
-                detail = 'No one available to receive it';
-            }
-            el('pillTitle').textContent = title;
-            el('pillDetail').textContent = detail;
+            return null;
         }
 
-        el('changeDeliveryBtn').addEventListener('click', () => {
-            if (!currentAuthUser) { redirectToLogin(); return; }
-            openCheckoutFlow();
-        });
+        /* ==========================================================
+           Client-side image compression (works in all modern browsers)
+           ========================================================== */
+        function compressImage(file, maxWidth = 1200, maxHeight = 1200, quality = 0.8) {
+            return new Promise((resolve) => {
+                // If it's not an image type, pass through
+                if (!file.type.startsWith('image/')) {
+                    resolve(file);
+                    return;
+                }
 
-        /* ---------- Auth ---------- */
-        let currentAuthUser = null;
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // Scale down large images for faster & safer uploads
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height *= maxWidth / width;
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width *= maxHeight / height;
+                                height = maxHeight;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                resolve(blob);
+                            } else {
+                                // Fallback - send the original file
+                                resolve(file);
+                            }
+                        }, file.type === 'image/webp' ? 'image/webp' : 'image/jpeg', quality);
+                    };
+                    img.onerror = () => resolve(file);
+                };
+                reader.onerror = () => resolve(file);
+            });
+        }
+
+        /* ==========================================================
+           DOM refs
+           ========================================================== */
+        const orderForm = document.getElementById('order-form');
+        const authRequiredBox = document.getElementById('auth-required');
+        const userChip = document.getElementById('user-chip');
+        const userAvatar = document.getElementById('user-avatar');
+        const userNameEl = document.getElementById('user-name');
+        const userEmailEl = document.getElementById('user-email');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const quantityInput = document.getElementById('quantity');
+        const backImageToggle = document.getElementById('back-image-toggle');
+        const backImageFields = document.getElementById('back-image-fields');
+        const backImageInput = document.getElementById('back-image');
+        const frontImageInput = document.getElementById('front-image');
+        const frontFileText = document.getElementById('front-file-text');
+        const backFileText = document.getElementById('back-file-text');
+        const frontPreview = document.getElementById('front-preview');
+        const frontPreviewImg = document.getElementById('front-preview-img');
+        const backPreview = document.getElementById('back-preview');
+        const backPreviewImg = document.getElementById('back-preview-img');
+        const totalAmountEl = document.getElementById('total-amount');
+        const submitBtn = document.getElementById('submit-btn');
+        const submitStatus = document.getElementById('submit-status');
+
+        let currentUser = null;
+
+        /* ==========================================================
+           Auth state - pull user info from Firebase
+           ========================================================== */
+        function fillUserInfo(user) {
+            const displayName = user.displayName || user.email.split('@')[0];
+            const email = user.email || '';
+
+            // Show user chip (auto-filled info from Firebase)
+            userChip.style.display = 'flex';
+            userNameEl.textContent = displayName;
+            userEmailEl.textContent = email;
+            userAvatar.textContent = displayName.charAt(0).toUpperCase();
+
+            // Auto-fill the readonly customer fields
+            nameInput.value = displayName;
+            emailInput.value = email;
+        }
 
         onAuthStateChanged(auth, (user) => {
-            currentAuthUser = user;
-            const ownerEl = el('ownerName');
-
             if (user) {
-                ownerEl.textContent = (user.displayName || user.email.split('@')[0]).split(' ')[0];
-                el('checkoutAuthNotice').classList.add('hidden');
-                el('checkoutBtn').disabled = false;
+                currentUser = user;
+                fillUserInfo(user);
 
-                // Load this user's saved order from the cloud so refresh never loses it.
-                onValue(ORDER_DB(user.uid), (snap) => {
-                    const data = snap.val();
-                    if (data) {
-                        if (Array.isArray(data.cart)) cart = data.cart;
-                        deliveryPref = data.deliveryPref || null;
-                        persistLocalDraft();
-                        remoteLoaded = true;
-                    } else {
-                        // First time from this device — upload the local draft to the cloud.
-                        remoteLoaded = true;
-                        persistCart();
-                    }
-                    renderSummary();
-                }, (err) => {
-                    remoteLoaded = true;
-                    console.error('Failed to load saved order:', err);
-                    renderSummary();
-                });
+                // Unlock the order form
+                authRequiredBox.style.display = 'none';
+                orderForm.style.display = 'flex';
             } else {
-                ownerEl.textContent = 'Guest';
-                el('checkoutAuthNotice').classList.remove('hidden');
-                el('checkoutBtn').disabled = true;
-                remoteLoaded = false;
+                currentUser = null;
+                userChip.style.display = 'none';
+                orderForm.style.display = 'none';
+                authRequiredBox.style.display = 'block';
             }
-            updateCheckoutButton();
         });
 
-        function redirectToLogin() {
-            sessionStorage.setItem('keepicsPostLoginRedirect', window.location.pathname + window.location.search);
-            window.location.href = 'login.html';
+        /* ==========================================================
+           Price calculator
+           ========================================================== */
+        function updateTotal() {
+            const qty = Math.max(1, parseInt(quantityInput.value, 10) || 1);
+            let total = BASE_PRICE * qty;
+            if (backImageToggle.checked) {
+                total += BACK_IMAGE_PRICE * qty;
+            }
+            totalAmountEl.textContent = 'P' + total.toFixed(2);
         }
 
-        /* ---------- Checkout button ---------- */
-        const checkoutBtn = el('checkoutBtn');
-
-        function updateCheckoutButton() {
-            if (!currentAuthUser) {
-                checkoutBtn.disabled = true;
-                checkoutBtn.textContent = 'Log in to checkout →';
-                return;
-            }
-            if (cart.length === 0) {
-                checkoutBtn.disabled = true;
-                checkoutBtn.textContent = 'Your cart is empty';
-                return;
-            }
-            checkoutBtn.disabled = false;
-            checkoutBtn.textContent = 'Proceed to Checkout →';
-        }
-
-        checkoutBtn.addEventListener('click', () => {
-            if (!currentAuthUser) { redirectToLogin(); return; }
-            if (cart.length === 0) return;
-            openCheckoutFlow();
-        });
-
-        /* ---------- Checkout flow modal ---------- */
-        const checkoutModal = el('checkoutModal');
-        const stages = {
-            cgc: el('stage-cgc'),
-            dmethod: el('stage-dmethod'),
-            address: el('stage-address'),
-            handoff: el('stage-handoff'),
-            friend: el('stage-friend'),
-            cannot: el('stage-cannot'),
-            review: el('stage-review')
-        };
-
-        function showStage(name) {
-            Object.values(stages).forEach(s => s.classList.add('hidden'));
-            stages[name].classList.remove('hidden');
-            if (name === 'address') {
-                el('roomInput').value = (deliveryPref && deliveryPref.room) || '';
-                el('buildingInput').value = (deliveryPref && deliveryPref.building) || '';
-            }
-            if (name === 'friend') {
-                el('friendNameInput').value = (deliveryPref && deliveryPref.friendName) || '';
-            }
-            if (name === 'review') buildReview();
-        }
-
-        function openCheckoutFlow() {
-            // If a valid delivery pref already exists, jump straight to review (still changeable).
-            // A "cannot order" pref always restarts the questions so they can change their answer.
-            if (deliveryPref && deliveryPref.kind !== 'cannot_order') {
-                showStage('review');
+        quantityInput.addEventListener('input', updateTotal);
+        backImageToggle.addEventListener('change', () => {
+            backImageFields.classList.toggle('show', backImageToggle.checked);
+            if (!backImageToggle.checked) {
+                backImageInput.value = '';
+                backFileText.textContent = 'Click to choose your back photo';
+                backPreview.classList.remove('show');
+                backPreviewImg.src = '';
+                backImageInput.removeAttribute('required');
             } else {
-                showStage('cgc');
+                backImageInput.setAttribute('required', '');
             }
-            checkoutModal.classList.remove('hidden');
-        }
-
-        el('closeCheckoutModal').addEventListener('click', () => checkoutModal.classList.add('hidden'));
-        checkoutModal.addEventListener('click', (e) => { if (e.target === checkoutModal) checkoutModal.classList.add('hidden'); });
-
-        /* --- CGC stage --- */
-        el('cgcYesBtn').addEventListener('click', () => showStage('dmethod'));
-        el('cgcNoBtn').addEventListener('click', () => showStage('handoff'));
-
-        /* --- Delivery method stage --- */
-        el('dmethodBack').addEventListener('click', () => showStage('cgc'));
-        el('deliverMeBtn').addEventListener('click', () => showStage('address'));
-        el('getUsBtn').addEventListener('click', () => {
-            deliveryPref = { kind: 'get_to_us', room: '', building: '', friendName: '', createdAt: Date.now() };
-            persistDelivery();
-            showStage('review');
+            updateTotal();
         });
 
-        /* --- Address stage --- */
-        el('addressBack').addEventListener('click', () => showStage('dmethod'));
-        el('saveAddressBtn').addEventListener('click', () => {
-            const room = el('roomInput').value.trim();
-            const building = el('buildingInput').value.trim();
-            if (!room) { el('roomInput').focus(); return; }
-            if (!building) { el('buildingInput').focus(); return; }
-            deliveryPref = { kind: 'needs_room', room, building, friendName: '', createdAt: Date.now() };
-            persistDelivery();
-            showStage('review');
-        });
-
-        /* --- Handoff stage --- */
-        el('handoffBack').addEventListener('click', () => showStage('cgc'));
-        el('friendBtn').addEventListener('click', () => showStage('friend'));
-        el('nobodyBtn').addEventListener('click', () => {
-            deliveryPref = { kind: 'cannot_order', room: '', building: '', friendName: '', createdAt: Date.now() };
-            persistDelivery();
-            showStage('cannot');
-        });
-
-        /* --- Friend stage --- */
-        el('friendBack').addEventListener('click', () => showStage('handoff'));
-        el('saveFriendBtn').addEventListener('click', () => {
-            const friendName = el('friendNameInput').value.trim();
-            if (!friendName) { el('friendNameInput').focus(); return; }
-            deliveryPref = { kind: 'friend_pickup', room: '', building: '', friendName, createdAt: Date.now() };
-            persistDelivery();
-            showStage('review');
-        });
-
-        /* --- Cannot order stage --- */
-        el('cannotCloseBtn').addEventListener('click', () => checkoutModal.classList.add('hidden'));
-
-        /* --- Review stage --- */
-        el('reviewBack').addEventListener('click', () => showStage('cgc'));
-
-        function buildReview() {
-            const user = currentAuthUser;
-            const itemsText = cart.map(c => `${c.name}`).join(', ');
-            const qtyText = cart.map(c => `${c.name} ×${c.qty}`).join(', ');
-            const total = cart.reduce((sum, c) => sum + (c.price * c.qty), 0);
-
-            let eligibility = '';
-            let method = '';
-            let room = '';
-            let building = '';
-            let friend = '';
-
-            if (deliveryPref.kind === 'needs_room' || deliveryPref.kind === 'get_to_us') {
-                eligibility = 'CGCian';
-                if (deliveryPref.kind === 'needs_room') {
-                    method = 'Deliver it to me';
-                    room = deliveryPref.room || '';
-                    building = deliveryPref.building || '';
+        /* ==========================================================
+           Image previews (cross-browser FileReader)
+           ========================================================== */
+        function setupImagePreview(input, fileTextEl, previewEl, previewImgEl) {
+            input.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    fileTextEl.textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImgEl.src = e.target.result;
+                        previewEl.classList.add('show');
+                    };
+                    reader.readAsDataURL(file);
                 } else {
-                    method = 'Get it to us · 12-HUMSS-3 Old Building';
+                    fileTextEl.textContent = 'Click to choose a photo';
+                    previewEl.classList.remove('show');
+                    previewImgEl.src = '';
                 }
-            } else if (deliveryPref.kind === 'friend_pickup') {
-                eligibility = 'Not a CGCian (friend pickup)';
-                method = 'A friend from the organization will pick it up';
-                friend = deliveryPref.friendName || '';
-            } else {
-                eligibility = 'Not a CGCian';
-                method = 'Cannot order — no one available to receive it';
-            }
-
-            // Store for FormSubmit
-            window.__orderPayload = {
-                itemsText, qtyText, total, eligibility, method, room, building, friend
-            };
-
-            const rows = `
-                <div class="review-row"><span>Customer</span><span>${(user?.displayName || user?.email || '—')}</span></div>
-                <div class="review-row"><span>Email</span><span>${user?.email || '—'}</span></div>
-                <div class="review-row"><span>Items</span><span>${itemsText}</span></div>
-                <div class="review-row"><span>Quantities</span><span>${qtyText}</span></div>
-                <div class="review-row"><span>Eligibility</span><span>${eligibility}</span></div>
-                <div class="review-row"><span>Method</span><span>${method}</span></div>
-                ${room ? `<div class="review-row"><span>Room</span><span>${room}</span></div>` : ''}
-                ${building ? `<div class="review-row"><span>Building</span><span>${building}</span></div>` : ''}
-                ${friend ? `<div class="review-row"><span>Friend</span><span>${friend}</span></div>` : ''}
-                <div class="review-row review-total"><span>Total (PHP)</span><span>₱${total.toFixed(2)}</span></div>
-            `;
-            el('reviewSummary').innerHTML = rows;
-            renderDeliveryPref();
+            });
         }
 
-        /* ---------- Place order (FormSubmit) ---------- */
-        el('placeOrderBtn').addEventListener('click', () => {
-            if (!currentAuthUser) { redirectToLogin(); return; }
-            if (!deliveryPref || deliveryPref.kind === 'cannot_order' || cart.length === 0) return;
+        setupImagePreview(frontImageInput, frontFileText, frontPreview, frontPreviewImg);
+        setupImagePreview(backImageInput, backFileText, backPreview, backPreviewImg);
 
-            const payload = window.__orderPayload;
-            const now = new Date();
-            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        /* ==========================================================
+           Form submission - upload to Dropbox, then send links
+           ========================================================== */
+        orderForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-            const form = el('orderForm');
-            el('f_subject').value = `New KeePics Order from ${currentAuthUser.displayName || currentAuthUser.email}`;
-            el('f_name').value = currentAuthUser.displayName || currentAuthUser.email.split('@')[0];
-            el('f_email').value = currentAuthUser.email || '';
-            el('f_date').value = dateStr;
-            el('f_items').value = payload.itemsText;
-            el('f_quantities').value = payload.qtyText;
-            el('f_total').value = `₱${payload.total.toFixed(2)}`;
-            el('f_eligibility').value = payload.eligibility;
-            el('f_method').value = payload.method;
-            el('f_room').value = payload.room;
-            el('f_building').value = payload.building;
-            el('f_friend').value = payload.friend;
-            el('f_uid').value = currentAuthUser.uid || '';
+            if (!currentUser) {
+                showStatus('Please log in to place your order.', 'error');
+                return;
+            }
 
-            // Clear local + cloud state before redirecting (banner confirms on return)
-            try { localStorage.removeItem(LS_DRAFT); } catch (e) {}
-            if (currentAuthUser) remove(ORDER_DB(currentAuthUser.uid)).catch(() => {});
-            cart = [];
-            deliveryPref = null;
+            // Validation
+            if (!frontImageInput.files || !frontImageInput.files[0]) {
+                showStatus('Please choose a front image for your keychain.', 'error');
+                return;
+            }
 
-            const btn = el('placeOrderBtn');
-            btn.textContent = 'Sending order…';
-            btn.disabled = true;
-            form.submit();
+            if (backImageToggle.checked && (!backImageInput.files || !backImageInput.files[0])) {
+                showStatus('Please choose a back image, or uncheck the back image option.', 'error');
+                return;
+            }
+
+            const qty = Math.max(1, parseInt(quantityInput.value, 10) || 1);
+            const total = (BASE_PRICE * qty) + (backImageToggle.checked ? BACK_IMAGE_PRICE * qty : 0);
+
+            const customerName = currentUser.displayName || currentUser.email.split('@')[0];
+            const customerEmail = currentUser.email || '';
+
+            // Disable form while processing
+            setLoading(true, 'Uploading your photos to secured storage...');
+
+            try {
+                const timestamp = Date.now();
+                const safeName = (customerName || 'customer').replace(/[^a-zA-Z0-9_-]/g, '_');
+
+                // ---- Upload front image to Dropbox ----
+                const frontFile = frontImageInput.files[0];
+                const frontBlob = await compressImage(frontFile);
+                const frontExt = (frontFile.type === 'image/png' ? 'png' : (frontFile.type === 'image/webp' ? 'webp' : 'jpg'));
+                const frontFilename = 'FRONT_' + safeName + '_' + timestamp + '.' + frontExt;
+                const frontUpload = await uploadToDropbox(frontBlob, frontFilename);
+                const frontLink = await createDropboxSharedLink(frontUpload.path_display);
+
+                // ---- Upload back image to Dropbox (if selected) ----
+                let backLink = null;
+                if (backImageToggle.checked && backImageInput.files && backImageInput.files[0]) {
+                    const backFile = backImageInput.files[0];
+                    const backBlob = await compressImage(backFile);
+                    const backExt = (backFile.type === 'image/png' ? 'png' : (backFile.type === 'image/webp' ? 'webp' : 'jpg'));
+                    const backFilename = 'BACK_' + safeName + '_' + timestamp + '.' + backExt;
+                    const backUpload = await uploadToDropbox(backBlob, backFilename);
+                    backLink = await createDropboxSharedLink(backUpload.path_display);
+                }
+
+                // ---- Save order to Firebase ----
+                const orderRef = ref(db, 'orders');
+                const orderData = {
+                    customerName: customerName,
+                    customerEmail: customerEmail,
+                    customerUid: currentUser.uid,
+                    product: 'Keychain (Custom, #1)',
+                    basePrice: BASE_PRICE,
+                    hasBackImage: backImageToggle.checked,
+                    backImagePrice: backImageToggle.checked ? BACK_IMAGE_PRICE : 0,
+                    quantity: qty,
+                    totalPricePHP: total,
+                    frontImageDropboxLink: frontLink || null,
+                    backImageDropboxLink: backLink || null,
+                    status: 'pending',
+                    timestamp: Date.now()
+                };
+                await push(orderRef, orderData);
+
+                // ---- Send order details to FormSubmit (links, not files) ----
+                const formData = new FormData();
+                formData.append('_subject', 'New Keychain Order - ' + customerName);
+                formData.append('_template', 'table');
+                formData.append('_captcha', 'false');
+                formData.append('Customer Name', customerName);
+                formData.append('Customer Email', customerEmail);
+                formData.append('Product', 'Keychain (Custom, #1)');
+                formData.append('Quantity', qty);
+                formData.append('Base Price (PHP)', BASE_PRICE);
+                formData.append('Back Image Added', backImageToggle.checked ? 'Yes (+P3)' : 'No');
+                formData.append('Back Image Price (PHP)', backImageToggle.checked ? BACK_IMAGE_PRICE : 0);
+                formData.append('Total Price (PHP)', total.toFixed(2));
+                formData.append('Front Image (Download Link)', frontLink || 'Upload failed - check Firebase orders');
+                if (backLink) {
+                    formData.append('Back Image (Download Link)', backLink);
+                }
+                formData.append('Order Timestamp', new Date().toLocaleString());
+
+                // Try sending via FormSubmit. If the network fails, the order
+                // is still safely stored in Firebase.
+                try {
+                    const response = await fetch('https://formsubmit.co/ajax/a1e63f151d76e68502b50191e9ef4195', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+                    if (!response.ok) {
+                        console.warn('FormSubmit responded with status:', response.status);
+                    }
+                } catch (formErr) {
+                    console.warn('FormSubmit network error (order still saved to Firebase):', formErr);
+                }
+
+                setLoading(false);
+                showStatus('Order placed successfully! Your photos are safely stored and the order details have been sent. We will contact you soon!', 'success');
+
+                // Reset form but keep user info
+                orderForm.reset();
+                fillUserInfo(currentUser);
+                frontPreview.classList.remove('show');
+                frontPreviewImg.src = '';
+                frontFileText.textContent = 'Click to choose your front photo';
+                backPreview.classList.remove('show');
+                backPreviewImg.src = '';
+                backFileText.textContent = 'Click to choose your back photo';
+                backImageToggle.checked = false;
+                backImageFields.classList.remove('show');
+                backImageInput.removeAttribute('required');
+                quantityInput.value = 1;
+                updateTotal();
+                submitBtn.disabled = false;
+            } catch (error) {
+                console.error('Order submission error:', error);
+                setLoading(false);
+                showStatus('There was an error placing your order. Please try again.', 'error');
+            }
         });
 
-        /* ---------- Order off / maintenance popup ---------- */
-        const orderOffModal = el('orderOffModal');
-        // Don't interrupt the "order sent" confirmation banner flow.
-        if (!urlParams.get('sent')) orderOffModal.classList.remove('hidden');
-        el('orderOffCloseBtn').addEventListener('click', () => orderOffModal.classList.add('hidden'));
-        orderOffModal.addEventListener('click', (e) => { if (e.target === orderOffModal) orderOffModal.classList.add('hidden'); });
+        /* ==========================================================
+           UI helpers
+           ========================================================== */
+        function setLoading(loading, message) {
+            if (loading) {
+                submitBtn.disabled = true;
+                submitStatus.className = 'submit-status loading';
+                submitStatus.innerHTML = '<span class="spinner"></span>' + (message || 'Processing...');
+            } else {
+                submitBtn.disabled = false;
+                submitStatus.className = 'submit-status';
+                submitStatus.innerHTML = '';
+            }
+        }
 
-        /* ---------- Init ---------- */
-        renderSummary();
+        function showStatus(message, type) {
+            submitStatus.className = 'submit-status ' + type;
+            submitStatus.textContent = message;
+            // Auto-hide success after 8 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    submitStatus.className = 'submit-status';
+                    submitStatus.innerHTML = '';
+                }, 8000);
+            }
+        }
+
+        // Initialize total on load
+        updateTotal();
     </script>
 </body>
 </html>

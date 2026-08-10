@@ -2081,6 +2081,13 @@ input, textarea, select {
     font-weight: 800;
 }
 
+.item-emoji img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 14px;
+}
+
 .item-name {
     font-weight: 700;
     color: var(--ink);
@@ -6856,7 +6863,170 @@ input, textarea, select {
         }
         .submit-modal-btn:hover { opacity: 0.9; }
 
-        @media screen and (max-width: 480px) { .shop-grid { grid-template-columns: 1fr; } }
+        /* ---- shop.html - Improved modern look (scoped to shop page only) ---- */
+        body.shop-page .container {
+            max-width: 520px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 12px 32px rgba(15, 118, 110, 0.10);
+        }
+
+        body.shop-page h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        body.shop-page .isx-75 { font-size: 0.9rem; color: #64748b; margin-bottom: 4px; }
+
+        body.shop-page .points-dashboard {
+            background: linear-gradient(135deg, #0f766e 0%, #115e59 55%, #134e4a 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 20px 18px 18px;
+            box-shadow: 0 10px 24px rgba(15, 118, 110, 0.28);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.shop-page .points-dashboard::before {
+            content: "";
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.16) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        body.shop-page .points-title {
+            color: #99f6e4;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        body.shop-page .points-val {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 6px;
+            color: #ffffff;
+        }
+
+        body.shop-page .points-number {
+            font-size: 2.6rem;
+            font-weight: 900;
+            line-height: 1.1;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+            font-variant-numeric: tabular-nums;
+        }
+
+        body.shop-page .points-unit {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #99f6e4;
+            letter-spacing: 1px;
+        }
+
+        body.shop-page .points-bar-track {
+            margin-top: 14px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        body.shop-page .points-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ffd166 0%, #ffb800 100%);
+            border-radius: 999px;
+            transition: width 0.12s linear;
+            box-shadow: 0 0 10px rgba(255, 184, 0, 0.55);
+        }
+
+        body.shop-page .history-board {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px dashed #99f6e4;
+            border-radius: 18px;
+            padding: 16px;
+        }
+
+        body.shop-page .history-title { color: #0f766e; }
+
+        body.shop-page .shop-item {
+            background: #ffffff;
+            border: 2px solid #ccfbf1;
+            border-radius: 20px;
+            padding: 20px 14px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.06);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            cursor: default;
+        }
+
+        body.shop-page .shop-item:hover {
+            transform: translateY(-4px);
+            border-color: #5eead4;
+            box-shadow: 0 10px 24px rgba(15, 118, 110, 0.14);
+        }
+
+        body.shop-page .item-emoji {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+            margin-bottom: 10px;
+            padding: 8px;
+        }
+
+        body.shop-page .item-name { color: #134e4a; font-weight: 800; }
+
+        body.shop-page .item-cost {
+            color: #0f766e;
+            background: rgba(204, 251, 241, 0.5);
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+        }
+
+        body.shop-page .buy-btn {
+            background: linear-gradient(135deg, #14b8a6, #0f766e);
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+            border-radius: 999px;
+            padding: 10px 20px;
+            font-size: 0.82rem;
+            letter-spacing: 0.4px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+
+        body.shop-page .buy-btn:hover:not(:disabled) {
+            opacity: 1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(15, 118, 110, 0.32);
+        }
+
+        body.shop-page .buy-btn:disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            box-shadow: none;
+        }
+
+        body.shop-page .claim-notice-banner {
+            border-radius: 14px;
+            background: linear-gradient(135deg, #fff7e6, #fff3cd);
+            border: 1px solid #ffeeba;
+        }
+
+        @media screen and (max-width: 480px) {
+            body.shop-page .points-number { font-size: 2.1rem; }
+            body.shop-page .shop-grid { grid-template-columns: 1fr; }
+        }
     
 
 /* ---- admin-tools/qrmaker.html ---- */

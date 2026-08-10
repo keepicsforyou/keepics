@@ -28,16 +28,22 @@
         </div>
 
         <div class="claim-notice-banner isx-73" id="claimNoticeBanner" >
-             Present your QR code to the Admin to claim physical items.
+             Present your Membership QR code while claiming the product to claim the voucher.
             <span class="isx-74" id="closeNoticeBtn" >&times;</span>
         </div>
 
         <h1>Voucher Shop</h1>
         <p class="isx-75" >Redeem your hard-earned points for awesome rewards</p>
 
-        <div class="points-dashboard">
+        <div class="points-dashboard" id="pointsDashboard">
             <div class="points-title"> Your Point Balance</div>
-            <div class="points-val" id="pointsDisplay">--</div>
+            <div class="points-val">
+                <span class="points-number" id="pointsDisplay">--</span>
+                <span class="points-unit" id="pointsUnit">pts</span>
+            </div>
+            <div class="points-bar-track" id="pointsBarTrack">
+                <div class="points-bar-fill" id="pointsBarFill"></div>
+            </div>
         </div>
 
         <div class="history-board">
@@ -51,54 +57,55 @@
 
         <div class="shop-grid">
             <div class="shop-item">
-                <div class="item-emoji"></div>
-                <div class="item-name">2PHP off Voucher</div>
+                <div class="item-emoji"><img src="assets/image/shop_assets/2VOUCHER.png" alt="2₱ off Voucher"></div>
+                <div class="item-name">₱2.00 Voucher</div>
                 <div class="item-cost">6,000 pts</div>
-                <button class="buy-btn" onclick="purchaseItem('voucher_2php', 6000, '2PHP off Voucher', 'voucher')" id="btn-voucher_2php" disabled>Redeem</button>
+                <button class="buy-btn" onclick="purchaseItem('voucher_2php', 6000, '2₱ off Voucher', 'voucher')" id="btn-voucher_2php" disabled>Redeem</button>
             </div>
 
             <div class="shop-item">
-                <div class="item-emoji"></div>
-                <div class="item-name">3PHP off Voucher</div>
+                <div class="item-emoji"><img src="assets/image/shop_assets/3VOUCHER.png" alt="3₱ off Voucher"></div>
+                <div class="item-name">₱3.00 Voucher</div>
                 <div class="item-cost">9,000 pts</div>
-                <button class="buy-btn" onclick="purchaseItem('voucher_3php', 9000, '3PHP off Voucher', 'voucher')" id="btn-voucher_3php" disabled>Redeem</button>
+                <button class="buy-btn" onclick="purchaseItem('voucher_3php', 9000, '3₱ off Voucher', 'voucher')" id="btn-voucher_3php" disabled>Redeem</button>
             </div>
 
             <div class="shop-item">
-                <div class="item-emoji"></div>
-                <div class="item-name">4PHP off Voucher</div>
+                <div class="item-emoji"><img src="assets/image/shop_assets/4VOUCHER.png" alt="4₱ off Voucher"></div>
+                <div class="item-name">₱4.00 Voucher</div>
                 <div class="item-cost">12,000 pts</div>
-                <button class="buy-btn" onclick="purchaseItem('voucher_4php', 12000, '4PHP off Voucher', 'voucher')" id="btn-voucher_4php" disabled>Redeem</button>
+                <button class="buy-btn" onclick="purchaseItem('voucher_4php', 12000, '4₱ off Voucher', 'voucher')" id="btn-voucher_4php" disabled>Redeem</button>
             </div>
 
             <div class="shop-item">
-                <div class="item-emoji"></div>
+                <div class="item-emoji"><img src="assets/image/shop_assets/MEMESTICKER.Png" alt="Meme Sticker"></div>
                 <div class="item-name">Meme Sticker</div>
                 <div class="item-cost">14,000 pts</div>
                 <button class="buy-btn" onclick="purchaseItem('meme_sticker', 14000, 'Meme Sticker', 'item')" id="btn-meme_sticker" disabled>Redeem</button>
             </div>
 
             <div class="shop-item">
-                <div class="item-emoji"></div>
-                <div class="item-name">5PHP off Voucher</div>
+                <div class="item-emoji"><img src="assets/image/shop_assets/5VOUCHER.png" alt="5₱ off Voucher"></div>
+                <div class="item-name">₱5.00 Voucher</div>
                 <div class="item-cost">15,000 pts</div>
-                <button class="buy-btn" onclick="purchaseItem('voucher_5php', 15000, '5PHP off Voucher', 'voucher')" id="btn-voucher_5php" disabled>Redeem</button>
+                <button class="buy-btn" onclick="purchaseItem('voucher_5php', 15000, '5₱ off Voucher', 'voucher')" id="btn-voucher_5php" disabled>Redeem</button>
             </div>
 
             <div class="shop-item">
-                <div class="item-emoji"></div>
-                <div class="item-name">6PHP off Voucher</div>
+                <div class="item-emoji"><img src="assets/image/shop_assets/6VOUCHER.png" alt="6₱ off Voucher"></div>
+                <div class="item-name">₱6.00 Voucher</div>
                 <div class="item-cost">18,000 pts</div>
-                <button class="buy-btn" onclick="purchaseItem('voucher_6php', 18000, '6PHP off Voucher', 'voucher')" id="btn-voucher_6php" disabled>Redeem</button>
+                <button class="buy-btn" onclick="purchaseItem('voucher_6php', 18000, '6₱ off Voucher', 'voucher')" id="btn-voucher_6php" disabled>Redeem</button>
             </div>
 
 
             <div class="shop-item">
-                <div class="item-emoji"></div>
+                <div class="item-emoji"><img src="assets/image/website/logo.png" alt="Custom Keychain"></div>
                 <div class="item-name">Custom Keychain</div>
                 <div class="item-cost">40,000 pts</div>
                 <button class="buy-btn" onclick="purchaseItem('keychain_custom', 40000, 'Custom Keychain', 'item')" id="btn-keychain_custom" disabled>Redeem</button>
             </div>
+        
         </div>
     </div>
 
@@ -177,8 +184,58 @@
     }
 
     const pointsDisplay = document.getElementById('pointsDisplay');
+    const pointsUnit = document.getElementById('pointsUnit');
+    const pointsBarFill = document.getElementById('pointsBarFill');
     const historyList = document.getElementById('historyList');
     
+    let displayedPoints = 0;
+    let pointsAnimId = null;
+    const MAX_BAR_POINTS = 40000;
+
+    function formatPoints(value) {
+        return value.toLocaleString();
+    }
+
+    function setPointsLocked() {
+        if (pointsAnimId) cancelAnimationFrame(pointsAnimId);
+        pointsAnimId = null;
+        displayedPoints = 0;
+        pointsDisplay.innerText = "LOCKED";
+        if (pointsUnit) pointsUnit.style.display = 'none';
+        if (pointsBarFill) pointsBarFill.style.width = '0%';
+    }
+
+    function animatePointsTo(target) {
+        if (pointsAnimId) cancelAnimationFrame(pointsAnimId);
+
+        if (pointsUnit) pointsUnit.style.display = '';
+        const start = displayedPoints;
+        const delta = target - start;
+        const duration = Math.min(1500, Math.max(600, Math.abs(delta) * 0.045));
+        const startTime = performance.now();
+
+        function frame(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(1, elapsed / duration);
+            const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+            const current = Math.round(start + delta * eased);
+            displayedPoints = current;
+            pointsDisplay.innerText = formatPoints(current);
+            if (pointsBarFill) {
+                pointsBarFill.style.width = Math.min(100, (current / MAX_BAR_POINTS) * 100) + '%';
+            }
+            if (progress < 1) {
+                pointsAnimId = requestAnimationFrame(frame);
+            } else {
+                pointsAnimId = null;
+                displayedPoints = target;
+                pointsDisplay.innerText = formatPoints(target);
+            }
+        }
+
+        pointsAnimId = requestAnimationFrame(frame);
+    }
+
     const keychainModal = document.getElementById('keychain-modal-gateway');
     const closeKeychainModal = document.getElementById('close-keychain-modal');
     const modalFileInput = document.getElementById('modal-file-input');
@@ -216,18 +273,19 @@
                 if (data) {
                     serverUserData = data;
                     currentPoints = data.points ?? 0;
-                    pointsDisplay.innerText = `${currentPoints.toLocaleString()} pts`;
+                    animatePointsTo(currentPoints);
                     
                     loadShopHistory(data.shop_history);
                 } else {
-                    pointsDisplay.innerText = "0 pts";
+                    currentPoints = 0;
+                    animatePointsTo(0);
                     historyList.innerHTML = '<div class="history-placeholder">No shop transactions executed yet.</div>';
                 }
                 updateButtonStates();
             });
         } else {
             currentUser = null;
-            pointsDisplay.innerText = "LOCKED";
+            setPointsLocked();
             historyList.innerHTML = '<div class="history-placeholder">You must be logged in to view items.</div>';
             disableAllButtons();
         }
