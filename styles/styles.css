@@ -4566,7 +4566,7 @@ input, textarea, select {
             z-index: 20;
         }
 
-        canvas {
+        body.game-page canvas {
             position: relative;
             border-radius: 50%;
             display: block;
