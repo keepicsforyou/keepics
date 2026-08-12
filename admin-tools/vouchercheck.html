@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="../assets/image/website/logo.png">
     <link rel="stylesheet" href="../styles/styles.css">
-    <title>KeePics - Admin Scanner</title>
+    <title>KeePics - Voucher Scanner</title>
     
 </head>
 <body>
@@ -33,18 +33,18 @@
     </div>
 
     <div class="admin-container" id="error-screen">
-        <h2 class="isx-76" >You are not the admin lol</h2>
-        <p class="isx-78" id="error-message" ></p>
+        <h2 class="isx-76">Access Error</h2>
+        <p class="isx-78" id="error-message"></p>
     </div>
 
     <div class="admin-container" id="dashboard-screen" style="display: none;">
         <div class="user-header">
             <h2 id="display-name">Loading...</h2>
             <p id="display-email">loading@email.com</p>
-            <p class="isx-79" >UID: <span id="display-uid"></span></p>
+            <p class="isx-79">UID: <span id="display-uid"></span></p>
         </div>
 
-        <h3 class="isx-80" >Customer Cart / Inventory</h3>
+        <h3 class="isx-80">Customer Cart / Inventory</h3>
         <div id="cart-list">
             </div>
     </div>
@@ -54,8 +54,7 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    const ADMIN_UIDS = ['nf6DyVHXpbTMxbtpDS9YicgGIYu1', '4dyuS34hliSLb0Ew0wGytuSviTG2'];
-
+    // Admin restriction removed - any authenticated user can access
     const loadingScreen = document.getElementById('loading-screen');
     const errorScreen = document.getElementById('error-screen');
     const errorMessage = document.getElementById('error-message');
@@ -84,10 +83,7 @@
             return;
         }
 
-        if (!ADMIN_UIDS.includes(user.uid)) {
-            showError("Your account does not have Admin privileges. Please exit.");
-            return;
-        }
+        // Admin check removed - any logged-in user can proceed
 
         if (!targetUid) {
             showError("No User ID found. Please scan a valid KeePics QR code.");

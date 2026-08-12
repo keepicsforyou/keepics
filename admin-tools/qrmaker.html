@@ -7,7 +7,7 @@
     <link rel="manifest" href="qrmaker.webmanifest">
     <meta name="theme-color" content="#ff8fa3">
     <link rel="stylesheet" href="../styles/styles.css">
-    <title>KeePics - Admin QR Generator</title>
+    <title>KeePics - QR Generator</title>
     
 </head>
 <body>
@@ -30,11 +30,6 @@
     <div class="admin-container" id="loading-screen">
         <h2>Loading...</h2>
         <p class="subtitle">Please wait...</p>
-    </div>
-
-    <div class="admin-container" id="error-screen">
-        <h2 class="isx-76" >URL Invalid</h2>
-        <p class="isx-77" >Admin can only scan</p>
     </div>
 
     <div class="content-layout" id="workspace" style="display: none;">
@@ -70,10 +65,7 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    const ADMIN_UIDS = ['nf6DyVHXpbTMxbtpDS9YicgGIYu1', '4dyuS34hliSLb0Ew0wGytuSviTG2'];
-
     const loadingScreen = document.getElementById('loading-screen');
-    const errorScreen = document.getElementById('error-screen');
     const workspace = document.getElementById('workspace');
     
     workspace.style.display = 'none';
@@ -87,11 +79,7 @@
             return;
         }
 
-        if (!ADMIN_UIDS.includes(user.uid)) {
-            errorScreen.style.display = 'block';
-            return;
-        }
-
+        // All authenticated users can access the QR generator
         workspace.style.display = 'flex';
         loadUserRegistry();
     });
@@ -202,12 +190,12 @@
             });
     });
 
-    // Register isolated Admin QR Maker Service Worker
+    // Register QR Maker Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('qrmaker-sw.js', { scope: './' })
-                .then(reg => console.log('Admin PWA Service Worker Registered', reg))
-                .catch(err => console.error('Admin PWA Service Worker Failed', err));
+                .then(reg => console.log('PWA Service Worker Registered', reg))
+                .catch(err => console.error('PWA Service Worker Failed', err));
         });
     }
 </script>

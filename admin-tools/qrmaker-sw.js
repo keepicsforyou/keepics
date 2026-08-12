@@ -3,11 +3,6 @@ const ASSETS = [
   'qrmaker.html',
   'scanner.html',
   'vouchercheck.html',
-  "/styles/fontstyles/mac's Minecraft.tff",
-  '/styles/fontstyles/Minecraft.tff',
-  '/styles/styles.css',
-  '/styles/contents/bg1.jpg',
-  '/styles/contents/web/logo.png',
   '/styles/contents/js/firebase-config.js'
 ];
 

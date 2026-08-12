@@ -31,11 +31,6 @@
         <p>Please wait...</p>
     </div>
 
-    <div class="admin-container" id="error-screen">
-        <h2 class="isx-76" > Access Denied</h2>
-        <p class="isx-77" >Your account does not have Admin privileges.</p>
-    </div>
-
     <div class="admin-container" id="scanner-screen" style="display: none;">
         <h2>Scan Customer QR</h2>
         <p class="subtitle">Align a customer's encrypted KeePics token inside the scanning frame.</p>
@@ -46,10 +41,7 @@
     import { auth } from '../assets/database/firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    const ADMIN_UIDS = ['nf6DyVHXpbTMxbtpDS9YicgGIYu1', '4dyuS34hliSLb0Ew0wGytuSviTG2'];
-
     const loadingScreen = document.getElementById('loading-screen');
-    const errorScreen = document.getElementById('error-screen');
     const scannerScreen = document.getElementById('scanner-screen');
 
     let qrScanner;
@@ -62,23 +54,20 @@
             return;
         }
 
-        if (!ADMIN_UIDS.includes(user.uid)) {
-            errorScreen.style.display = 'block';
-            return;
-        }
-
+        // Admin check removed - any authenticated user can access the scanner
         scannerScreen.style.display = 'block';
         initializeScanner();
     });
 
     function initializeScanner() {
         qrScanner = new Html5QrcodeScanner(
-            "reader", 
+            "reader",
             { fps: 15, qrbox: { width: 260, height: 260 } },
             false
         );
         qrScanner.render(onScanSuccess, onScanFailure);
     }
+
 
     function onScanSuccess(decodedText) {
         if (decodedText.startsWith("KEEPICS_SECURE_V1:")) {
