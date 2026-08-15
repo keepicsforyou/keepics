@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Google Material Symbols (Rounded) -->
-    
     <link rel="icon" type="image/png" href="assets/image/website/logo.png">
     <link rel="stylesheet" href="styles/styles.css">
     <title>KeePics.</title>
@@ -20,13 +18,14 @@
             <span class="bar"></span>
         </div>
         <ul class="nav-links" id="nav-menu">
-            <li><a href="features.html">Go back</a></li>
+            <li><a href="features.html">Go Back</a></li>
+            <li id="auth-status"><a href="login.html">Login</a></li>
         </ul>
     </nav>
 
     <div class="stacked-container">
         <div class="form-wrapper">
-            <!-- Progress Tracker -->
+
             <div class="progress-container">
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
@@ -34,8 +33,7 @@
             <form action="https://formspree.io/f/mvzjkyvz" method="POST" enctype="multipart/form-data" id="feedback-form">
               
                 <h2 class="isx-3" >Drop Us Some Feedback!</h2>
-                
-                <!-- STAGE 1: Quick Categories -->
+
                 <div class="form-step active" data-step="1">
                     <div class="form-group">
                         <label>Stage 1: What caught your attention today? (Select any)</label>
@@ -60,7 +58,6 @@
                     </div>
                 </div>
 
-                <!-- STAGE 2: Core Performance Indicators -->
                 <div class="form-step" data-step="2">
                     <label class="isx-5" >Stage 2: Rate our work!</label>
                     
@@ -87,7 +84,6 @@
                     </div>
                 </div>
 
-                <!-- STAGE 3: System Usability Assessment -->
                 <div class="form-step" data-step="3">
                     <label class="isx-5" >Stage 3: Website Check</label>
                     
@@ -103,7 +99,6 @@
                     </div>
                 </div>
 
-                <!-- STAGE 4: Qualitative Critiques -->
                 <div class="form-step" data-step="4">
                     <label class="isx-5" >Stage 4: Your thoughts</label>
                     
@@ -118,7 +113,6 @@
                     </div>
                 </div>
 
-                <!-- Dynamic Navigation Buttons -->
                 <div class="btn-controls">
                     <button type="button" class="prev-btn" id="prev-btn" style="display: none;">Back</button>
                     <button type="button" class="next-btn" id="next-btn">Next</button>
@@ -135,7 +129,6 @@
     </script>
 
     <script>
-        // Navbar functionality
         const hamburger = document.getElementById('hamburger-menu');
         const navMenu = document.getElementById('nav-menu');
 
@@ -144,7 +137,6 @@
             navMenu.classList.toggle('active');
         });
 
-        // --- STAGE NAVIGATION SYSTEM ---
         let currentStep = 1;
         const totalSteps = 4;
 

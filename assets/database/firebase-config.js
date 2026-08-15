@@ -118,7 +118,7 @@ function injectModalStyles() {
         }
         .logout-modal {
             padding: 30px; text-align: center; max-width: 350px; width: 90%;
-            background-image: linear-gradient(to bottom right, #FFFBD8, #FDD3EB, #DDD7E5);
+            background-image: linear-gradient(to bottom right, #fffef5, #fff7fb, #ffffff);
             box-shadow: #8f8f8f 3px 3px 3px; border-radius: 15px; border: 1px solid #7f8c8d;
         }
         .logout-modal h3 { font-family: 'Minecraft', sans-serif; color: #2c3e50; margin-bottom: 20px; font-size: 22px; }
@@ -127,8 +127,8 @@ function injectModalStyles() {
             padding: 10px 25px; border: none; border-radius: 5px; font-family: 'MC', sans-serif;
             font-weight: bold; cursor: pointer; transition: opacity 0.2s;
         }
-        .modal-btn.yes { background-color: #B73B49; color: white; }
-        .modal-btn.no { background-color: #2c3e50; color: white; }
+        .modal-btn.yes { background-color: #ffb0ff; color: white; }
+        .modal-btn.no { background-color: #d6d6d6; color: white; }
         .modal-btn:hover { opacity: 0.9; }
         .fb-timestamp { font-size: 13px; color: #657786; font-weight: normal; }
     `;
@@ -166,7 +166,7 @@ export function handleNavbarAuth(authStatusLiId) {
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('displayName');
             const isLoginPage = window.location.pathname.includes('login.html');
-            authStatusLi.innerHTML = `<a href="login.html" class="${isLoginPage ? 'active' : ''}">Log In</a>`;
+            authStatusLi.innerHTML = `<a href="login.html" class="${isLoginPage ? 'active' : ''}">Login</a>`;
         }
     });
 } 
@@ -353,8 +353,10 @@ function renderRatingsUI(allRatings, displayArea, currentUserId) {
     allRatings.forEach(item => {
         const ADMIN_UID = 'nf6DyVHXpbTMxbtpDS9YicgGIYu1';
         const DEV_UID = '4dyuS34hliSLb0Ew0wGytuSviTG2';
+        // Services.html admin UID for cross-page moderation
+        const SERVICES_ADMIN_UID = 'hCys7QbIUrbSdVwZm1eDGY3KBrP2';
         
-        const isAdmin = item.authorName === "KeePics." || item.authorId === ADMIN_UID;
+        const isAdmin = item.authorName === "KeePics." || item.authorId === ADMIN_UID || item.authorId === SERVICES_ADMIN_UID;
         const isDev = item.authorId === DEV_UID;
 
         // Inline SVG stars (no font/emoji dependency)
@@ -373,7 +375,7 @@ function renderRatingsUI(allRatings, displayArea, currentUserId) {
             badgeHTML = `<span class="admin-badge" style="background-color: #B73B49; color: white; ${baseBadgeStyle}">Admin</span>`;
         }
 
-        const canDeleteMain = currentUserId && (item.authorId === currentUserId || currentUserId === ADMIN_UID || currentUserId === DEV_UID);
+        const canDeleteMain = currentUserId && (item.authorId === currentUserId || currentUserId === ADMIN_UID || currentUserId === DEV_UID || currentUserId === SERVICES_ADMIN_UID);
         let optionsButtonHTML = "";
         if (canDeleteMain) {
             optionsButtonHTML = `
@@ -418,7 +420,7 @@ function renderRatingsUI(allRatings, displayArea, currentUserId) {
                         replyBadgeHTML = `<span style="background-color: #B73B49; color: white; font-size: 10px; padding: 1px 5px; border-radius: 4px; margin-left: 6px; font-weight: bold; display: inline-block;">Admin</span>`;
                     }
 
-                    const canDeleteReply = currentUserId && (replyItem.authorId === currentUserId || replyItem.authorId === ADMIN_UID || replyItem.authorId === DEV_UID);
+                    const canDeleteReply = currentUserId && (replyItem.authorId === currentUserId || replyItem.authorId === ADMIN_UID || replyItem.authorId === DEV_UID || currentUserId === SERVICES_ADMIN_UID);
                     const replyDeleteButtonHTML = canDeleteReply 
                         ? ` · <span style="color: #B73B49; cursor: pointer; font-size: 11px;" onclick="deleteThreadReply('${item.id}', '${replyId}')">Delete</span>`
                         : "";

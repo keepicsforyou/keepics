@@ -18,7 +18,8 @@
             <span class="bar"></span>
         </div>
         <ul class="nav-links" id="nav-menu">
-            <li><a href="features.html">Go back</a></li>
+            <li><a href="features.html">Go Back</a></li>
+            <li id="auth-status"><a href="login.html">Login</a></li>
         </ul>
     </nav>
 
@@ -103,7 +104,6 @@
     
     if(typeof handleNavbarAuth === 'function') handleNavbarAuth('auth-status');
 
-    // UI Wire-up
     const hamburger = document.getElementById('hamburger-menu');
     const navMenu = document.getElementById('nav-menu');
 
@@ -129,8 +129,7 @@
     const adminResetBtn = document.getElementById('adminResetBtn');
     const prizesChancesList = document.getElementById('prizesChancesList');
     const modalClaimContainer = document.getElementById('modalClaimContainer');
-    
-    // Banner and Preference DOM elements
+
     const claimNoticeBanner = document.getElementById('claimNoticeBanner');
     const closeBannerBtn = document.getElementById('closeBannerBtn');
     const showHintWrapper = document.getElementById('showHintWrapper');
@@ -138,7 +137,6 @@
 
     const MAX_TRIES = 5; 
 
-    // NOTICE PREFERENCE HANDLING (localStorage integration)
     function initializeNoticePreference() {
         const isDismissed = localStorage.getItem('dismissedClaimNotice') === 'true';
         if (isDismissed) {
@@ -164,7 +162,6 @@
 
     initializeNoticePreference();
     
-    // Stickers and Vouchers have been removed from the segments pool
     const segments = [
         { label: "150 Pts", weight: 25.30, color: "#fdd3eb", displayStr: " 150 Digital Points", isPoints: true, pointsValue: 150},
         { label: "200 Pts", weight: 21.30, color: "#f3fffd", displayStr: " 200 Digital Points", isPoints: true, pointsValue: 200},
@@ -184,7 +181,6 @@
 
     const spinAgainIndex = segments.findIndex(seg => seg.label === "Spin Again");
 
-    // Real-time listener for the Keychain inventory remaining in stock
     const wheelSettingsRef = ref(db, 'wheel_settings/keychain_left');
     onValue(wheelSettingsRef, (snapshot) => {
         const val = snapshot.val();
@@ -211,7 +207,6 @@
         });
     }
 
-    // Evaluates if the logged-in account has already obtained a Keychain
     function hasKeychain() {
         const historyNode = serverUserData.history || {};
         return Object.values(historyNode).some(item => item.displayStr && item.displayStr.includes("Keychain"));
@@ -469,7 +464,6 @@
                 break;
             }
         }
-        // Enforces only one keychain per user, and blocks the win if global database stock runs out
         if (segments[outcomeIndex].isKeychain && (hasKeychain() || keychainStock <= 0)) {
             return segments.findIndex(seg => seg.label === "Spin Again");
         }
@@ -508,7 +502,6 @@
             points: nextPointsBalance,
             lastResetPeriod: currentPeriod 
         }).then(() => {
-            // Decrement item counter if user hits the keychain
             if (selectedPrize.isKeychain) {
                 set(ref(db, 'wheel_settings/keychain_left'), Math.max(0, keychainStock - 1));
             }
@@ -528,7 +521,6 @@
                 spinBtn.disabled = true; 
                 spinBtn.innerText = "PROCESSING..."; 
                 
-                // Immediately push outcome log to server to capture key reference for claiming mechanics
                 const pushKey = pushSpinResultToDatabase(segments[activeOutcomeIndex]);
                 handleOutcome(activeOutcomeIndex, pushKey);
             }, 6000); 
@@ -557,7 +549,7 @@
 
     function handleOutcome(index, pushKey) {
         const selected = segments[index];
-        modalClaimContainer.innerHTML = ''; // Reset container state
+        modalClaimContainer.innerHTML = '';
         
         if (selected.isPhysicalOrVoucher) {
             modalPrizeText.innerText = selected.displayStr;
@@ -574,7 +566,6 @@
                     </div>`;
             }
 
-            // Appends a functional matching Claim Now button directly inside the pop-up modal panel
             const claimBtn = document.createElement('button');
             claimBtn.className = "claim-btn";
             claimBtn.style.cssText = "padding: 12px 35px; font-size: 1.05rem; border-radius: 50px; margin-top: 10px; width: 85%;";
@@ -601,7 +592,6 @@
         updateUI(); 
     }
 
-    // Initialize immediate renderings on start
     drawWheel();
     updatePrizesDisplay();
 

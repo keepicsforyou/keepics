@@ -18,7 +18,8 @@
             <span class="bar"></span>
         </div>
         <ul class="nav-links" id="nav-menu">
-            <li><a href="features.html">Go back</a></li>
+            <li><a href="features.html">Go Back</a></li>
+            <li id="auth-status"><a href="login.html">Login</a></li>
         </ul>
     </nav>
 
@@ -28,7 +29,7 @@
         </div>
 
         <div class="claim-notice-banner isx-73" id="claimNoticeBanner" >
-             Present your Membership QR code while claiming the product to claim the voucher.
+             This features is exclusively for Membership Card owners.
             <span class="isx-74" id="closeNoticeBtn" >&times;</span>
         </div>
 
@@ -79,7 +80,7 @@
 
             <div class="shop-item">
                 <div class="item-emoji"><img src="assets/image/shop_assets/MEMESTICKER.Png" alt="Meme Sticker"></div>
-                <div class="item-name">Meme Sticker</div>
+                <div class="item-name">Meme Sticker (2pc)</div>
                 <div class="item-cost">14,000 pts</div>
                 <button class="buy-btn" onclick="purchaseItem('meme_sticker', 14000, 'Meme Sticker', 'item')" id="btn-meme_sticker" disabled>Redeem</button>
             </div>
@@ -386,7 +387,7 @@
                     if (log.itemId === 'keychain_custom') {
                         actionMarkup = `<button class="claim-btn" onclick="window.claimReward('${log.id}')">Submit Details</button>`;
                     } else {
-                        actionMarkup = `<div style="font-size: 0.7rem; color: #ff8fa3; font-weight: bold; border: 1px solid #ffb6c1; padding: 4px 8px; border-radius: 12px; background: rgba(255, 182, 193, 0.1);">Admin Scan Required</div>`;
+                        actionMarkup = `<div style="font-size: 0.7rem; color: #ff8fa3; font-weight: bold; border: 1px solid #ffb6c1; padding: 4px 8px; border-radius: 12px; background: rgba(255, 182, 193, 0.1);">Present your Membership Card upon receiving the product</div>`;
                     }
                 }
             }

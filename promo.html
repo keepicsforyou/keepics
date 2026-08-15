@@ -32,12 +32,8 @@
         </div>
 
         <ul class="nav-links" id="nav-menu">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="order.html">Add to Cart</a></li>
-            <li><a href="features.html">Features</a></li>
-            <li id="auth-status"><a href="login.html">Log In</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="about.html">About</a></li>        
+            <li><a href="features.html">Go Back</a></li>
+            <li id="auth-status"><a href="login.html">Login</a></li>  
         </ul>
     </nav>
 
@@ -86,7 +82,6 @@
             activeUser = user;
         });
 
-        // Simplified native-feeling pop-up window generator
         function showAppPopup(title, text, icon = "ℹ", styleTheme = "theme-alert") {
             boxCard.className = `dramatic-box ${styleTheme}`;
             modalTitle.innerText = title;
@@ -96,11 +91,10 @@
         }
 
         claimBtn.addEventListener('click', async () => {
-            // REMOVED .toUpperCase() to preserve uppercase/lowercase exact casing matching database keys
             const typedCode = promoInput.value.trim();
 
             if (!activeUser) {
-                showAppPopup("Access Denied", "Please log in to your account first.", "", "theme-alert");
+                showAppPopup("Claim Denied", "Please log in to your account first.", "", "theme-alert");
                 return;
             }
 

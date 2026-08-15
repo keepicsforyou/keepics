@@ -16,14 +16,14 @@
     <meta name="theme-color" content="#ff8fa3">
     
     <link rel="stylesheet" href="styles/styles.css">
-    <title>KeePics.</title>
+    <title>KeePics - Home</title>
 
     
 </head>
 <body class="home-page">
 
     <nav class="navbar">
-        <div class="logo">KeePics.<span class="logo-dot"></span></div>
+        <div class="logo">KeePics.</div>
         
         <div class="hamburger" id="hamburger-menu">
             <span class="bar"></span>
@@ -33,9 +33,9 @@
 
         <ul class="nav-links" id="nav-menu">
             <li><a href="index.html" class="active">Home</a></li>
-            <li><a href="order.html">Add to Cart</a></li>
+            <li><a href="order.html">Order</a></li>
             <li><a href="features.html">Features</a></li>
-            <li id="auth-status"><a href="login.html">Log In</a></li>
+            <li id="auth-status"><a href="login.html">Login</a></li>
             <li><a href="services.html">Services</a></li>
             <li><a href="about.html">About</a></li>        
         </ul>
@@ -115,7 +115,6 @@
 
     <main class="home-main">
 
-        <!-- ===== HERO ===== -->
         <section class="hp-hero">
             <div class="hp-hero-inner">
                 <span class="hp-eyebrow hp-eyebrow-light">Customized Memory Keychains</span>
@@ -148,7 +147,6 @@
             <div class="hp-hero-blob hp-hero-blob-3"></div>
         </section>
 
-        <!-- ===== TRUST BAR ===== -->
         <div class="hp-trustbar">
             <span>Custom Keychains</span>
             <span>Photobooth Strips</span>
@@ -157,7 +155,6 @@
             <span>Student-Made</span>
         </div>
 
-        <!-- ===== STORY / ABOUT ===== -->
         <section class="hp-section hp-about" id="hp-story">
             <div class="hp-section-head">
                 <span class="hp-eyebrow">Our Story</span>
@@ -183,7 +180,6 @@
             </div>
         </section>
 
-        <!-- ===== PRODUCTS ===== -->
         <section class="hp-section hp-products" id="hp-products">
             <div class="hp-section-head">
                 <span class="hp-eyebrow">Our Products</span>
@@ -215,7 +211,6 @@
             <p class="hp-note">Use one (1) voucher per keychain or photobooth product. The ₱3, ₱4, ₱5, and ₱6 vouchers are strictly for Membership Card holders — keep your card handy as a souvenir, and with purpose.</p>
         </section>
 
-        <!-- ===== FEATURES / CUSTOMIZATION ===== -->
         <section class="hp-section hp-features" id="hp-features">
             <div class="hp-section-head">
                 <span class="hp-eyebrow">Fully Customized</span>
@@ -256,7 +251,6 @@
             </div>
         </section>
 
-        <!-- ===== ENGAGEMENT / REWARDS ===== -->
         <section class="hp-section hp-engage" id="hp-rewards">
             <div class="hp-engage-inner">
                 <div class="hp-engage-text">
@@ -290,7 +284,6 @@
             </div>
         </section>
 
-        <!-- ===== TEAM ===== -->
         <section class="hp-section hp-team" id="hp-team">
             <div class="hp-section-head">
                 <span class="hp-eyebrow">The Team Behind KeePics</span>
@@ -321,7 +314,6 @@
             </div>
         </section>
 
-        <!-- ===== CTA ===== -->
         <section class="hp-cta">
             <h2>Ready to Hold Your Story?</h2>
             <p>Preorder your customized KeePics keychain today. We're open daily from 5:00 AM to 9:00 PM.</p>
@@ -331,7 +323,6 @@
             </div>
         </section>
 
-        <!-- ===== FOOTER ===== -->
         <footer class="hp-footer">
             <div class="hp-footer-grid">
                 <div class="hp-footer-brand">
@@ -371,12 +362,10 @@
     </script>
 
     <script>
-        // --- 1. SERVICE WORKER & INTELLIGENT APP UPDATER ---
         const updateBanner = document.getElementById('update-banner');
         const appUpdateBtn = document.getElementById('app-update-btn');
         const updateCloseBtn = document.getElementById('update-close-btn');
         
-        // Cinematic references
         const cinematicScreen = document.getElementById('cinematic-update-screen');
         const dramaticBar = document.getElementById('dramatic-progress-bar');
         const dramaticText = document.getElementById('dramatic-progress-text');
@@ -385,15 +374,13 @@
         const cinematicIcon = document.getElementById('cinematic-icon');
 
         let assetsToUpdate = [];
-        let isManualCheck = false; // Tracks if update check was manual
+        let isManualCheck = false;
 
-        // Helper to check if the user is in the installed app
         const isRunningAsApp = () => {
             return ('standalone' in window.navigator && window.navigator.standalone) || 
                    window.matchMedia('(display-mode: standalone)').matches;
         };
 
-        // Helper to assert network status
         function assertNetworkOnline() {
             if (!navigator.onLine) {
                 if (appUpdateBtn) appUpdateBtn.innerText = "No internet connection";
@@ -402,7 +389,6 @@
             return true;
         }
 
-        // Close button for the update banner
         if (updateCloseBtn) {
             updateCloseBtn.addEventListener('click', () => {
                 updateBanner.style.display = 'none';
@@ -432,7 +418,6 @@
                     }
                     assetsToUpdate = data.changedAssets;
 
-                    // Show update banner ONLY if updates exist AND it was requested manually
                     if (assetsToUpdate.length > 0) {
                         if (isManualCheck) {
                             updateBanner.style.display = 'flex';
@@ -446,7 +431,6 @@
                             }
                         }
                     } else {
-                        // Same Cache Level reached
                         if (isManualCheck) {
                             const checkBtn = document.getElementById('pwa-check-update-btn');
                             if (checkBtn) {
@@ -463,11 +447,9 @@
                 else if (data.action === 'UPDATE_PROGRESS') {
                     if (!assertNetworkOnline()) return;
                     
-                    // Push live progress changes to the dramatic loader
                     dramaticBar.style.width = `${data.progress}%`;
                     dramaticText.innerText = `${data.progress}%`;
-                    
-                    // Adaptive descriptive strings for dynamic flair
+
                     if (data.progress > 80) {
                         cinematicDesc.innerText = "Polishing visual elements and applying custom layout wrappers...";
                     } else if (data.progress > 40) {
@@ -477,7 +459,6 @@
                 else if (data.action === 'UPDATE_COMPLETE') {
                     if (!assertNetworkOnline()) return;
                     
-                    // Final dramatic transition sequence
                     cinematicIcon.innerText = "";
                     cinematicTitle.innerText = "Configuration Absolute!";
                     cinematicDesc.innerText = "Re-aligning aesthetic matrix lines. Re-opening KeePics now...";
@@ -519,7 +500,6 @@
             }
         });
 
-        // --- 2. PWA INSTALLATION & MANUAL UPDATE ACTION ---
         let deferredPrompt;
         const pwaBanner = document.getElementById('pwa-banner');
         const pwaSettingsHint = document.getElementById('pwa-settings-hint');
@@ -529,13 +509,11 @@
         const pwaOptOutBtn = document.getElementById('pwa-optout-btn');
         const pwaBodyText = document.getElementById('pwa-body-text');
 
-        // Check if user is on iOS devices
         const isIos = () => {
           const userAgent = window.navigator.userAgent.toLowerCase();
           return /iphone|ipad|ipod/.test(userAgent);
         };
         
-        // Detect if already running as a standalone app
         const isInStandaloneMode = () => {
             return ('standalone' in window.navigator && window.navigator.standalone) || 
                    window.matchMedia('(display-mode: standalone)').matches;
@@ -543,9 +521,7 @@
 
         const hasOptedOut = localStorage.getItem('pwa_optout_preference') === 'true';
 
-        // Manage Initial Component Display Rules
         if (isInStandaloneMode()) {
-            // Already installed: Hide installation option text, show gear hint for updates
             pwaBodyText.innerText = "Manage your application settings or check for latest feature synchronization updates safely below.";
             pwaInstallBtn.style.display = "none";
             pwaSettingsHint.style.display = 'flex';
@@ -561,7 +537,6 @@
             }
         }
 
-        // Standard Chrome/Android prompt capturing
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             if (isInStandaloneMode()) return; 
@@ -576,9 +551,8 @@
             }
         });
 
-        // Manual Update Event Handler
+
         pwaCheckUpdateBtn.addEventListener('click', () => {
-            // Guard: Assert network connectivity
             if (!navigator.onLine) {
                 pwaCheckUpdateBtn.innerText = " Offline";
                 setTimeout(() => {
@@ -592,11 +566,9 @@
             pwaCheckUpdateBtn.innerText = "Checking...";
 
             if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                // Fetch new sw.js script mapping records from web server if available
                 navigator.serviceWorker.getRegistration().then(reg => {
                     if (reg) reg.update();
                 });
-                // Send cross-check configuration properties call
                 navigator.serviceWorker.controller.postMessage({ action: 'CHECK_UPDATE' });
             } else {
                 pwaCheckUpdateBtn.innerText = "Application is up to date!";

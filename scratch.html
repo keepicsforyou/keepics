@@ -17,7 +17,8 @@
             <span class="bar"></span>
         </div>
         <ul class="nav-links" id="nav-menu">
-            <li><a href="features.html">Go back</a></li>
+            <li><a href="features.html">Go Back</a></li>
+            <li id="auth-status"><a href="login.html">Login</a></li>
         </ul>
     </nav>
 
@@ -69,8 +70,6 @@
         let lastY = -1;
         let currentUser = null;
 
-        // Size the canvas backing store to the full rendered prize container
-        // so the scratch cover always fills exactly where the prize is shown.
         function resizeCanvas() {
             const wrapper = document.getElementById('cardContainer');
             if (!wrapper) return;
@@ -86,7 +85,6 @@
         let selectedPrize = null;
         let todayScratchCount = 0;
 
-        // Configured strictly for 100, 150, 200, 250, and rare 500 weights
         const scratchPrizes = [
             { type: "points", value: 100, chance: 35.0, emoji: "", displayStr: "100 POINTS" },
             { type: "points", value: 150, chance: 30.0, emoji: "", displayStr: "150 POINTS" },
@@ -259,11 +257,11 @@
             ctx.beginPath();
             
             if (lastX === -1 || lastY === -1) {
-                // First contact: stamp a circle so there is no delay before effect starts
+
                 ctx.arc(canvasX, canvasY, 18, 0, Math.PI * 2);
                 ctx.fill();
             } else {
-                // Connect consecutive points so fast swipes erase a continuous trail
+
                 ctx.moveTo(lastX, lastY);
                 ctx.lineTo(canvasX, canvasY);
                 ctx.stroke();
@@ -284,12 +282,10 @@
             
             const percentCleared = (cleared / (pixels.length / 4)) * 100;
 
-            // Session anti-cheat lock triggers upon breaking > 1% cover
             if (percentCleared > 1 && percentCleared <= 45) {
                 savePendingScratchToDatabase();
             }
 
-            // Reveal fully when past 45% threshold
             if (percentCleared > 45) {
                 rewardGranted = true;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);

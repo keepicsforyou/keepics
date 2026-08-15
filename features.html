@@ -8,10 +8,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
     <link rel="icon" type="image/png" href="assets/image/website/logo.png">
     <link rel="stylesheet" href="styles/styles.css">
-    <!-- Google Material Symbols (Rounded variant for a clean, friendly look) -->
-    
-    
-    <title>KeePics.</title>
+    <title>KeePics - Features</title>
     
     
     
@@ -52,16 +49,15 @@
 
         <ul class="nav-links" id="nav-menu">
             <li><a href="index.html">Home</a></li>
-            <li><a href="order.html">Add to Cart</a></li>
+            <li><a href="order.html">Order</a></li>
             <li><a href="features.html" class="active">Features</a></li>
-            <li id="auth-status"><a href="login.html">Log In</a></li>
+            <li id="auth-status"><a href="login.html">Login</a></li>
             <li><a href="services.html">Services</a></li>
             <li><a href="about.html">About</a></li>        
         </ul>
     </nav>
 
     <div class="order-container">
-        <!-- Category 1: Games / Prizes -->
         <div class="page-header"><h1>Games / Prizes</h1></div>
         <div class="liquid-glass-wrapper">
             <section class="arcade-container">
@@ -107,7 +103,6 @@
             </section>
         </div>
 
-        <!-- Category 2: Community Layout Segment -->
         <div class="page-header"><h1>Community</h1></div>
         <div class="liquid-glass-wrapper">
             <section class="arcade-container">
@@ -154,7 +149,21 @@
                 </a>
             </section>
         </div>
-                        <a href="promo.html" id="link-promo" class="arcade-link" onclick="markAsRead(this)">
+            <div class="page-header"><h1>More Features</h1></div>
+                <a href="photobooth.html" id="link-photobooth" class="arcade-link" onclick="markAsRead(this)">
+                    <div class="notification-dot" id="dot-promo"></div>
+                    <div class="arcade-card">
+                        <div class="card-icon-container">
+                            <svg class="isx-2" viewBox="0 0 24 24" width="40px" height="40px" fill="currentColor"  aria-hidden="true"><path d="M22 10V6c0-1.11-.9-2-2-2H4c-1.1 0-1.99.89-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 7.5h-2v-2h2v2zm0-4.5h-2v-2h2v2zm0-4.5h-2v-2h2v2z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>Photobooth</h3>
+                            <p>Take a picture and make memories.</p>
+                        </div>
+                        <div class="card-arrow"><svg viewBox="0 0 24 24" width="20px" height="20px" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></div>
+                    </div>
+                </a>
+                <a href="promo.html" id="link-promo" class="arcade-link" onclick="markAsRead(this)">
                     <div class="notification-dot" id="dot-promo"></div>
                     <div class="arcade-card">
                         <div class="card-icon-container">
@@ -169,12 +178,10 @@
                 </a>
     </div>
 
-    <!-- Execute state detection immediately as elements finish parsing -->
     <script>
         window.checkNotificationStatesFast();
     </script>
 
-    <!-- Firebase Configuration Imports -->
     <script type="module">
         import { handleNavbarAuth, auth, db } from './assets/database/firebase-config.js';
         import { ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -204,7 +211,6 @@
         });
     </script>
 
-    <!-- Standard Client Side Navigation Interactions Script -->
     <script>
         const hamburger = document.getElementById('hamburger-menu');
         const navMenu = document.getElementById('nav-menu');

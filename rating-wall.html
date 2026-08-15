@@ -7,30 +7,68 @@
     <link rel="icon" type="image/png" href="assets/image/website/logo.png">
     <link rel="stylesheet" href="styles/styles.css">
     <title>KeePics - Reviews Wall</title>
-    
+    <style>
+        .review-image-upload {
+            margin: 12px 0;
+        }
+        .review-image-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        .review-image-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+        }
+        .review-image-label svg {
+            flex-shrink: 0;
+        }
+        .review-image-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px dashed #dee2e6;
+        }
+        .review-image-preview img {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .remove-image-btn:hover {
+            background: #9a2d3a !important;
+        }
+    </style>
 </head>
 <body class="rating-wall-page">
 
-    <div id="page-wrapper" class="main-content-wrapper">
-        <nav class="navbar">
-            <div class="logo">KeePics.</div>
-            
-            <div class="hamburger" id="hamburger-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
+    <nav class="navbar">
+        <div class="logo">KeePics.</div>
+        
+        <div class="hamburger" id="hamburger-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
 
-            <ul class="nav-links" id="nav-menu">
-            <li><a href="features.html">Go back</a></li>
-            </ul>
-        </nav>
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="features.html">Go Back</a></li>
+            <li id="auth-status"><a href="login.html">Login</a></li>  
+        </ul>
+    </nav>
+
 
         <div class="wall-container">
             <section class="action-card">
                 <h2>Community Feedback</h2>
                 <p>Loved your custom keychain? Let us know!</p>
-                <p>Hi there! This is a message from the developer of this website, I don't know how can I implement photo uploading feature here on the reviews, I even forgot how I manage to implement image upload on chat community. Please upload your reviews (If you wanted pictures, go to community chat) and rate it there for everyone to see, thank you! - Admin Miel.</p>
                 <button class="write-review-btn" id="open-review-modal"><svg viewBox="0 0 24 24" width="18px" height="18px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg> Post a Review</button>
             </section>
 
@@ -54,6 +92,15 @@
                 <span data-value="3"><svg viewBox="0 0 24 24" width="28px" height="28px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
                 <span data-value="4"><svg viewBox="0 0 24 24" width="28px" height="28px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
                 <span data-value="5"><svg viewBox="0 0 24 24" width="28px" height="28px" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+            </div>
+
+            <div class="review-image-upload">
+                <label for="review-image-input" class="review-image-label" id="review-image-label">
+                    <svg viewBox="0 0 24 24" width="18px" height="18px" fill="currentColor" aria-hidden="true"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                    Attach Photo
+                </label>
+                <input type="file" id="review-image-input" accept="image/*" hidden>
+                <div id="review-image-preview" class="review-image-preview"></div>
             </div>
 
             <div class="fb-comment-box">
@@ -132,6 +179,52 @@
             });
         }
 
+        // Image upload preview handling
+        const reviewImageInput = document.getElementById('review-image-input');
+        const reviewImageLabel = document.getElementById('review-image-label');
+        const reviewImagePreview = document.getElementById('review-image-preview');
+
+        reviewImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validate file size (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("Image file is too large! Please choose an image smaller than 2MB.");
+                    this.value = "";
+                    return;
+                }
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert("Please select a valid image file.");
+                    this.value = "";
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    reviewImagePreview.innerHTML = `
+                        <img src="${event.target.result}" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+                        <button type="button" class="remove-image-btn" onclick="removeReviewImage()" style="margin-top: 8px; padding: 4px 12px; background: #B73B49; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button>
+                    `;
+                    reviewImageLabel.innerHTML = `
+                        <svg viewBox="0 0 24 24" width="18px" height="18px" fill="currentColor" aria-hidden="true"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                        Change Photo
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        window.removeReviewImage = function() {
+            reviewImageInput.value = "";
+            reviewImagePreview.innerHTML = "";
+            reviewImageLabel.innerHTML = `
+                <svg viewBox="0 0 24 24" width="18px" height="18px" fill="currentColor" aria-hidden="true"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                Attach Photo
+            `;
+        };
+
         document.getElementById('submit-review-btn').addEventListener('click', async () => {
             if (currentRating === 0) {
                 alert('Please select a star rating before submitting!');
@@ -146,8 +239,10 @@
 
             try {
                 if (typeof window.submitComment === 'function') {
-                    await window.submitComment('main-rating-field');
+                    await window.submitComment('main-rating-field', 'review-image-input');
                     closeModalWindow();
+                    // Reset image preview after successful submit
+                    window.removeReviewImage();
                 } else {
                     alert("Database engine down. Please try again later.");
                 }

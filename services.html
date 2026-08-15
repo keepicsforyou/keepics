@@ -21,9 +21,9 @@
 
         <ul class="nav-links" id="nav-menu">
             <li><a href="index.html">Home</a></li>
-            <li><a href="order.html">Add to Cart</a></li>
+            <li><a href="order.html">Order</a></li>
             <li><a href="features.html">Features</a></li>
-            <li id="auth-status"><a href="login.html">Log In</a></li>
+            <li id="auth-status"><a href="login.html">Login</a></li>
             <li><a href="services.html" class="active">Services</a></li>
             <li><a href="about.html">About</a></li>        
         </ul>
@@ -33,16 +33,16 @@
         
         <div class="page-header">
             <h1>Announcement / Offers</h1>
-            <p>Catch up on our latest video logs, active point sales, spin promos, and official announcements.</p>
+            <p>Stay updated to latest video, announcement and promos.</p>
         </div>
 
         <div class="admin-controls-panel" id="admin-panel">
-            <p> Staff Dashboard Activated. Control point promos, post video features, or publish updates instantly.</p>
-            <button class="admin-btn-primary" id="open-modal-btn">Upload (For admins)</button>
+            <p>Want to add announcement or promos?</p>
+            <button class="admin-btn-primary" id="open-modal-btn">Add Announcement</button>
         </div>
 
         <div class="exclusive-showcase" id="showcase-target">
-            <p class="isx-71" >Loading active showcases...</p>
+            <p class="isx-71" >Loading announcements...</p>
         </div>
 
         <div class="features-section">
@@ -84,21 +84,21 @@
 
             <div class="form-group">
                 <label id="label-title" for="deal-title">Offer or Header Title</label>
-                <input type="text" id="deal-title" placeholder="e.g., Flash Points Discount!">
+                <input type="text" id="deal-title">
             </div>
 
             <div class="form-group">
                 <label id="label-desc" for="deal-desc">Description Content Text</label>
-                <textarea id="deal-desc" placeholder="Provide relevant details or message updates details here..."></textarea>
+                <textarea id="deal-desc"></textarea>
             </div>
 
             <div id="promo-fields-group">
                 <div class="form-group">
-                    <label for="deal-count">Badge Label / Items Metric Count</label>
-                    <input type="text" id="deal-count" placeholder="e.g., 15 Items Left or NEW">
+                    <label for="deal-count">Items left</label>
+                    <input type="text" id="deal-count">
                 </div>
                 <div class="form-group">
-                    <label for="deal-action-type">Button CTA Action Configuration</label>
+                    <label for="deal-action-type">Redirecting Function</label>
                     <select id="deal-action-type">
                         <option value="spin">Redirect to Spin Wheel (game.html)</option>
                         <option value="order">Link to Shopping Cart Order (order.html)</option>
@@ -106,25 +106,25 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="deal-price-tag">Footer Pricing Label Subtext</label>
-                    <input type="text" id="deal-price-tag" placeholder="e.g., Exclusive, 50 Pts, $4.99">
+                    <label for="deal-price-tag">Pricing</label>
+                    <input type="text" id="deal-price-tag">
                 </div>
             </div>
 
             <div id="youtube-fields-group" style="display: none;">
                 <div class="form-group">
-                    <label for="deal-youtube-id">YouTube iframe snippet, full URL, or 11-char ID</label>
-                    <input type="text" id="deal-youtube-id" placeholder="Paste full <iframe> snippet or watch link here...">
+                    <label for="deal-youtube-id">Youtube link</label>
+                    <input type="text" id="deal-youtube-id">
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="deal-accent-color">Custom Layout Accent Border Color Theme</label>
+                <label for="deal-accent-color">Top border</label>
                 <input type="color" id="deal-accent-color" value="#3b82f6">
             </div>
 
             <div class="form-group" id="image-upload-wrapper">
-                <label for="deal-file">Upload Banner / Graphic Thumbnail Image Asset</label>
+                <label for="deal-file">Banner</label>
                 <input type="file" id="deal-file" accept="image/*">
                 <div class="isx-72" id="file-upload-status" ></div>
             </div>
@@ -143,8 +143,8 @@
 
         handleNavbarAuth('auth-status');
 
-        const ADMIN_UID = 'nf6DyVHXpbTMxbtpDS9YicgGIYu1';
-        const DEV_UID = '4dyuS34hliSLb0Ew0wGytuSviTG2';
+        const ADMIN_UID = 'hCys7QbIUrbSdVwZm1eDGY3KBrP2';
+        const DEV_UID = 'hCys7QbIUrbSdVwZm1eDGY3KBrP2';
 
         const adminPanel = document.getElementById('admin-panel');
         const showcaseTarget = document.getElementById('showcase-target');
