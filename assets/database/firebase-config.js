@@ -12,7 +12,7 @@ import {
     sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { 
-    getDatabase, ref, push, onValue, remove, runTransaction, update 
+    getDatabase, ref, push, onValue, remove, runTransaction, update, get
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { 
     getStorage, ref as storageRef, uploadBytes, getDownloadURL 
@@ -120,15 +120,18 @@ function injectModalStyles() {
             padding: 30px; text-align: center; max-width: 350px; width: 90%;
             background-image: linear-gradient(to bottom right, #fffef5, #fff7fb, #ffffff);
             box-shadow: #8f8f8f 3px 3px 3px; border-radius: 15px; border: 1px solid #7f8c8d;
+            box-sizing: border-box;
         }
         .logout-modal h3 { font-family: 'Minecraft', sans-serif; color: #2c3e50; margin-bottom: 20px; font-size: 22px; }
-        .modal-btns { display: flex; gap: 15px; justify-content: center; }
+        .modal-btns-vertical { display: flex; flex-direction: column; gap: 10px; width: 100%; box-sizing: border-box; }
+        .modal-btns-horizontal { display: flex; gap: 10px; justify-content: center; width: 100%; box-sizing: border-box; }
         .modal-btn {
-            padding: 10px 25px; border: none; border-radius: 5px; font-family: 'MC', sans-serif;
-            font-weight: bold; cursor: pointer; transition: opacity 0.2s;
+            padding: 10px 15px; border: none; border-radius: 5px; font-family: 'MC', sans-serif;
+            font-weight: bold; cursor: pointer; transition: opacity 0.2s; box-sizing: border-box;
         }
-        .modal-btn.yes { background-color: #ffb0ff; color: white; }
-        .modal-btn.no { background-color: #d6d6d6; color: white; }
+        .modal-btn.member { width: 100%; background-color: #ffdb7e; color: #14171a; }
+        .modal-btn.yes { flex: 1; background-color: #ffb0ff; color: white; }
+        .modal-btn.no { flex: 1; background-color: #d6d6d6; color: white; }
         .modal-btn:hover { opacity: 0.9; }
         .fb-timestamp { font-size: 13px; color: #657786; font-weight: normal; }
     `;
@@ -171,15 +174,39 @@ export function handleNavbarAuth(authStatusLiId) {
     });
 } 
 
-function showLogoutModal(displayName) {
+async function showLogoutModal(displayName) {
+    const currentUser = auth.currentUser;
+    let memberData = null;
+
+    if (currentUser) {
+        try {
+            const memberSnap = await get(ref(db, `memberships/${currentUser.uid}`));
+            if (memberSnap.exists()) {
+                memberData = memberSnap.val();
+            }
+        } catch (err) {
+            console.error("Error fetching member status:", err);
+        }
+    }
+
+    let memberBtnText = "Account Status";
+    if (memberData?.isMember === true) {
+        memberBtnText = "KeePics Member";
+    } else if (memberData?.status === "pending") {
+        memberBtnText = "Verifying Account...";
+    }
+
     const overlay = document.createElement('div');
     overlay.className = 'logout-modal-overlay';
     overlay.innerHTML = `
         <div class="logout-modal">
             <h3>Sign out, ${displayName}</h3>
-            <div class="modal-btns">
-                <button class="modal-btn yes" id="confirm-logout-yes">Yes</button>
-                <button class="modal-btn no" id="confirm-logout-no">No</button>
+            <div class="modal-btns-vertical">
+                <button class="modal-btn member" id="confirm-logout-member">${memberBtnText}</button>
+                <div class="modal-btns-horizontal">
+                    <button class="modal-btn yes" id="confirm-logout-yes">Yes</button>
+                    <button class="modal-btn no" id="confirm-logout-no">No</button>
+                </div>
             </div>
         </div>
     `;
@@ -190,6 +217,16 @@ function showLogoutModal(displayName) {
             overlay.remove();
             window.location.href = "index.html";
         });
+    });
+
+    document.getElementById('confirm-logout-member').addEventListener('click', async () => {
+        overlay.remove();
+        if (typeof window.openMembershipModal !== 'function') {
+            await import('./membership.js');
+        }
+        if (typeof window.openMembershipModal === 'function' && currentUser) {
+            window.openMembershipModal(currentUser, memberData);
+        }
     });
 
     document.getElementById('confirm-logout-no').addEventListener('click', () => {
@@ -353,13 +390,11 @@ function renderRatingsUI(allRatings, displayArea, currentUserId) {
     allRatings.forEach(item => {
         const ADMIN_UID = 'nf6DyVHXpbTMxbtpDS9YicgGIYu1';
         const DEV_UID = '4dyuS34hliSLb0Ew0wGytuSviTG2';
-        // Services.html admin UID for cross-page moderation
         const SERVICES_ADMIN_UID = 'hCys7QbIUrbSdVwZm1eDGY3KBrP2';
         
         const isAdmin = item.authorName === "KeePics." || item.authorId === ADMIN_UID || item.authorId === SERVICES_ADMIN_UID;
         const isDev = item.authorId === DEV_UID;
 
-        // Inline SVG stars (no font/emoji dependency)
         const starPath = "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
         const starSvg = (filled) => `<svg class="review-star" viewBox="0 0 24 24" style="width:16px;height:16px;display:inline-block;vertical-align:middle;" aria-hidden="true"><path fill="${filled ? '#f1c40f' : '#d5d5d5'}" d="${starPath}"/></svg>`;
         let starsHTML = "";
@@ -386,18 +421,6 @@ function renderRatingsUI(allRatings, displayArea, currentUserId) {
                     </div>
                 </div>
             `;
-        }
-
-        const cloudLikesObj = item.likes || {};
-        const likedUsersArray = Object.values(cloudLikesObj);
-        const totalLikes = likedUsersArray.length;
-
-        let tooltipHTML = "";
-        if (totalLikes > 0) {
-            const listNames = totalLikes <= 3 
-                ? likedUsersArray.join(", ") 
-                : `${likedUsersArray.slice(0, 3).join(", ")}, and ${totalLikes - 3} more.`;
-            tooltipHTML = `<div class="like-tooltip">Liked by: ${listNames}</div>`;
         }
 
         let existingRepliesHTML = "";

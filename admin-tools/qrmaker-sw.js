@@ -2,11 +2,9 @@ const CACHE_NAME = 'qrmaker-admin-pwa-v1';
 const ASSETS = [
   'qrmaker.html',
   'scanner.html',
-  'vouchercheck.html',
-  '/styles/contents/js/firebase-config.js'
+  'vouchercheck.html',  
 ];
 
-// Install Service Worker
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -15,7 +13,6 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// Activate & Clean old caches
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
@@ -30,7 +27,6 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Network First fallback to Cache
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request).catch(() => {

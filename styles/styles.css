@@ -42,6 +42,9 @@
     --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
+.hidden{
+    display: none;
+}
 @font-face {
     font-family: 'Minecraft';
     src: url('fontstyles/Minecraft.ttf') format('truetype');
@@ -70,12 +73,9 @@ body {
     font-family: var(--font-body);
     color: var(--ink);
     background-color: #fff5f7;
-    background-image: url('../assets/bg1.jpg');
     background-size: 400px;
-    background-repeat: repeat;
     background-attachment: fixed;
     min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
 }
 
 /* Home — clean porcelain (the homepage has its own professional redesign later) */

@@ -6,7 +6,8 @@
     <link rel="icon" type="image/png" href="../assets/image/website/logo.png">
     <link rel="manifest" href="qrmaker.webmanifest">
     <meta name="theme-color" content="#ff8fa3">
-    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="stylesheet" href="../styles/styles.css"
+    <link rel="stylesheet" href="../styles/optimizations.css">>
     <title>KeePics - QR Generator</title>
     
 </head>
@@ -79,12 +80,10 @@
             return;
         }
 
-        // All authenticated users can access the QR generator
         workspace.style.display = 'flex';
         loadUserRegistry();
     });
 
-    // Realtime database listener engine synchronizing data records locally
     function loadUserRegistry() {
         const userListEl = document.getElementById('user-list');
         const usersRef = ref(db, 'users'); 
@@ -114,13 +113,11 @@
                 userListEl.appendChild(li);
             });
 
-            // Clipboard inject tracking events mapping directly onto manual field input systems
             document.querySelectorAll('.copy-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const uid = e.target.getAttribute('data-uid');
                     
                     navigator.clipboard.writeText(uid).then(() => {
-                        // Drop value inside our manual target generator container field
                         document.getElementById('input-uid').value = uid;
                         
                         const originalText = e.target.innerText;
@@ -160,7 +157,6 @@
         
         const securePayload = `KEEPICS_SECURE_V1:${btoa(uid)}`;
 
-        // Render QR
         qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(securePayload)}`;
         
         qrImage.onload = () => {
@@ -190,7 +186,6 @@
             });
     });
 
-    // Register QR Maker Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('qrmaker-sw.js', { scope: './' })

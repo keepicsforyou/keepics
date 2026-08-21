@@ -6,7 +6,6 @@
     <link rel="icon" type="image/png" href="assets/image/website/logo.png">
     <link rel="stylesheet" href="styles/styles.css">
     <title>KeePics - Authentication</title>
-    
 </head>
 <body class="login-page">
     <nav class="navbar">
@@ -93,7 +92,7 @@
             </form>
         </div>
     </section>
-
+    
     <script>
         const hamburger = document.getElementById('hamburger-menu');
         const navMenu = document.getElementById('nav-menu');
@@ -118,6 +117,14 @@
         } from './assets/database/firebase-config.js';
         
         import { ref, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        // Redirect immediately if already logged in to prevent looping
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                redirectUser();
+            }
+        });
 
         handleNavbarAuth('auth-status');
 
@@ -145,7 +152,6 @@
         let currentMode = 'login';
 
         const displayStatus = (err, successMsg = "") => {
-            // Reset blocks
             errorText.textContent = "";
             errorBox.style.display = "none";
             successText.textContent = "";
@@ -187,7 +193,6 @@
             }
         };
 
-        // Helper function to update the user record node in Realtime Database
         function saveUserToRegistry(user, customName = null) {
             const userRef = ref(db, `users/${user.uid}`);
             const updates = {
@@ -275,12 +280,22 @@
             const password = passwordInput.value;
             displayStatus(null);
 
+            // Disable button to prevent multi-clicks
+            mainSubmitBtn.disabled = true;
+            const originalBtnText = mainSubmitBtn.textContent;
+            mainSubmitBtn.textContent = "Processing...";
+
             if (currentMode === 'login') {
                 signInWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => { 
-                        return saveUserToRegistry(userCredential.user).then(() => redirectUser());
+                        saveUserToRegistry(userCredential.user); // Fire and forget
+                        redirectUser();
                     })
-                    .catch((err) => { displayStatus(err); });
+                    .catch((err) => { 
+                        displayStatus(err); 
+                        mainSubmitBtn.disabled = false;
+                        mainSubmitBtn.textContent = originalBtnText;
+                    });
             } 
             else if (currentMode === 'signup') {
                 const fullName = `${firstNameInput.value.trim()} ${lastNameInput.value.trim()}`;
@@ -291,34 +306,57 @@
                             .then(() => userCredential.user);
                     })
                     .then((user) => {
-                        return saveUserToRegistry(user, fullName).then(() => sendEmailVerification(user));
+                        sendEmailVerification(user); // Fire and forget
+                        return saveUserToRegistry(user, fullName);
                     })
                     .then(() => { 
                         localStorage.setItem('isLoggedIn', 'true');
                         localStorage.setItem('displayName', fullName);
                         displayStatus(null, "Account created! A secure verification link has been delivered to your email address.");
                         setTimeout(() => { redirectUser(); }, 4000);
+                        // No need to reset button state since we redirect away
                     })
-                    .catch((err) => { displayStatus(err); });
+                    .catch((err) => { 
+                        displayStatus(err); 
+                        mainSubmitBtn.disabled = false;
+                        mainSubmitBtn.textContent = originalBtnText;
+                    });
             } 
             else if (currentMode === 'forgot') {
                 sendPasswordResetEmail(auth, email)
                     .then(() => {
                         displayStatus(null, "Password reset link transmitted successfully. Check your email inbox or spam folder.");
+                        mainSubmitBtn.disabled = false;
+                        mainSubmitBtn.textContent = originalBtnText;
                     })
-                    .catch((err) => { displayStatus(err); });
+                    .catch((err) => { 
+                        displayStatus(err); 
+                        mainSubmitBtn.disabled = false;
+                        mainSubmitBtn.textContent = originalBtnText;
+                    });
             }
         });
 
         googleAuthBtn.addEventListener('click', () => {
             displayStatus(null);
+            
+            // Handle Loading state for Google Button
+            const originalGoogleHtml = googleAuthBtn.innerHTML;
+            googleAuthBtn.disabled = true;
+            googleAuthBtn.innerHTML = "Loading...";
+            
             signInWithPopup(auth, googleProvider)
                 .then((result) => {
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('displayName', result.user.displayName);
-                    return saveUserToRegistry(result.user).then(() => redirectUser());
+                    saveUserToRegistry(result.user); // Fire and forget
+                    redirectUser();
                 })
-                .catch((err) => { displayStatus(err); });
+                .catch((err) => { 
+                    displayStatus(err); 
+                    googleAuthBtn.disabled = false;
+                    googleAuthBtn.innerHTML = originalGoogleHtml;
+                });
         });
     </script>
 </body>
