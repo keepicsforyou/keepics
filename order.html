@@ -502,6 +502,119 @@
             flex: none;
         }
 
+        /* --- CGCian Delivery Option --- */
+        .delivery-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .delivery-card {
+            cursor: pointer;
+            display: block;
+            user-select: none;
+        }
+
+        .delivery-card input[type="radio"] {
+            display: none;
+        }
+
+        .delivery-card .card-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px 16px;
+            transition: all 0.2s ease;
+        }
+
+        .delivery-card:hover .card-content {
+            border-color: #ffb6c1;
+        }
+
+        .delivery-card input[type="radio"]:checked + .card-content {
+            background: linear-gradient(135deg, #fff9fb, #ffe4e6);
+            border-color: #ff8fa3;
+            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.2);
+        }
+
+        .delivery-card .delivery-info h3 {
+            font-size: 0.95rem;
+            color: var(--navy);
+            margin: 0 0 3px 0;
+        }
+
+        .delivery-card .delivery-info p {
+            font-size: 0.76rem;
+            color: #64748b;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .delivery-card .delivery-icon {
+            font-size: 1.5rem;
+            margin-left: 12px;
+            flex: none;
+        }
+
+        .delivery-subfields {
+            display: none;
+            margin-top: 12px;
+            padding: 16px;
+            background: #fff9fb;
+            border: 1.5px dashed #ffb6c1;
+            border-radius: 14px;
+        }
+
+        .delivery-subfields.show {
+            display: block;
+            animation: fadeIn 0.35s ease forwards;
+        }
+
+        .delivery-subfields .form-label {
+            margin-bottom: 7px;
+        }
+
+        .delivery-subfields small {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .knowsome-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+            line-height: 1.45;
+        }
+
+        .knowsome-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 1px;
+            accent-color: #ff8fa3;
+            cursor: pointer;
+            flex: none;
+        }
+
+        .knowsomeone-name-field {
+            display: none;
+            margin-top: 14px;
+        }
+
+        .knowsomeone-name-field.show {
+            display: block;
+            animation: fadeIn 0.35s ease forwards;
+        }
+
         /* --- Status Pop-up Modal --- */
         .status-modal-overlay {
             display: none;
@@ -617,6 +730,17 @@
             }
             .product-card .product-price {
                 margin-left: 0;
+            }
+
+            /* Delivery option adjustments */
+            .delivery-card .card-content {
+                padding: 12px 14px;
+            }
+            .delivery-card .delivery-icon {
+                font-size: 1.3rem;
+            }
+            .delivery-subfields {
+                padding: 13px;
             }
 
             .total-row {
@@ -831,7 +955,6 @@
             </div>
 
             <form id="order-form" class="order-form" autocomplete="off" novalidate style="display:none;">
-
                 <div class="form-group">
                     <label class="form-label" for="name">Customer Name (Please use your full name)</label>
                     <input type="text" id="name" name="name" required>
@@ -841,6 +964,57 @@
                     <label class="form-label" for="email">Email Address</label>
                     <input type="email" id="email" name="email" required readonly>
                 </div>
+
+                <!-- CGCian Delivery Option -->
+                <div class="form-group">
+                    <label class="form-label">Delivery Option</label>
+
+                    <div class="delivery-options">
+                        <!-- CGCian Card -->
+                        <label class="delivery-card">
+                            <input type="radio" id="cgcian-yes" name="cgcian" value="cgcian" required>
+                            <div class="card-content">
+                                <div class="delivery-info">
+                                    <h3>I am a CGCian</h3>
+                                    <p>Your order will be delivered straight to your building & room number.</p>
+                                </div>
+                                <div class="delivery-icon">🏫</div>
+                            </div>
+                        </label>
+
+                    <div id="cgcian-fields" class="delivery-subfields">
+                        <label class="form-label" for="classroom">Building & Room Number <span style="color:#b73b49;">*</span></label>
+                        <input type="text" id="classroom" name="classroom" placeholder="e.g. BE Building, Room 204">
+                        <small>This is where we will deliver your item.</small>
+                    </div>
+
+                        <!-- Not CGCian Card -->
+                        <label class="delivery-card">
+                            <input type="radio" id="cgcian-no" name="cgcian" value="not_cgcian">
+                            <div class="card-content">
+                                <div class="delivery-info">
+                                    <h3>Not a CGCian</h3>
+                                    <p>Meet-up delivery, optionally through someone you know from the org.</p>
+                                </div>
+                                <div class="delivery-icon">👤</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Fields shown when "Not a CGCian" is selected -->
+                    <div id="regular-fields" class="delivery-subfields">
+                        <label class="knowsome-row">
+                            <input type="checkbox" id="knowsomeone-check" name="know_someone">
+                            <span>I know someone from this organization who could deliver my item.</span>
+                        </label>
+                        <div id="knowsomeone-name-field" class="knowsomeone-name-field">
+                            <label class="form-label" for="knowsomeone-name">Full Name of the Person You Know</label>
+                            <input type="text" id="knowsomeone-name" name="know_someone_name" placeholder="Enter full name">
+                            <small>We will coordinate with them regarding your delivery.</small>
+                        </div>
+                    </div>
+                </div>
+
 
                 <!-- Product Selection Area -->
                 <div class="form-group">
@@ -1181,6 +1355,16 @@
         const submitBtn = document.getElementById('submit-btn');
         const submitStatus = document.getElementById('submit-status');
 
+        // CGCian Delivery Option Elements
+        const cgcianYesRadio = document.getElementById('cgcian-yes');
+        const cgcianNoRadio = document.getElementById('cgcian-no');
+        const cgcianFields = document.getElementById('cgcian-fields');
+        const regularFields = document.getElementById('regular-fields');
+        const classroomInput = document.getElementById('classroom');
+        const knowsomeoneCheck = document.getElementById('knowsomeone-check');
+        const knowsomeoneNameField = document.getElementById('knowsomeone-name-field');
+        const knowsomeoneNameInput = document.getElementById('knowsomeone-name');
+
         // Status Pop-up Modal Elements
         const statusModalOverlay = document.getElementById('status-modal-overlay');
         const statusModal = document.getElementById('status-modal');
@@ -1255,6 +1439,54 @@
         }
 
         quantityInput.addEventListener('input', updateTotal);
+
+        // --- CGCian Delivery Option Logic ---
+        function updateDeliveryFields() {
+            const isCgcian = cgcianYesRadio.checked;
+
+            cgcianFields.classList.toggle('show', isCgcian);
+            regularFields.classList.toggle('show', cgcianNoRadio.checked);
+
+            classroomInput.required = isCgcian;
+            if (!isCgcian) classroomInput.value = '';
+        }
+
+        cgcianYesRadio.addEventListener('change', updateDeliveryFields);
+        cgcianNoRadio.addEventListener('change', updateDeliveryFields);
+
+        knowsomeoneCheck.addEventListener('change', () => {
+            const show = knowsomeoneCheck.checked;
+            knowsomeoneNameField.classList.toggle('show', show);
+            if (!show) knowsomeoneNameInput.value = '';
+        });
+
+        function getDeliveryInfo() {
+            if (cgcianYesRadio.checked) {
+                return {
+                    method: 'CGCian (Room Delivery)',
+                    buildingRoom: classroomInput.value.trim(),
+                    knownDeliverer: null
+                };
+            }
+            const knownPerson = (knowsomeoneCheck.checked && knowsomeoneNameInput.value.trim()) ? knowsomeoneNameInput.value.trim() : null;
+            return {
+                method: 'Non-CGCian (Meet-up)',
+                buildingRoom: null,
+                knownDeliverer: knownPerson
+            };
+        }
+
+        function resetDeliverySection() {
+            cgcianYesRadio.checked = false;
+            cgcianNoRadio.checked = false;
+            cgcianFields.classList.remove('show');
+            regularFields.classList.remove('show');
+            classroomInput.value = '';
+            classroomInput.removeAttribute('required');
+            knowsomeoneCheck.checked = false;
+            knowsomeoneNameField.classList.remove('show');
+            knowsomeoneNameInput.value = '';
+        }
 
         async function processAndUploadFile(file, type) {
             const statusEl = type === 'front' ? frontUploadStatus : backUploadStatus;
@@ -1346,6 +1578,17 @@
                 return;
             }
 
+            if (!cgcianYesRadio.checked && !cgcianNoRadio.checked) {
+                showStatus('Please choose a delivery option.', 'error');
+                return;
+            }
+
+            const deliveryInfo = getDeliveryInfo();
+            if (cgcianYesRadio.checked && !deliveryInfo.buildingRoom) {
+                showStatus('Please enter your building and room number for delivery.', 'error');
+                return;
+            }
+
             if (!selectedProductData) {
                 showStatus('Please select a product before submitting.', 'error');
                 return;
@@ -1391,6 +1634,9 @@
                     customerName: customerName,
                     customerEmail: customerEmail,
                     customerUid: currentUser.uid,
+                    deliveryMethod: deliveryInfo.method,
+                    buildingRoom: deliveryInfo.buildingRoom,
+                    knownDeliverer: deliveryInfo.knownDeliverer,
                     product: selectedProductData.name,
                     basePrice: selectedProductData.price,
                     hasBackImage: selectedProductData.twoSided,
@@ -1409,6 +1655,13 @@
                 formData.append('_captcha', 'false');
                 formData.append('Customer Name', customerName);
                 formData.append('Customer Email', customerEmail);
+                formData.append('Delivery Method', deliveryInfo.method);
+                if (deliveryInfo.buildingRoom) {
+                    formData.append('Building & Room Number', deliveryInfo.buildingRoom);
+                }
+                if (deliveryInfo.knownDeliverer) {
+                    formData.append('Known Deliverer', deliveryInfo.knownDeliverer);
+                }
                 formData.append('Product', selectedProductData.name);
                 formData.append('Quantity', qty);
                 formData.append('Base Price (PHP)', selectedProductData.price);
@@ -1435,6 +1688,7 @@
                 // Reset Form state
                 orderForm.reset();
                 fillUserInfo(currentUser);
+                resetDeliverySection();
                 
                 selectedProductData = null;
                 customizationSection.style.display = 'none';
