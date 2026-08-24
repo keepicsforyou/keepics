@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Inventory & Sales</title>
+    <link rel="manifest" href="inventory.webmanifest">
+    <meta name="theme-color" content="#3498db">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { font-size: 1.5rem; color: #2c3e50; }
+        h2 { font-size: 1.25rem; color: #2c3e50; margin-top: 20px; }
+        h3 { font-size: 1.1rem; color: #2c3e50; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 768px) { 
+            .grid-2 { grid-template-columns: 1fr; } 
+            body { margin: 5px; }
+            .container { padding: 10px; }
+        }
+        
+        .card {
+            background: #eef2f5;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 1px solid #ccd6dd;
+        }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            min-height: 44px;
+        }
+        textarea { min-height: 60px; }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            min-height: 44px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        button:hover { background-color: #2980b9; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        .btn-success { background-color: #2ecc71; }
+        .btn-success:hover { background-color: #27ae60; }
+        .btn-secondary { background-color: #7f8c8d; padding: 8px 12px; font-size: 12px; min-height: 38px; width: auto; }
+        .btn-secondary:hover { background-color: #95a5a6; }
+        .btn-warning { background-color: #f39c12; padding: 8px; font-size: 12px; min-height: 36px; width: auto; }
+        .btn-warning:hover { background-color: #d35400; }
+        .btn-danger { background-color: #e74c3c; padding: 8px; font-size: 12px; min-height: 36px; width: auto; }
+        .btn-danger:hover { background-color: #c0392b; }
+        .btn-icon-only { padding: 8px; width: 36px; height: 36px; min-height: 36px; }
+
+        .subtype-input-row, .cart-item-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .checkbox-container input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; white-space: nowrap; }
+        .item-img { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 3px;
+        }
+        .badge-category { background-color: #9b59b6; }
+        .badge-subtype { background-color: #16a085; }
+        .badge-sku { background-color: #34495e; }
+        .badge-low-stock { background-color: #e67e22; }
+        
+        .grand-total { font-size: 16px; font-weight: bold; color: #2c3e50; }
+        .net-worth-card {
+            background: #e8f8f5;
+            border: 1px solid #a3e4d7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .form-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .subtypes-list-container {
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #dcdcdc;
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .form-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .form-header-row button {
+                width: 100%;
+            }
+            .subtype-input-row, .cart-item-row {
+                flex-direction: column;
+                align-items: stretch;
+                background: #fff;
+                padding: 12px;
+                border-radius: 6px;
+                border: 1px solid #ddd;
+                gap: 10px;
+            }
+            .subtype-input-row button, .cart-item-row button {
+                width: 100%;
+                margin-top: 5px;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+                min-width: 100%;
+            }
+            thead tr {
+                display: none;
+            }
+            tr {
+                border: 1px solid #ccd6dd;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                background: #fff;
+                padding: 10px;
+            }
+            td {
+                border: none;
+                border-bottom: 1px solid #f0f0f0;
+                padding: 10px 5px;
+                text-align: right;
+                position: relative;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            td:last-child {
+                border-bottom: none;
+            }
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                text-align: left;
+                color: #2c3e50;
+                margin-right: 15px;
+            }
+            .admin-col {
+                display: flex !important;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .action-buttons {
+                width: 100%;
+            }
+            .action-buttons button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Store Inventory & Sales</h1>
+
+    <div id="admin-panel" style="display: none;">
+        <div class="grid-2">
+            <div class="card">
+                <div class="form-header-row">
+                    <h2 id="form-title" style="margin: 0;">Add or Edit Product</h2>
+                    <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Cancel
+                    </button>
+                </div>
+                <form id="inventory-form">
+                    <input type="hidden" id="editing-item-id" value="">
+                    
+                    <div class="form-group">
+                        <label for="item-sku">Item Code</label>
+                        <input type="text" id="item-sku" placeholder="e.g., ITEM-101" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-name">Product Name</label>
+                        <input type="text" id="item-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-category">Category</label>
+                        <input type="text" id="item-category" placeholder="e.g., Shirts, Mugs" required>
+                    </div>
+
+                    <div class="form-group" id="base-price-group">
+                        <label for="item-price">Price (₱)</label>
+                        <input type="number" id="item-price" step="0.01" min="0">
+                    </div>
+
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="enable-subtypes-checkbox">
+                        <label for="enable-subtypes-checkbox" style="margin: 0;">Has Options (Sizes, Colors)</label>
+                    </div>
+
+                    <div class="form-group" id="subtypes-section" style="display: none;">
+                        <div class="subtypes-list-container">
+                            <div id="subtypes-fields-container"></div>
+                            <button type="button" id="add-subtype-field-btn" class="btn-secondary" style="margin-top: 5px;">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add Option
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-qty">Stock Count</label>
+                        <input type="number" id="item-qty" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-desc">Details</label>
+                        <textarea id="item-desc" rows="2" placeholder="Write more details here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-image">Picture</label>
+                        <input type="file" id="item-image" accept="image/*">
+                    </div>
+                    <button type="submit" id="inventory-submit-btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Save Product
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="form-header-row">
+                    <h2 id="sales-form-title" style="margin: 0;">New Sale</h2>
+                    <button type="button" id="cancel-sale-edit-btn" class="btn-secondary" style="display: none;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Cancel
+                    </button>
+                </div>
+                <form id="sales-form">
+                    <input type="hidden" id="editing-sale-id" value="">
+                    
+                    <div class="form-group">
+                        <label for="sale-customer">Customer Name</label>
+                        <input type="text" id="sale-customer" placeholder="Name" required>
+                    </div>
+
+                    <label style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 5px;">Items Buying</label>
+                    <div id="cart-items-container"></div>
+
+                    <button type="button" id="add-product-btn" class="btn-secondary" style="margin-bottom: 12px; width: 100%;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add Item
+                    </button>
+                    
+                    <div class="grand-total">
+                        Total: ₱<span id="sales-grand-total">0.00</span>
+                    </div>
+                    <br>
+                    <button type="submit" id="sale-submit-btn" class="btn-success">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg> Finish Sale
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-warning" style="display: none; color: #c0392b; font-weight: bold; margin-bottom: 15px;">
+        Viewing only. Please log in to change products or sales.
+    </div>
+
+    <h2>Store Inventory</h2>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Picture</th>
+                    <th>Code</th>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Options</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th class="admin-col" style="display: none;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="inventory-table-body">
+                <tr><td colspan="8" style="text-align: center;">Loading products...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <br><hr><br>
+
+    <div class="net-worth-card">
+        <h3 style="margin-top: 0; margin-bottom: 5px;">Total Net-Worth</h3>
+        <div class="grand-total" style="font-size: 1.2rem; color: #27ae60;">
+            ₱<span id="sales-net-worth">0.00</span>
+        </div>
+    </div>
+
+    <h2>Sales History</h2>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Items Bought</th>
+                    <th>Total Paid</th>
+                    <th class="admin-col" style="display: none;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="sales-table-body">
+                <tr><td colspan="5" style="text-align: center;">Loading sales...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getDatabase, ref, push, onValue, remove, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCLDSTIj-iK8y-HAR5dwtJNs0KjKlCdeuo",
+        authDomain: "keepics-7c48f.firebaseapp.com",
+        projectId: "keepics-7c48f",
+        storageBucket: "keepics-7c48f.firebasestorage.app",
+        messagingSenderId: "869338453647",
+        appId: "1:869338453647:web:4d6e5c6abce6712db502fa",
+        measurementId: "G-N17QH1743W",
+        databaseURL: "https://keepics-7c48f-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+
+    const ADMIN_UID = "hCys7QbIUrbSdVwZm1eDGY3KBrP2";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const storage = getStorage(app);
+
+    const adminPanel = document.getElementById('admin-panel');
+    const adminWarning = document.getElementById('admin-warning');
+    const inventoryForm = document.getElementById('inventory-form');
+    const salesForm = document.getElementById('sales-form');
+    const inventoryTableBody = document.getElementById('inventory-table-body');
+    const salesTableBody = document.getElementById('sales-table-body');
+    const salesNetWorth = document.getElementById('sales-net-worth');
+    
+    const enableSubtypesCheckbox = document.getElementById('enable-subtypes-checkbox');
+    const subtypesSection = document.getElementById('subtypes-section');
+    const basePriceGroup = document.getElementById('base-price-group');
+    const itemPriceInput = document.getElementById('item-price');
+    const subtypesFieldsContainer = document.getElementById('subtypes-fields-container');
+    const addSubtypeFieldBtn = document.getElementById('add-subtype-field-btn');
+    
+    const cartItemsContainer = document.getElementById('cart-items-container');
+    const addProductBtn = document.getElementById('add-product-btn');
+    const salesGrandTotal = document.getElementById('sales-grand-total');
+
+    const editingItemIdInput = document.getElementById('editing-item-id');
+    const formTitle = document.getElementById('form-title');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    const submitBtn = document.getElementById('inventory-submit-btn');
+
+    const editingSaleIdInput = document.getElementById('editing-sale-id');
+    const salesFormTitle = document.getElementById('sales-form-title');
+    const cancelSaleEditBtn = document.getElementById('cancel-sale-edit-btn');
+    const saleSubmitBtn = document.getElementById('sale-submit-btn');
+
+    let currentUserId = null;
+    let cachedInventoryData = {};
+    let cachedSalesData = {};
+
+    enableSubtypesCheckbox.addEventListener('change', () => {
+        if (enableSubtypesCheckbox.checked) {
+            subtypesSection.style.display = 'block';
+            basePriceGroup.style.display = 'none';
+            itemPriceInput.removeAttribute('required');
+            if (subtypesFieldsContainer.children.length === 0) {
+                addSubtypeInputField();
+            }
+        } else {
+            subtypesSection.style.display = 'none';
+            basePriceGroup.style.display = 'block';
+            itemPriceInput.setAttribute('required', 'true');
+        }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUserId = user.uid;
+            const isAdmin = (currentUserId === ADMIN_UID);
+            adminPanel.style.display = isAdmin ? "block" : "none";
+            adminWarning.style.display = isAdmin ? "none" : "block";
+            document.querySelectorAll('.admin-col').forEach(el => el.style.display = isAdmin ? "table-cell" : "none");
+        } else {
+            currentUserId = null;
+            adminPanel.style.display = "none";
+            adminWarning.style.display = "none";
+            document.querySelectorAll('.admin-col').forEach(el => el.style.display = "none");
+        }
+        listenToInventory();
+        listenToSales();
+    });
+
+    function addSubtypeInputField(name = "", price = "") {
+        const row = document.createElement('div');
+        row.className = 'subtype-input-row';
+        row.innerHTML = `
+            <input type="text" class="subtype-name-input" value="${name}" placeholder="Option Name (e.g. Small)" required>
+            <input type="number" class="subtype-price-input" step="0.01" min="0" value="${price}" placeholder="Price (₱)" required>
+            <button type="button" class="btn-danger btn-icon-only remove-subtype-btn" title="Remove Option">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+        `;
+        row.querySelector('.remove-subtype-btn').addEventListener('click', () => row.remove());
+        subtypesFieldsContainer.appendChild(row);
+    }
+
+    addSubtypeFieldBtn.addEventListener('click', () => addSubtypeInputField());
+
+    function createCartRow(selectedKey = "", initialQty = 1) {
+        const row = document.createElement('div');
+        row.className = 'cart-item-row';
+        
+        let optionsHTML = `<option value="">-- Pick an Item --</option>`;
+        Object.keys(cachedInventoryData).forEach(id => {
+            const item = cachedInventoryData[id];
+            if (item.hasSubtypes && item.subtypes && item.subtypes.length > 0) {
+                item.subtypes.forEach(st => {
+                    const optValue = `${id}||${st.name}||${st.price}`;
+                    const isSelected = (optValue === selectedKey) ? "selected" : "";
+                    optionsHTML += `<option value="${optValue}" ${isSelected}>${item.name} (${st.name}) - ₱${parseFloat(st.price).toFixed(2)} [Left: ${item.quantity}]</option>`;
+                });
+            } else {
+                const price = item.price ? parseFloat(item.price).toFixed(2) : '0.00';
+                const optValue = `${id}||Base Item||${item.price}`;
+                const isSelected = (optValue === selectedKey) ? "selected" : "";
+                optionsHTML += `<option value="${optValue}" ${isSelected}>${item.name} - ₱${price} [Left: ${item.quantity}]</option>`;
+            }
+        });
+
+        row.innerHTML = `
+            <select class="cart-product-select" required>${optionsHTML}</select>
+            <input type="number" class="cart-qty-input" min="1" value="${initialQty}" placeholder="Amount" required>
+            <button type="button" class="btn-danger btn-icon-only remove-row-btn" title="Remove Item">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+        `;
+
+        row.querySelector('.cart-product-select').addEventListener('change', calculateGrandTotal);
+        row.querySelector('.cart-qty-input').addEventListener('input', calculateGrandTotal);
+        row.querySelector('.remove-row-btn').addEventListener('click', () => {
+            row.remove();
+            calculateGrandTotal();
+        });
+
+        cartItemsContainer.appendChild(row);
+        calculateGrandTotal();
+    }
+
+    addProductBtn.addEventListener('click', () => createCartRow());
+
+    function calculateGrandTotal() {
+        let total = 0;
+        const rows = cartItemsContainer.querySelectorAll('.cart-item-row');
+        rows.forEach(row => {
+            const select = row.querySelector('.cart-product-select');
+            const qtyInput = row.querySelector('.cart-qty-input');
+            const val = select.value;
+            const qty = parseInt(qtyInput.value, 10) || 0;
+
+            if (val) {
+                const [, , priceStr] = val.split("||");
+                const price = parseFloat(priceStr) || 0;
+                total += price * qty;
+            }
+        });
+        salesGrandTotal.textContent = total.toFixed(2);
+    }
+
+    function listenToInventory() {
+        const inventoryRef = ref(db, 'inventory');
+        onValue(inventoryRef, (snapshot) => {
+            inventoryTableBody.innerHTML = "";
+            cachedInventoryData = snapshot.val() || {};
+
+            if (Object.keys(cachedInventoryData).length === 0) {
+                inventoryTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No products found.</td></tr>`;
+                return;
+            }
+
+            if (!editingSaleIdInput.value) {
+                cartItemsContainer.innerHTML = "";
+                createCartRow();
+            }
+
+            Object.keys(cachedInventoryData).forEach((itemId) => {
+                const item = cachedInventoryData[itemId];
+
+                const tr = document.createElement('tr');
+                const imageCell = item.imageUrl 
+                    ? `<img src="${item.imageUrl}" class="item-img" alt="${item.name}">` 
+                    : `<span>No Image</span>`;
+                
+                const stockBadge = item.quantity <= 5 
+                    ? `<span class="badge badge-low-stock">${item.quantity} (Low)</span>` 
+                    : item.quantity;
+
+                let subtypesHTML = `<span style="color:#999;font-style:italic;">None</span>`;
+                if (item.hasSubtypes && item.subtypes && item.subtypes.length > 0) {
+                    subtypesHTML = item.subtypes.map(s => 
+                        `<span class="badge badge-subtype">${s.name}: ₱${parseFloat(s.price).toFixed(2)}</span>`
+                    ).join(" ");
+                }
+
+                const basePriceCell = item.hasSubtypes 
+                    ? `<span style="color:#999;font-style:italic;">Varies</span>` 
+                    : `₱${parseFloat(item.price || 0).toFixed(2)}`;
+
+                const actionCell = (currentUserId === ADMIN_UID) 
+                    ? `<td data-label="Actions" class="admin-col">
+                        <div class="action-buttons">
+                            <button class="btn-warning" onclick="editItem('${itemId}')" title="Edit">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit
+                            </button>
+                            <button class="btn-danger" onclick="deleteItem('${itemId}')" title="Delete">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete
+                            </button>
+                        </div>
+                       </td>` 
+                    : '';
+
+                tr.innerHTML = `
+                    <td data-label="Picture">${imageCell}</td>
+                    <td data-label="Code"><span class="badge badge-sku">${item.sku || 'N/A'}</span></td>
+                    <td data-label="Product">
+                        <strong>${item.name}</strong><br>
+                        <small style="color: #666;">${item.description || ''}</small>
+                    </td>
+                    <td data-label="Category"><span class="badge badge-category">${item.category || 'General'}</span></td>
+                    <td data-label="Options">${subtypesHTML}</td>
+                    <td data-label="Stock">${stockBadge}</td>
+                    <td data-label="Price">${basePriceCell}</td>
+                    ${actionCell}
+                `;
+                inventoryTableBody.appendChild(tr);
+            });
+            calculateGrandTotal();
+        });
+    }
+
+    function listenToSales() {
+        const salesRef = ref(db, 'sales');
+        onValue(salesRef, (snapshot) => {
+            salesTableBody.innerHTML = "";
+            cachedSalesData = snapshot.val() || {};
+
+            if (Object.keys(cachedSalesData).length === 0) {
+                salesTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No sales yet.</td></tr>`;
+                if (salesNetWorth) salesNetWorth.textContent = "0.00";
+                return;
+            }
+
+            const salesArray = Object.keys(cachedSalesData).map(key => ({ id: key, ...cachedSalesData[key] }));
+            salesArray.sort((a, b) => b.timestamp - a.timestamp);
+
+            const totalNetWorth = salesArray.reduce((sum, sale) => sum + (parseFloat(sale.grandTotal) || 0), 0);
+            if (salesNetWorth) {
+                salesNetWorth.textContent = totalNetWorth.toFixed(2);
+            }
+
+            salesArray.forEach((sale) => {
+                const tr = document.createElement('tr');
+                const dateStr = new Date(sale.timestamp).toLocaleString();
+                
+                let itemsPurchasedHTML = `<ul style="padding-left: 15px; margin: 0;">`;
+                if (sale.items && Array.isArray(sale.items)) {
+                    sale.items.forEach(i => {
+                        const subtypeDisplay = i.subtype && i.subtype !== 'Base Item' ? ` (${i.subtype})` : '';
+                        itemsPurchasedHTML += `<li>${i.name}${subtypeDisplay} (x${i.quantity}) - ₱${parseFloat(i.total).toFixed(2)}</li>`;
+                    });
+                }
+                itemsPurchasedHTML += `</ul>`;
+
+                const actionCell = (currentUserId === ADMIN_UID) 
+                    ? `<td data-label="Actions" class="admin-col">
+                        <div class="action-buttons">
+                            <button class="btn-warning" onclick="editSale('${sale.id}')" title="Edit">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit
+                            </button>
+                            <button class="btn-danger" onclick="deleteSale('${sale.id}')" title="Delete">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete
+                            </button>
+                        </div>
+                       </td>` 
+                    : '';
+
+                tr.innerHTML = `
+                    <td data-label="Date">${dateStr}</td>
+                    <td data-label="Customer"><strong>${sale.customer || 'Guest'}</strong></td>
+                    <td data-label="Items Bought">${itemsPurchasedHTML}</td>
+                    <td data-label="Total Paid"><strong>₱${parseFloat(sale.grandTotal).toFixed(2)}</strong></td>
+                    ${actionCell}
+                `;
+                salesTableBody.appendChild(tr);
+            });
+        });
+    }
+
+    inventoryForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (currentUserId !== ADMIN_UID) return;
+
+        const editingId = editingItemIdInput.value;
+        const sku = document.getElementById('item-sku').value.trim();
+        const name = document.getElementById('item-name').value.trim();
+        const category = document.getElementById('item-category').value.trim();
+        const quantity = parseInt(document.getElementById('item-qty').value, 10);
+        const description = document.getElementById('item-desc').value.trim();
+        const fileInput = document.getElementById('item-image');
+        const hasSubtypes = enableSubtypesCheckbox.checked;
+
+        let price = 0;
+        let subtypes = [];
+
+        if (hasSubtypes) {
+            const rows = subtypesFieldsContainer.querySelectorAll('.subtype-input-row');
+            rows.forEach(r => {
+                const sName = r.querySelector('.subtype-name-input').value.trim();
+                const sPrice = parseFloat(r.querySelector('.subtype-price-input').value) || 0;
+                if (sName) subtypes.push({ name: sName, price: sPrice });
+            });
+            if (subtypes.length === 0) {
+                alert("Please add at least one option.");
+                return;
+            }
+        } else {
+            price = parseFloat(itemPriceInput.value) || 0;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Saving...`;
+
+        try {
+            let imageUrl = editingId && cachedInventoryData[editingId] ? cachedInventoryData[editingId].imageUrl : null;
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const fileRef = storageRef(storage, `inventory/${Date.now()}_${file.name}`);
+                const snapshot = await uploadBytes(fileRef, file);
+                imageUrl = await getDownloadURL(snapshot.ref);
+            }
+
+            const payload = {
+                sku, name, category, quantity, description,
+                hasSubtypes,
+                price: hasSubtypes ? null : price,
+                subtypes: hasSubtypes ? subtypes : null,
+                imageUrl: imageUrl || null,
+                updatedAt: Date.now()
+            };
+
+            if (editingId) {
+                await update(ref(db, `inventory/${editingId}`), payload);
+            } else {
+                payload.createdAt = Date.now();
+                await push(ref(db, 'inventory'), payload);
+            }
+
+            resetFormState();
+        } catch (err) {
+            alert("Error saving item.");
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+
+    window.editItem = function(itemId) {
+        const item = cachedInventoryData[itemId];
+        if (!item) return;
+
+        editingItemIdInput.value = itemId;
+        document.getElementById('item-sku').value = item.sku || '';
+        document.getElementById('item-name').value = item.name || '';
+        document.getElementById('item-category').value = item.category || '';
+        document.getElementById('item-qty').value = item.quantity || 0;
+        document.getElementById('item-desc').value = item.description || '';
+
+        subtypesFieldsContainer.innerHTML = "";
+
+        if (item.hasSubtypes) {
+            enableSubtypesCheckbox.checked = true;
+            subtypesSection.style.display = 'block';
+            basePriceGroup.style.display = 'none';
+            itemPriceInput.removeAttribute('required');
+            itemPriceInput.value = '';
+
+            if (item.subtypes && item.subtypes.length > 0) {
+                item.subtypes.forEach(st => addSubtypeInputField(st.name, st.price));
+            }
+        } else {
+            enableSubtypesCheckbox.checked = false;
+            subtypesSection.style.display = 'none';
+            basePriceGroup.style.display = 'block';
+            itemPriceInput.setAttribute('required', 'true');
+            itemPriceInput.value = item.price || 0;
+        }
+
+        formTitle.textContent = "Edit Product";
+        submitBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Update Product`;
+        cancelEditBtn.style.display = "inline-flex";
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    function resetFormState() {
+        inventoryForm.reset();
+        subtypesFieldsContainer.innerHTML = "";
+        enableSubtypesCheckbox.checked = false;
+        subtypesSection.style.display = 'none';
+        basePriceGroup.style.display = 'block';
+        itemPriceInput.setAttribute('required', 'true');
+        
+        editingItemIdInput.value = "";
+        formTitle.textContent = "Add or Edit Product";
+        submitBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Save Product`;
+        cancelEditBtn.style.display = "none";
+    }
+
+    cancelEditBtn.addEventListener('click', resetFormState);
+
+    salesForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (currentUserId !== ADMIN_UID) return;
+
+        const editingSaleId = editingSaleIdInput.value;
+        const customer = document.getElementById('sale-customer').value.trim();
+        const rows = cartItemsContainer.querySelectorAll('.cart-item-row');
+
+        if (rows.length === 0) {
+            alert("Please add at least one item.");
+            return;
+        }
+
+        const itemsToPurchase = [];
+        const stockDeductionsMap = {};
+        let grandTotal = 0;
+
+        for (let row of rows) {
+            const rawVal = row.querySelector('.cart-product-select').value;
+            const qty = parseInt(row.querySelector('.cart-qty-input').value, 10);
+
+            if (!rawVal) {
+                alert("Please select a valid item.");
+                return;
+            }
+
+            const [itemId, subtype, priceStr] = rawVal.split("||");
+            const item = cachedInventoryData[itemId];
+            const unitPrice = parseFloat(priceStr) || 0;
+
+            if (!item) continue;
+
+            stockDeductionsMap[itemId] = (stockDeductionsMap[itemId] || 0) + qty;
+
+            let availableStock = item.quantity;
+            if (editingSaleId && cachedSalesData[editingSaleId]) {
+                const oldSale = cachedSalesData[editingSaleId];
+                if (oldSale.items && Array.isArray(oldSale.items)) {
+                    oldSale.items.forEach(oldItem => {
+                        if (oldItem.itemId === itemId) {
+                            availableStock += oldItem.quantity;
+                        }
+                    });
+                }
+            }
+
+            if (stockDeductionsMap[itemId] > availableStock) {
+                alert(`You only have ${availableStock} of "${item.name}" left!`);
+                return;
+            }
+
+            const lineTotal = unitPrice * qty;
+            grandTotal += lineTotal;
+
+            itemsToPurchase.push({
+                itemId,
+                name: item.name,
+                subtype: subtype,
+                unitPrice: unitPrice,
+                quantity: qty,
+                total: lineTotal
+            });
+        }
+
+        saleSubmitBtn.disabled = true;
+        saleSubmitBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg> Processing...`;
+
+        try {
+            if (editingSaleId && cachedSalesData[editingSaleId]) {
+                const oldSale = cachedSalesData[editingSaleId];
+                if (oldSale.items && Array.isArray(oldSale.items)) {
+                    for (let oldItem of oldSale.items) {
+                        const itemQtyRef = ref(db, `inventory/${oldItem.itemId}/quantity`);
+                        await runTransaction(itemQtyRef, (currentQty) => {
+                            return (currentQty || 0) + oldItem.quantity;
+                        });
+                    }
+                }
+            }
+
+            for (let itemId in stockDeductionsMap) {
+                const totalDeduction = stockDeductionsMap[itemId];
+                const itemQtyRef = ref(db, `inventory/${itemId}/quantity`);
+                await runTransaction(itemQtyRef, (currentQty) => {
+                    if (currentQty === null || currentQty < totalDeduction) return; 
+                    return currentQty - totalDeduction;
+                });
+            }
+
+            if (editingSaleId) {
+                await update(ref(db, `sales/${editingSaleId}`), {
+                    customer: customer,
+                    items: itemsToPurchase,
+                    grandTotal: grandTotal,
+                    updatedAt: Date.now()
+                });
+            } else {
+                await push(ref(db, 'sales'), {
+                    customer: customer,
+                    items: itemsToPurchase,
+                    grandTotal: grandTotal,
+                    timestamp: Date.now()
+                });
+            }
+
+            resetSalesFormState();
+        } catch (err) {
+            alert("Error finishing sale.");
+        } finally {
+            saleSubmitBtn.disabled = false;
+        }
+    });
+
+    window.editSale = function(saleId) {
+        const sale = cachedSalesData[saleId];
+        if (!sale) return;
+
+        editingSaleIdInput.value = saleId;
+        document.getElementById('sale-customer').value = sale.customer || '';
+
+        cartItemsContainer.innerHTML = "";
+        if (sale.items && Array.isArray(sale.items)) {
+            sale.items.forEach(i => {
+                const key = `${i.itemId}||${i.subtype}||${i.unitPrice}`;
+                createCartRow(key, i.quantity);
+            });
+        }
+
+        salesFormTitle.textContent = "Edit Sale";
+        saleSubmitBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg> Update Sale`;
+        cancelSaleEditBtn.style.display = "inline-flex";
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    function resetSalesFormState() {
+        salesForm.reset();
+        editingSaleIdInput.value = "";
+        cartItemsContainer.innerHTML = "";
+        createCartRow();
+        salesGrandTotal.textContent = "0.00";
+        salesFormTitle.textContent = "New Sale";
+        saleSubmitBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg> Finish Sale`;
+        cancelSaleEditBtn.style.display = "none";
+    }
+
+    cancelSaleEditBtn.addEventListener('click', resetSalesFormState);
+
+    window.deleteSale = async function(saleId) {
+        if (currentUserId !== ADMIN_UID) return;
+        const sale = cachedSalesData[saleId];
+        if (!sale) return;
+
+        if (confirm("Are you sure you want to delete this sale? The items will be added back to your stock.")) {
+            try {
+                if (sale.items && Array.isArray(sale.items)) {
+                    for (let item of sale.items) {
+                        const itemQtyRef = ref(db, `inventory/${item.itemId}/quantity`);
+                        await runTransaction(itemQtyRef, (currentQty) => {
+                            return (currentQty || 0) + item.quantity;
+                        });
+                    }
+                }
+                
+                await remove(ref(db, `sales/${saleId}`));
+
+                if (editingSaleIdInput.value === saleId) {
+                    resetSalesFormState();
+                }
+            } catch (err) {
+                alert("Failed to delete sale.");
+            }
+        }
+    };
+
+    window.deleteItem = async function(itemId) {
+        if (currentUserId !== ADMIN_UID) return;
+        if (confirm("Are you sure you want to delete this product completely?")) {
+            try {
+                await remove(ref(db, `inventory/${itemId}`));
+                if (editingItemIdInput.value === itemId) {
+                    resetFormState();
+                }
+            } catch (err) {
+                alert("Failed to delete item.");
+            }
+        }
+    };
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('inventory-sw.js', { scope: './' })
+    .then(reg => console.log('Inventory SW registered', reg.scope))
+    .catch(err => console.error('Inventory SW registration failed', err));
+}
+</script>
+</body>
+</html>
