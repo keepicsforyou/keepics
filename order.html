@@ -7,106 +7,115 @@
     <link rel="stylesheet" href="styles/styles.css">
     <title>KeePics - Order</title>
     <style>
+        :root {
+            --primary: #db2777;
+            --primary-hover: #be185d;
+            --primary-light: #fdf2f8;
+            --accent-border: #fbcfe8;
+            --navy: #0f172a;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --bg-page: #f8fafc;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+        }
+
         body.order-page {
-            background-image: linear-gradient(135deg, #fff5f7 0%, #ffe4e6 30%, #fff1f4 65%, #fff5f7 100%);
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            background-color: var(--bg-page);
+            background-image: radial-gradient(#fbcfe8 0.75px, transparent 0.75px);
+            background-size: 16px 16px;
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
         }
 
         .order-shell {
-            max-width: 640px;
-            margin: 50px auto;
-            padding: 0 20px;
+            max-width: 580px;
+            margin: 40px auto;
+            padding: 0 16px;
         }
 
         .order-card {
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1.5px solid #f1dfe4;
-            border-radius: 24px;
-            box-shadow: 0 20px 45px rgba(183, 59, 73, 0.12);
-            padding: 32px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            padding: 28px;
         }
 
         .order-card h1 {
-            font-family: var(--font-mc);
-            font-size: 1.85rem;
+            font-size: 1.6rem;
             color: var(--navy);
             text-align: center;
-            margin-bottom: 6px;
-            letter-spacing: 1px;
+            margin: 0 0 4px 0;
+            font-weight: 700;
         }
 
         .order-card .order-subtitle {
             text-align: center;
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 28px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin: 0 0 24px 0;
         }
 
         .auth-required-box {
             text-align: center;
-            padding: 40px 24px;
+            padding: 32px 16px;
         }
 
         .auth-required-box h2 {
             color: var(--navy);
-            font-size: 1.3rem;
-            margin-bottom: 10px;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
         }
 
         .auth-required-box p {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 22px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 20px;
         }
 
         .auth-required-box .login-link-btn {
             display: inline-block;
-            padding: 12px 32px;
-            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
+            padding: 10px 24px;
+            background: var(--primary);
             color: #fff;
             border-radius: 50px;
-            font-weight: 800;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.875rem;
             text-decoration: none;
-            box-shadow: 0 6px 18px rgba(255, 143, 163, 0.35);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: background 0.2s, transform 0.1s;
         }
 
         .auth-required-box .login-link-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 24px rgba(255, 143, 163, 0.5);
+            background: var(--primary-hover);
         }
 
         .order-form {
             display: flex;
             flex-direction: column;
-            gap: 0;
-        }
-
-        .order-form label.form-label {
-            display: block;
-            font-weight: 700;
-            font-size: 0.82rem;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 7px;
         }
 
         .order-form .form-group {
             margin-bottom: 20px;
         }
 
+        .order-form label.form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
         .order-form .form-group small {
             display: block;
-            color: #94a3b8;
+            color: var(--text-muted);
             font-size: 0.75rem;
-            margin-top: 5px;
-            font-weight: 500;
+            margin-top: 6px;
+            font-weight: 400;
             text-transform: none;
             letter-spacing: 0;
         }
@@ -117,13 +126,12 @@
         .order-form select {
             width: 100%;
             box-sizing: border-box;
-            padding: 12px 14px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-md);
             font-size: 0.9rem;
-            color: #1e293b;
+            color: var(--navy);
             background: #fff;
-            font-family: inherit;
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
@@ -132,131 +140,121 @@
         .order-form input[type="email"]:focus,
         .order-form input[type="number"]:focus,
         .order-form select:focus {
-            border-color: #ff8fa3;
-            box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.12);
         }
 
         .order-form input[readonly] {
-            background: #f8fafc;
-            color: #475569;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            cursor: not-allowed;
         }
 
-        /* --- Product Selection Cards --- */
-        .product-options {
+        /* --- Option Cards --- */
+        .product-options,
+        .delivery-options {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 10px;
+            gap: 10px;
         }
 
-        .product-card {
+        .product-card,
+        .delivery-card {
             cursor: pointer;
             display: block;
             user-select: none;
         }
 
-        .product-card input[type="radio"] {
+        .product-card input[type="radio"],
+        .delivery-card input[type="radio"] {
             display: none;
         }
 
-        .product-card .card-content {
+        .product-card .card-content,
+        .delivery-card .card-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: #fff;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
             transition: all 0.2s ease;
         }
 
-        .product-card input[type="radio"]:checked + .card-content {
-            background: linear-gradient(135deg, #fff9fb, #ffe4e6);
-            border-color: #ff8fa3;
-            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.2);
+        .product-card:hover .card-content,
+        .delivery-card:hover .card-content {
+            border-color: var(--accent-border);
         }
 
-        .product-card .product-info h3 {
-            font-size: 1rem;
+        .product-card input[type="radio"]:checked + .card-content,
+        .delivery-card input[type="radio"]:checked + .card-content {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .product-card .product-info h3,
+        .delivery-card .delivery-info h3 {
+            font-size: 0.925rem;
             color: var(--navy);
-            margin: 0 0 4px 0;
+            margin: 0 0 2px 0;
+            font-weight: 600;
         }
 
-        .product-card .product-info p {
-            font-size: 0.78rem;
-            color: #64748b;
+        .product-card .product-info p,
+        .delivery-card .delivery-info p {
+            font-size: 0.775rem;
+            color: var(--text-muted);
             margin: 0;
-            line-height: 1.4;
+            line-height: 1.35;
         }
 
         .product-card .product-price {
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: #b73b49;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
             white-space: nowrap;
             margin-left: 12px;
         }
 
-        /* Premium Product Styling */
-        .premium-card .card-content {
-            border-color: #f846cc;
-            background: linear-gradient(135deg, #fff4ff, #fff4ff);
-        }
-        .premium-card input[type="radio"]:checked + .card-content {
-            background: linear-gradient(135deg, #ffc7fc, #ff60ea);
-            border-color: #ff33c2;
-            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
-        }
-        .premium-card .product-info h3 {
-            color: #ff6acd;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .premium-card .premium-badge {
-            background: #7050ff;
-            color: white;
-            font-size: 0.65rem;
-            padding: 2px 8px;
-            border-radius: 12px;
+        .premium-badge {
+            background: #be185d;
+            color: #fff;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 4px;
             text-transform: uppercase;
-            font-weight: 900;
+            font-weight: 700;
             letter-spacing: 0.5px;
-        }
-        .premium-card .product-info p {
-            color: #680d5c;
-            font-weight: 500;
-        }
-        .premium-card .product-price {
-            color: #b4095f;
+            margin-left: 6px;
         }
 
-        /* --- Hide customization until product is selected --- */
+        /* Dynamic Subsections */
         #customization-section {
             display: none;
-            margin-top: 15px;
-            animation: fadeIn 0.4s ease forwards;
+            margin-top: 10px;
+            animation: fadeIn 0.3s ease forwards;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-6px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .file-upload-area {
             position: relative;
-            border: 2px dashed #ffb6c1;
-            border-radius: 14px;
-            background: #fff9fb;
-            padding: 18px;
+            border: 1.5px dashed var(--accent-border);
+            border-radius: var(--radius-md);
+            background: var(--primary-light);
+            padding: 20px 16px;
             text-align: center;
             cursor: pointer;
             transition: border-color 0.2s, background 0.2s;
         }
 
         .file-upload-area:hover {
-            border-color: #ff8fa3;
-            background: #fff5f7;
+            border-color: var(--primary);
+            background: #fce7f3;
         }
 
         .file-upload-area input[type="file"] {
@@ -269,22 +267,10 @@
             z-index: 2;
         }
 
-        .file-upload-area .upload-icon {
-            font-size: 1.6rem;
-            display: block;
-            margin-bottom: 4px;
-        }
-
         .file-upload-area .upload-text {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: #64748b;
-        }
-
-        .file-upload-area .upload-hint {
-            font-size: 0.72rem;
-            color: #94a3b8;
-            margin-top: 3px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--navy);
         }
 
         .file-upload-status {
@@ -294,622 +280,225 @@
             gap: 8px;
             margin-top: 8px;
             font-size: 0.8rem;
-            font-weight: 700;
+            font-weight: 600;
         }
 
-        .file-upload-status.uploading {
-            display: flex;
-            color: #1e3a8a;
-        }
-
-        .file-upload-status.success {
-            display: flex;
-            color: #137333;
-        }
-
-        .file-upload-status.error {
-            display: flex;
-            color: #b91c1c;
-        }
+        .file-upload-status.uploading { display: flex; color: #1d4ed8; }
+        .file-upload-status.success { display: flex; color: #15803d; }
+        .file-upload-status.error { display: flex; color: #b91c1c; }
 
         .upload-preview {
             display: none;
-            margin-top: 12px;
-            border-radius: 12px;
+            margin-top: 10px;
+            border-radius: var(--radius-md);
             overflow: hidden;
-            border: 2px solid #ffb6c1;
+            border: 1px solid #e2e8f0;
             background: #fff;
-            position: relative;
         }
 
         .upload-preview img {
             width: 100%;
-            max-height: 280px;
+            max-height: 220px;
             object-fit: cover;
             display: block;
         }
 
-        .upload-preview.show {
-            display: block;
-        }
-
-        .back-image-fields {
-            display: none;
-        }
-        .back-image-fields.show {
-            display: block;
-        }
+        .upload-preview.show { display: block; }
+        .back-image-fields { display: none; }
+        .back-image-fields.show { display: block; }
 
         .total-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: linear-gradient(135deg, #fff9fb, #ffe4e6);
-            border: 1.5px solid #ffb6c1;
-            border-radius: 14px;
-            padding: 16px 18px;
-            margin-bottom: 22px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 20px;
         }
 
         .total-row .total-label {
-            font-weight: 800;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 0.85rem;
             color: var(--navy);
             text-transform: uppercase;
-            letter-spacing: 0.8px;
         }
 
         .total-row .total-amount {
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: #b73b49;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
         }
 
         .submit-btn {
             width: 100%;
             border: none;
             border-radius: 50px;
-            padding: 15px 24px;
-            font-size: 1rem;
-            font-weight: 800;
+            padding: 13px 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
             color: #fff;
-            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
-            box-shadow: 0 8px 22px rgba(255, 143, 163, 0.4);
+            background: var(--primary);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            transition: background 0.2s;
             font-family: inherit;
         }
 
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(255, 143, 163, 0.5);
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
+        .submit-btn:hover { background: var(--primary-hover); }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .submit-status {
             display: none;
-            margin-top: 14px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.84rem;
-            font-weight: 600;
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.825rem;
+            font-weight: 500;
             text-align: center;
-            line-height: 1.5;
         }
 
-        .submit-status.error {
-            display: block;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #b91c1c;
-        }
-
-        .submit-status.success {
-            display: block;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #137333;
-        }
-
-        .submit-status.loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e3a8a;
-        }
+        .submit-status.error { display: block; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+        .submit-status.success { display: block; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+        .submit-status.loading { display: flex; align-items: center; justify-content: center; gap: 8px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
 
         .spinner {
-            width: 17px;
-            height: 17px;
-            border: 3px solid rgba(30, 58, 138, 0.2);
-            border-top-color: #1e3a8a;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(30, 64, 175, 0.2);
+            border-top-color: #1e40af;
             border-radius: 50%;
             animation: orderSpin 0.7s linear infinite;
-            flex: none;
         }
 
-        @keyframes orderSpin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes orderSpin { to { transform: rotate(360deg); } }
 
         .user-chip {
             display: flex;
             align-items: center;
             gap: 10px;
             background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
             margin-bottom: 20px;
         }
 
         .user-chip .user-avatar {
-            width: 38px;
-            height: 38px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
+            background: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-weight: 900;
-            font-size: 1rem;
-            flex: none;
-            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 0.85rem;
         }
 
-        .user-chip .user-meta {
-            min-width: 0;
-        }
-
-        .user-chip .user-meta .user-name {
-            font-weight: 800;
-            font-size: 0.88rem;
-            color: var(--navy);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .user-chip .user-meta .user-email {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .user-chip .user-meta .user-name { font-weight: 700; font-size: 0.85rem; color: var(--navy); }
+        .user-chip .user-meta .user-email { font-size: 0.725rem; color: var(--text-muted); }
 
         .user-chip .user-badge {
             margin-left: auto;
-            font-size: 0.65rem;
-            font-weight: 800;
-            background: #d3fde9;
-            color: #137333;
-            border-radius: 30px;
-            padding: 4px 10px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            background: #dcfce7;
+            color: #15803d;
+            border-radius: 20px;
+            padding: 3px 8px;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            white-space: nowrap;
-            flex: none;
-        }
-
-        /* --- CGCian Delivery Option --- */
-        .delivery-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .delivery-card {
-            cursor: pointer;
-            display: block;
-            user-select: none;
-        }
-
-        .delivery-card input[type="radio"] {
-            display: none;
-        }
-
-        .delivery-card .card-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 14px 16px;
-            transition: all 0.2s ease;
-        }
-
-        .delivery-card:hover .card-content {
-            border-color: #ffb6c1;
-        }
-
-        .delivery-card input[type="radio"]:checked + .card-content {
-            background: linear-gradient(135deg, #fff9fb, #ffe4e6);
-            border-color: #ff8fa3;
-            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.2);
-        }
-
-        .delivery-card .delivery-info h3 {
-            font-size: 0.95rem;
-            color: var(--navy);
-            margin: 0 0 3px 0;
-        }
-
-        .delivery-card .delivery-info p {
-            font-size: 0.76rem;
-            color: #64748b;
-            margin: 0;
-            line-height: 1.4;
-        }
-
-        .delivery-card .delivery-icon {
-            font-size: 1.5rem;
-            margin-left: 12px;
-            flex: none;
         }
 
         .delivery-subfields {
             display: none;
-            margin-top: 12px;
-            padding: 16px;
-            background: #fff9fb;
-            border: 1.5px dashed #ffb6c1;
-            border-radius: 14px;
+            margin-top: 10px;
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: var(--radius-md);
         }
 
-        .delivery-subfields.show {
-            display: block;
-            animation: fadeIn 0.35s ease forwards;
-        }
-
-        .delivery-subfields .form-label {
-            margin-bottom: 7px;
-        }
-
-        .delivery-subfields small {
-            display: block;
-            color: #94a3b8;
-            font-size: 0.75rem;
-            margin-top: 5px;
-            font-weight: 500;
-        }
+        .delivery-subfields.show { display: block; animation: fadeIn 0.3s ease forwards; }
 
         .knowsome-row {
             display: flex;
-            align-items: flex-start;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #475569;
-            line-height: 1.45;
+            font-size: 0.825rem;
+            color: var(--text-main);
         }
 
-        .knowsome-row input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-top: 1px;
-            accent-color: #ff8fa3;
-            cursor: pointer;
-            flex: none;
-        }
+        .knowsome-row input[type="checkbox"] { accent-color: var(--primary); }
+        .knowsomeone-name-field { display: none; margin-top: 10px; }
+        .knowsomeone-name-field.show { display: block; animation: fadeIn 0.3s ease forwards; }
 
-        .knowsomeone-name-field {
-            display: none;
-            margin-top: 14px;
-        }
-
-        .knowsomeone-name-field.show {
-            display: block;
-            animation: fadeIn 0.35s ease forwards;
-        }
-
-        /* --- Status Pop-up Modal --- */
+        /* Modal Overlays */
         .status-modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.55);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px;
         }
 
-        .status-modal-overlay.show {
-            display: flex;
-            animation: modalFadeIn 0.25s ease forwards;
-        }
+        .status-modal-overlay.show { display: flex; animation: modalFadeIn 0.2s ease forwards; }
 
         .status-modal {
             background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(15, 23, 42, 0.3);
-            padding: 36px 32px;
-            max-width: 420px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 28px 24px;
+            max-width: 380px;
             width: 100%;
             text-align: center;
-            transform: scale(0.9);
-            animation: modalPopIn 0.3s ease forwards;
-            border-top: 5px solid #94a3b8;
-        }
-
-        .status-modal.success {
-            border-top-color: #22c55e;
-        }
-
-        .status-modal.error {
-            border-top-color: #ef4444;
         }
 
         .status-modal-icon {
-            width: 64px;
-            height: 64px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 1.8rem;
-            font-weight: 900;
+            margin: 0 auto 12px;
+            font-size: 1.4rem;
             color: #fff;
         }
 
-        .status-modal.success .status-modal-icon {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-        }
-
-        .status-modal.error .status-modal-icon {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
+        .status-modal.success .status-modal-icon { background: #16a34a; }
+        .status-modal.error .status-modal-icon { background: #dc2626; }
 
         .status-modal-message {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #1e293b;
-            line-height: 1.6;
-            margin: 0 0 24px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            margin: 0 0 20px;
+            line-height: 1.5;
         }
 
         .status-modal-close {
             border: none;
             border-radius: 50px;
-            padding: 12px 32px;
-            font-size: 0.9rem;
-            font-weight: 800;
+            padding: 10px 24px;
+            font-size: 0.85rem;
+            font-weight: 700;
             color: #fff;
-            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
-            box-shadow: 0 6px 18px rgba(255, 143, 163, 0.35);
+            background: var(--navy);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-family: inherit;
         }
 
-        .status-modal-close:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 24px rgba(255, 143, 163, 0.5);
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes modalPopIn {
-            from { opacity: 0; transform: scale(0.85) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         @media (max-width: 560px) {
-            .order-card {
-                padding: 22px 18px;
-                border-radius: 18px;
-            }
-
-            .order-card h1 {
-                font-size: 1.5rem;
-            }
-            
-            .product-card .card-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            .product-card .product-price {
-                margin-left: 0;
-            }
-
-            /* Delivery option adjustments */
-            .delivery-card .card-content {
-                padding: 12px 14px;
-            }
-            .delivery-card .delivery-icon {
-                font-size: 1.3rem;
-            }
-            .delivery-subfields {
-                padding: 13px;
-            }
-
-            .total-row {
-                flex-direction: column;
-                gap: 4px;
-                align-items: flex-start;
-            }
-
-            .status-modal {
-                padding: 28px 20px;
-            }
-
-            /* File upload area adjustments */
-            .file-upload-area {
-                padding: 14px;
-            }
-            .file-upload-area .upload-icon {
-                font-size: 1.4rem;
-            }
-            .file-upload-area .upload-text {
-                font-size: 0.78rem;
-            }
-            .file-upload-area .upload-hint {
-                font-size: 0.68rem;
-            }
-
-            /* Upload preview adjustments */
-            .upload-preview {
-                max-width: 100%;
-            }
-            .upload-preview img {
-                max-height: 220px;
-            }
-
-            /* Form input adjustments */
-            .order-form input[type="text"],
-            .order-form input[type="email"],
-            .order-form input[type="number"],
-            .order-form select {
-                padding: 10px 12px;
-                font-size: 0.85rem;
-            }
-
-            .order-form label.form-label {
-                font-size: 0.78rem;
-            }
-
-            .order-form .form-group small {
-                font-size: 0.7rem;
-            }
-
-            .submit-btn {
-                padding: 13px 20px;
-                font-size: 0.9rem;
-            }
-
-            .user-chip {
-                padding: 10px 12px;
-            }
-            .user-chip .user-avatar {
-                width: 34px;
-                height: 34px;
-                font-size: 0.9rem;
-            }
-            .user-chip .user-meta .user-name {
-                font-size: 0.82rem;
-            }
-            .user-chip .user-meta .user-email {
-                font-size: 0.7rem;
-            }
-            .user-chip .user-badge {
-                font-size: 0.6rem;
-                padding: 3px 8px;
-            }
-
-            .auth-required-box {
-                padding: 30px 18px;
-            }
-            .auth-required-box h2 {
-                font-size: 1.15rem;
-            }
-            .auth-required-box p {
-                font-size: 0.82rem;
-            }
-            .auth-required-box .login-link-btn {
-                padding: 10px 24px;
-                font-size: 0.82rem;
-            }
-        }
-
-        /* Extra small screens (e.g., iPhone SE, older Android) */
-        @media (max-width: 400px) {
-            .order-shell {
-                margin: 30px auto;
-                padding: 0 12px;
-            }
-
-            .order-card {
-                padding: 18px 14px;
-                border-radius: 16px;
-            }
-
-            .order-card h1 {
-                font-size: 1.35rem;
-            }
-
-            .order-card .order-subtitle {
-                font-size: 0.82rem;
-                margin-bottom: 20px;
-            }
-
-            .form-group {
-                margin-bottom: 16px;
-            }
-
-            .file-upload-area {
-                padding: 12px;
-            }
-
-            .upload-preview img {
-                max-height: 180px;
-            }
-
-            .total-row {
-                padding: 12px 14px;
-            }
-
-            .total-row .total-label {
-                font-size: 0.82rem;
-            }
-
-            .total-row .total-amount {
-                font-size: 1.35rem;
-            }
-
-            .submit-btn {
-                padding: 12px 18px;
-                font-size: 0.85rem;
-            }
-
-            .user-chip {
-                padding: 8px 10px;
-            }
-            .user-chip .user-avatar {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
-            }
-
-            .product-card .card-content {
-                padding: 12px;
-            }
-
-            .product-card .product-info h3 {
-                font-size: 0.92rem;
-            }
-
-            .product-card .product-info p {
-                font-size: 0.72rem;
-            }
-
-            .product-card .product-price {
-                font-size: 1.1rem;
-            }
-
-            .premium-badge {
-                font-size: 0.58rem !important;
-                padding: 1px 6px !important;
-            }
+            .order-card { padding: 20px 16px; }
+            .product-card .card-content { flex-direction: column; align-items: flex-start; gap: 6px; }
+            .product-card .product-price { margin-left: 0; }
         }
     </style>
 </head>
@@ -917,7 +506,6 @@
 
     <nav class="navbar">
         <div class="logo">KeePics.</div>
-
         <div class="hamburger" id="hamburger-menu">
             <span class="bar"></span>
             <span class="bar"></span>
@@ -937,7 +525,7 @@
     <div class="order-shell">
         <div class="order-card">
             <h1>KeePics Production</h1>
-            <p class="order-subtitle">Customize your KeePics Product</p>
+            <p class="order-subtitle">Customize your custom product below</p>
 
             <div class="user-chip" id="user-chip" style="display:none;">
                 <div class="user-avatar" id="user-avatar">K</div>
@@ -949,14 +537,14 @@
             </div>
 
             <div class="auth-required-box" id="auth-required" style="display:none;">
-                <h2>Please log in to order</h2>
-                <p>Login to access various features that we offer, including order.</p>
+                <h2>Please sign in to order</h2>
+                <p>Log in to access ordering and custom design features.</p>
                 <a href="login.html" class="login-link-btn">Login / Sign up</a>
             </div>
 
             <form id="order-form" class="order-form" autocomplete="off" novalidate style="display:none;">
                 <div class="form-group">
-                    <label class="form-label" for="name">Customer Name (Please use your full name)</label>
+                    <label class="form-label" for="name">Full Name</label>
                     <input type="text" id="name" name="name" required>
                 </div>
 
@@ -965,114 +553,100 @@
                     <input type="email" id="email" name="email" required readonly>
                 </div>
 
-                <!-- CGCian Delivery Option -->
+                <!-- Delivery Option -->
                 <div class="form-group">
                     <label class="form-label">Delivery Option</label>
-
                     <div class="delivery-options">
-                        <!-- CGCian Card -->
                         <label class="delivery-card">
                             <input type="radio" id="cgcian-yes" name="cgcian" value="cgcian" required>
                             <div class="card-content">
                                 <div class="delivery-info">
                                     <h3>I am a CGCian</h3>
-                                    <p>Your order will be delivered straight to your building & room number.</p>
+                                    <p>Delivered directly to your building and room number.</p>
                                 </div>
-                                <div class="delivery-icon">🏫</div>
                             </div>
                         </label>
 
-                    <div id="cgcian-fields" class="delivery-subfields">
-                        <label class="form-label" for="classroom">Building & Room Number <span style="color:#b73b49;">*</span></label>
-                        <input type="text" id="classroom" name="classroom" placeholder="e.g. BE Building, Room 204">
-                        <small>This is where we will deliver your item.</small>
-                    </div>
+                        <div id="cgcian-fields" class="delivery-subfields">
+                            <label class="form-label" for="classroom">Building & Room Number <span style="color:var(--primary);">*</span></label>
+                            <input type="text" id="classroom" name="classroom" placeholder="e.g. BE Building, Room 204">
+                            <small>Specify your exact location on campus.</small>
+                        </div>
 
-                        <!-- Not CGCian Card -->
                         <label class="delivery-card">
                             <input type="radio" id="cgcian-no" name="cgcian" value="not_cgcian">
                             <div class="card-content">
                                 <div class="delivery-info">
                                     <h3>Not a CGCian</h3>
-                                    <p>Meet-up delivery, optionally through someone you know from the org.</p>
+                                    <p>Meet-up delivery or coordinate via a mutual contact.</p>
                                 </div>
-                                <div class="delivery-icon">👤</div>
                             </div>
                         </label>
                     </div>
 
-                    <!-- Fields shown when "Not a CGCian" is selected -->
                     <div id="regular-fields" class="delivery-subfields">
                         <label class="knowsome-row">
                             <input type="checkbox" id="knowsomeone-check" name="know_someone">
-                            <span>I know someone from this organization who could deliver my item.</span>
+                            <span>I know someone in the org who can deliver my item.</span>
                         </label>
                         <div id="knowsomeone-name-field" class="knowsomeone-name-field">
-                            <label class="form-label" for="knowsomeone-name">Full Name of the Person You Know</label>
+                            <label class="form-label" for="knowsomeone-name">Full Name of Contact</label>
                             <input type="text" id="knowsomeone-name" name="know_someone_name" placeholder="Enter full name">
-                            <small>We will coordinate with them regarding your delivery.</small>
                         </div>
                     </div>
                 </div>
 
-
                 <!-- Product Selection Area -->
                 <div class="form-group">
-                    <label class="form-label">Select a Product</label>
-                    
+                    <label class="form-label">Select Product Type</label>
                     <div class="product-options">
-                        
-                        <!-- Custom Keychain (One Side) -->
                         <label class="product-card">
                             <input type="radio" name="product_selection" value="custom_1" required>
                             <div class="card-content">
                                 <div class="product-info">
-                                    <h3>Custom Keychain (One side)</h3>
-                                    <p>Default keychain, no protection only front have a picture.</p>
+                                    <h3>Custom Keychain (One Side)</h3>
+                                    <p>Standard print on front side.</p>
                                 </div>
-                                <div class="product-price">P30.00</div>
+                                <div class="product-price">₱30.00</div>
                             </div>
                         </label>
 
-                        <!-- Custom Keychain (Two Sided) -->
                         <label class="product-card">
                             <input type="radio" name="product_selection" value="custom_2">
                             <div class="card-content">
                                 <div class="product-info">
-                                    <h3>Custom Keychain (Two sided)</h3>
-                                    <p>Fully back to back keychain.</p>
+                                    <h3>Custom Keychain (Two Sided)</h3>
+                                    <p>Standard print back-to-back.</p>
                                 </div>
-                                <div class="product-price">P33.00</div>
+                                <div class="product-price">₱33.00</div>
                             </div>
                         </label>
 
-                        <!-- Premium Keychain (One Side) -->
-                        <label class="product-card premium-card">
+                        <label class="product-card">
                             <input type="radio" name="product_selection" value="premium_1">
                             <div class="card-content">
                                 <div class="product-info">
-                                    <h3>Premium Keychain (One side) <span class="premium-badge">Hot</span></h3>
-                                    <p>Premium quality, one side, coated with resin to protect the keychain from scratches.</p>
+                                    <h3>Premium Keychain (One Side) <span class="premium-badge">Resin</span></h3>
+                                    <p>Scratch-proof clear resin protection.</p>
                                 </div>
-                                <div class="product-price">P35.00</div>
+                                <div class="product-price">₱35.00</div>
                             </div>
                         </label>
 
-                        <!-- Premium Keychain (Two Sided) -->
-                        <label class="product-card premium-card">
+                        <label class="product-card">
                             <input type="radio" name="product_selection" value="premium_2">
                             <div class="card-content">
                                 <div class="product-info">
-                                    <h3>Premium Keychain (Two sided) <span class="premium-badge">Best Value</span></h3>
-                                    <p>Premium quality, a full back to back, resin coated that was made to last.</p>
+                                    <h3>Premium Keychain (Two Sided) <span class="premium-badge">Resin</span></h3>
+                                    <p>Double-sided durable resin coating.</p>
                                 </div>
-                                <div class="product-price">P37.00</div>
+                                <div class="product-price">₱37.00</div>
                             </div>
                         </label>
                     </div>
                 </div>
 
-                <!-- Customization Section (Hidden until product is selected) -->
+                <!-- Customization Section -->
                 <div id="customization-section">
                     <div class="form-group">
                         <label class="form-label" for="quantity">Quantity</label>
@@ -1080,11 +654,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="front-image">Front Image <span style="color:#b73b49;">*</span></label>
+                        <label class="form-label" for="front-image">Front Image <span style="color:var(--primary);">*</span></label>
                         <div class="file-upload-area" id="front-upload-area">
-                            <span class="upload-icon"></span>
-                            <span class="upload-text" id="front-file-text">Click to choose your front photo</span>
-                            <span class="upload-hint"></span>
+                            <span class="upload-text" id="front-file-text">Click or drop front photo here</span>
                             <div class="file-upload-status" id="front-upload-status"></div>
                             <input type="file" id="front-image" name="Front_Image" accept="image/jpeg,image/png,image/webp" required>
                         </div>
@@ -1094,11 +666,9 @@
                     </div>
 
                     <div class="back-image-fields form-group" id="back-image-fields">
-                        <label class="form-label" for="back-image">Back Image <span style="color:#b73b49;">*</span></label>
+                        <label class="form-label" for="back-image">Back Image <span style="color:var(--primary);">*</span></label>
                         <div class="file-upload-area" id="back-upload-area">
-                            <span class="upload-icon"></span>
-                            <span class="upload-text" id="back-file-text">Click to choose your back photo</span>
-                            <span class="upload-hint"></span>
+                            <span class="upload-text" id="back-file-text">Click or drop back photo here</span>
                             <div class="file-upload-status" id="back-upload-status"></div>
                             <input type="file" id="back-image" name="Back_Image" accept="image/jpeg,image/png,image/webp">
                         </div>
@@ -1108,21 +678,20 @@
                     </div>
 
                     <div class="total-row">
-                        <span class="total-label">Total</span>
-                        <span class="total-amount" id="total-amount">P0.00</span>
+                        <span class="total-label">Total Amount</span>
+                        <span class="total-amount" id="total-amount">₱0.00</span>
                     </div>
 
                     <button type="submit" class="submit-btn" id="submit-btn">Place Order</button>
-
                     <div class="submit-status" id="submit-status"></div>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Status Pop-up Modal -->
+    <!-- Status Modal -->
     <div class="status-modal-overlay" id="status-modal-overlay">
-        <div class="status-modal" id="status-modal" role="dialog" aria-modal="true" aria-labelledby="status-modal-message">
+        <div class="status-modal" id="status-modal" role="dialog" aria-modal="true">
             <div class="status-modal-icon" id="status-modal-icon"></div>
             <p class="status-modal-message" id="status-modal-message"></p>
             <button class="status-modal-close" id="status-modal-close">Close</button>
@@ -1146,7 +715,6 @@
 
         handleNavbarAuth('auth-status');
 
-        // Product Catalog
         const PRODUCTS = {
             'custom_1': { name: 'Custom Keychain (One side)', price: 30, twoSided: false },
             'custom_2': { name: 'Custom Keychain (Two sided)', price: 33, twoSided: true },
@@ -1155,18 +723,14 @@
         };
 
         let selectedProductData = null;
-
         const DROPBOX_TOKEN_CACHE_KEY = 'keepicsDropboxAccessToken';
         const DROPBOX_FOLDER = '/Keychain_Orders_KeePics';
-
-        // Hardcoded Dropbox Credentials
         const DROPBOX_CONFIG = {
             appKey: 'qbtzc6t2n9yadxe',
             appSecret: 'fcpvodv3em504gf',
             refreshToken: 'elKx910CMv4AAAAAAAAAAVgl9M4nTzl9SP2LSm4fbYKWP1WV_fLFi0fWTFhI0Mfe'
         };
 
-        // Cache links once uploaded on selection
         let uploadedFrontLink = null;
         let uploadedBackLink = null;
         let isFrontUploading = false;
@@ -1175,9 +739,7 @@
         function getCachedAccessToken() {
             try {
                 const cached = JSON.parse(localStorage.getItem(DROPBOX_TOKEN_CACHE_KEY));
-                if (cached && cached.token && cached.expiresAt > Date.now() + 5 * 60 * 1000) {
-                    return cached.token;
-                }
+                if (cached && cached.token && cached.expiresAt > Date.now() + 5 * 60 * 1000) return cached.token;
             } catch(e) {}
             return null;
         }
@@ -1185,8 +747,7 @@
         function cacheAccessToken(token, expiresInSeconds) {
             try {
                 localStorage.setItem(DROPBOX_TOKEN_CACHE_KEY, JSON.stringify({
-                    token,
-                    expiresAt: Date.now() + (expiresInSeconds || 14400) * 1000
+                    token, expiresAt: Date.now() + (expiresInSeconds || 14400) * 1000
                 }));
             } catch(e) {}
         }
@@ -1197,32 +758,21 @@
                 body.append('grant_type', 'refresh_token');
                 body.append('refresh_token', DROPBOX_CONFIG.refreshToken);
                 body.append('client_id', DROPBOX_CONFIG.appKey);
-                if (includeSecret && DROPBOX_CONFIG.appSecret) {
-                    body.append('client_secret', DROPBOX_CONFIG.appSecret);
-                }
+                if (includeSecret && DROPBOX_CONFIG.appSecret) body.append('client_secret', DROPBOX_CONFIG.appSecret);
 
                 const res = await fetch('https://api.dropboxapi.com/oauth2/token', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: body.toString()
                 });
-
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok) {
-                    const errMsg = data.error_description || data.error || ('HTTP ' + res.status);
-                    return { ok: false, err: errMsg };
-                }
+                if (!res.ok) return { ok: false, err: data.error_description || data.error || ('HTTP ' + res.status) };
                 return { ok: true, data };
             };
 
             let attempt = await doRefresh(true);
-            if (!attempt.ok && /secret|client/i.test(attempt.err || '')) {
-                attempt = await doRefresh(false);
-            }
-
-            if (!attempt.ok) {
-                throw new Error('Dropbox token refresh failed: ' + attempt.err);
-            }
+            if (!attempt.ok && /secret|client/i.test(attempt.err || '')) attempt = await doRefresh(false);
+            if (!attempt.ok) throw new Error('Dropbox token refresh failed: ' + attempt.err);
 
             cacheAccessToken(attempt.data.access_token, attempt.data.expires_in);
             return attempt.data.access_token;
@@ -1231,9 +781,8 @@
         async function getDropboxAccessToken() {
             const cached = getCachedAccessToken();
             if (cached) return cached;
-            try {
-                return await refreshDropboxAccessToken();
-            } catch (e) {
+            try { return await refreshDropboxAccessToken(); }
+            catch (e) {
                 try { localStorage.removeItem(DROPBOX_TOKEN_CACHE_KEY); } catch(_) {}
                 throw e;
             }
@@ -1248,9 +797,7 @@
                         'Content-Type': 'application/octet-stream',
                         'Dropbox-API-Arg': JSON.stringify({
                             path: DROPBOX_FOLDER + '/' + filename,
-                            mode: 'add',
-                            autorename: true,
-                            mute: false
+                            mode: 'add', autorename: true, mute: false
                         })
                     },
                     body: file
@@ -1265,17 +812,7 @@
                 res = await doUpload(token);
             }
 
-            if (!res.ok) {
-                const errText = await res.text().catch(() => '');
-                let errMsg = res.status + ' ' + res.statusText;
-                try {
-                    const errData = JSON.parse(errText);
-                    errMsg = errData.error_summary || errData.error || errMsg;
-                } catch(e) {
-                    errMsg = errText || errMsg;
-                }
-                throw new Error('Dropbox upload failed: ' + errMsg);
-            }
+            if (!res.ok) throw new Error('Dropbox upload failed.');
             return res.json();
         }
 
@@ -1299,33 +836,11 @@
                     const data = await res.json();
                     return data.url.replace('dl=0', 'dl=1');
                 }
-
-                const listReq = async (token) => {
-                    return await fetch('https://api.dropboxapi.com/2/sharing/list_shared_links', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ path: path, direct_only: true })
-                    });
-                };
-
-                let listRes = await listReq(await getDropboxAccessToken());
-                if (listRes.status === 401) {
-                    await refreshDropboxAccessToken();
-                    listRes = await listReq(await getDropboxAccessToken());
-                }
-
-                if (listRes.ok) {
-                    const listData = await listRes.json();
-                    if (listData.links && listData.links.length > 0) {
-                        return listData.links[0].url.replace('dl=0', 'dl=1');
-                    }
-                }
             } catch (e) {
-                console.error('Dropbox shared link error:', e);
+                console.error('Dropbox link error:', e);
             }
             return null;
         }
-
 
         const orderForm = document.getElementById('order-form');
         const authRequiredBox = document.getElementById('auth-required');
@@ -1339,7 +854,6 @@
         const customizationSection = document.getElementById('customization-section');
         const productRadios = document.querySelectorAll('input[name="product_selection"]');
         const quantityInput = document.getElementById('quantity');
-        
         const backImageFields = document.getElementById('back-image-fields');
         const backImageInput = document.getElementById('back-image');
         const frontImageInput = document.getElementById('front-image');
@@ -1355,7 +869,6 @@
         const submitBtn = document.getElementById('submit-btn');
         const submitStatus = document.getElementById('submit-status');
 
-        // CGCian Delivery Option Elements
         const cgcianYesRadio = document.getElementById('cgcian-yes');
         const cgcianNoRadio = document.getElementById('cgcian-no');
         const cgcianFields = document.getElementById('cgcian-fields');
@@ -1365,26 +878,21 @@
         const knowsomeoneNameField = document.getElementById('knowsomeone-name-field');
         const knowsomeoneNameInput = document.getElementById('knowsomeone-name');
 
-        // Status Pop-up Modal Elements
         const statusModalOverlay = document.getElementById('status-modal-overlay');
         const statusModal = document.getElementById('status-modal');
         const statusModalIcon = document.getElementById('status-modal-icon');
         const statusModalMessage = document.getElementById('status-modal-message');
         const statusModalClose = document.getElementById('status-modal-close');
 
-        let statusAutoCloseTimer = null;
-
         let currentUser = null;
 
         function fillUserInfo(user) {
             const displayName = user.displayName || user.email.split('@')[0];
             const email = user.email || '';
-
             userChip.style.display = 'flex';
             userNameEl.textContent = displayName;
             userEmailEl.textContent = email;
             userAvatar.textContent = displayName.charAt(0).toUpperCase();
-
             nameInput.value = displayName;
             emailInput.value = email;
         }
@@ -1393,7 +901,6 @@
             if (user) {
                 currentUser = user;
                 fillUserInfo(user);
-
                 authRequiredBox.style.display = 'none';
                 orderForm.style.display = 'flex';
             } else {
@@ -1404,7 +911,6 @@
             }
         });
 
-        // Handle Product Selection Change
         productRadios.forEach(radio => {
             radio.addEventListener('change', (e) => {
                 selectedProductData = PRODUCTS[e.target.value];
@@ -1416,12 +922,9 @@
                 } else {
                     backImageFields.classList.remove('show');
                     backImageInput.removeAttribute('required');
-                    
-                    // Reset back image data if they switch from 2-sided to 1-sided
                     backImageInput.value = '';
-                    backFileText.textContent = 'Click to choose your back photo';
+                    backFileText.textContent = 'Click or drop back photo here';
                     backPreview.classList.remove('show');
-                    backPreviewImg.src = '';
                     uploadedBackLink = null;
                     isBackUploading = false;
                     backUploadStatus.className = 'file-upload-status';
@@ -1434,19 +937,15 @@
         function updateTotal() {
             if (!selectedProductData) return;
             const qty = Math.max(1, parseInt(quantityInput.value, 10) || 1);
-            let total = selectedProductData.price * qty;
-            totalAmountEl.textContent = 'P' + total.toFixed(2);
+            totalAmountEl.textContent = '₱' + (selectedProductData.price * qty).toFixed(2);
         }
 
         quantityInput.addEventListener('input', updateTotal);
 
-        // --- CGCian Delivery Option Logic ---
         function updateDeliveryFields() {
             const isCgcian = cgcianYesRadio.checked;
-
             cgcianFields.classList.toggle('show', isCgcian);
             regularFields.classList.toggle('show', cgcianNoRadio.checked);
-
             classroomInput.required = isCgcian;
             if (!isCgcian) classroomInput.value = '';
         }
@@ -1460,76 +959,34 @@
             if (!show) knowsomeoneNameInput.value = '';
         });
 
-        function getDeliveryInfo() {
-            if (cgcianYesRadio.checked) {
-                return {
-                    method: 'CGCian (Room Delivery)',
-                    buildingRoom: classroomInput.value.trim(),
-                    knownDeliverer: null
-                };
-            }
-            const knownPerson = (knowsomeoneCheck.checked && knowsomeoneNameInput.value.trim()) ? knowsomeoneNameInput.value.trim() : null;
-            return {
-                method: 'Non-CGCian (Meet-up)',
-                buildingRoom: null,
-                knownDeliverer: knownPerson
-            };
-        }
-
-        function resetDeliverySection() {
-            cgcianYesRadio.checked = false;
-            cgcianNoRadio.checked = false;
-            cgcianFields.classList.remove('show');
-            regularFields.classList.remove('show');
-            classroomInput.value = '';
-            classroomInput.removeAttribute('required');
-            knowsomeoneCheck.checked = false;
-            knowsomeoneNameField.classList.remove('show');
-            knowsomeoneNameInput.value = '';
-        }
-
         async function processAndUploadFile(file, type) {
             const statusEl = type === 'front' ? frontUploadStatus : backUploadStatus;
             const customerName = currentUser ? (currentUser.displayName || currentUser.email.split('@')[0]) : 'customer';
             const safeName = customerName.replace(/[^a-zA-Z0-9_-]/g, '_');
             const timestamp = Date.now();
 
-            if (type === 'front') {
-                isFrontUploading = true;
-                uploadedFrontLink = null;
-            } else {
-                isBackUploading = true;
-                uploadedBackLink = null;
-            }
+            if (type === 'front') { isFrontUploading = true; uploadedFrontLink = null; }
+            else { isBackUploading = true; uploadedBackLink = null; }
 
             statusEl.className = 'file-upload-status uploading';
-            statusEl.innerHTML = '<span class="spinner"></span>loading...';
+            statusEl.innerHTML = '<span class="spinner"></span>Uploading...';
 
             try {
-                // Uploading original file without compression to maintain quality
-                const ext = (file.type === 'image/png' ? 'png' : (file.type === 'image/webp' ? 'webp' : 'jpg'));
-                const filename = type.toUpperCase() + '_' + safeName + '_' + timestamp + '.' + ext;
-
+                const ext = file.type.split('/')[1] || 'jpg';
+                const filename = `${type.toUpperCase()}_${safeName}_${timestamp}.${ext}`;
                 const uploadRes = await uploadToDropbox(file, filename);
                 const link = await createDropboxSharedLink(uploadRes.path_display);
 
-                if (type === 'front') {
-                    uploadedFrontLink = link;
-                    isFrontUploading = false;
-                } else {
-                    uploadedBackLink = link;
-                    isBackUploading = false;
-                }
+                if (type === 'front') { uploadedFrontLink = link; isFrontUploading = false; }
+                else { uploadedBackLink = link; isBackUploading = false; }
 
                 statusEl.className = 'file-upload-status success';
-                statusEl.innerHTML = '&#10004;';
+                statusEl.innerHTML = '&#10004; Ready';
             } catch (err) {
-                console.error('Dropbox Direct Upload Error:', err);
                 if (type === 'front') isFrontUploading = false;
                 else isBackUploading = false;
-
                 statusEl.className = 'file-upload-status error';
-                statusEl.innerHTML = '&#10060; loading failed. Please re-select the image.';
+                statusEl.innerHTML = '&#10060; Upload failed. Retry.';
             }
         }
 
@@ -1538,31 +995,13 @@
                 if (this.files && this.files[0]) {
                     const file = this.files[0];
                     fileTextEl.textContent = file.name;
-
                     const reader = new FileReader();
-                    reader.onload = function (e) {
+                    reader.onload = (e) => {
                         previewImgEl.src = e.target.result;
                         previewEl.classList.add('show');
                     };
                     reader.readAsDataURL(file);
-
-                    // Trigger loading and uploading directly on selection (Original Quality)
                     processAndUploadFile(file, type);
-                } else {
-                    fileTextEl.textContent = 'Click to choose a photo';
-                    previewEl.classList.remove('show');
-                    previewImgEl.src = '';
-                    if (type === 'front') {
-                        uploadedFrontLink = null;
-                        isFrontUploading = false;
-                        frontUploadStatus.className = 'file-upload-status';
-                        frontUploadStatus.innerHTML = '';
-                    } else {
-                        uploadedBackLink = null;
-                        isBackUploading = false;
-                        backUploadStatus.className = 'file-upload-status';
-                        backUploadStatus.innerHTML = '';
-                    }
                 }
             });
         }
@@ -1572,215 +1011,50 @@
 
         orderForm.addEventListener('submit', async function (e) {
             e.preventDefault();
+            if (!currentUser) return showStatus('Please log in.', 'error');
+            if (!cgcianYesRadio.checked && !cgcianNoRadio.checked) return showStatus('Select a delivery option.', 'error');
+            if (cgcianYesRadio.checked && !classroomInput.value.trim()) return showStatus('Room location missing.', 'error');
+            if (!selectedProductData) return showStatus('Select a product.', 'error');
+            if (!uploadedFrontLink || (selectedProductData.twoSided && !uploadedBackLink)) return showStatus('Please await photo upload finish.', 'error');
 
-            if (!currentUser) {
-                showStatus('Please log in to place your order.', 'error');
-                return;
-            }
-
-            if (!cgcianYesRadio.checked && !cgcianNoRadio.checked) {
-                showStatus('Please choose a delivery option.', 'error');
-                return;
-            }
-
-            const deliveryInfo = getDeliveryInfo();
-            if (cgcianYesRadio.checked && !deliveryInfo.buildingRoom) {
-                showStatus('Please enter your building and room number for delivery.', 'error');
-                return;
-            }
-
-            if (!selectedProductData) {
-                showStatus('Please select a product before submitting.', 'error');
-                return;
-            }
-
-            if (!frontImageInput.files || !frontImageInput.files[0]) {
-                showStatus('Please choose a front image for your keychain.', 'error');
-                return;
-            }
-
-            if (isFrontUploading || (selectedProductData.twoSided && isBackUploading)) {
-                showStatus('Please wait for your image(s) to finish loading...', 'error');
-                return;
-            }
-
-            if (!uploadedFrontLink) {
-                showStatus('Front image loading is not completed. Please select the image again.', 'error');
-                return;
-            }
-
-            if (selectedProductData.twoSided) {
-                if (!backImageInput.files || !backImageInput.files[0]) {
-                    showStatus('Please choose a back image for your two-sided product.', 'error');
-                    return;
-                }
-                if (!uploadedBackLink) {
-                    showStatus('Back image loading is not completed. Please select the image again.', 'error');
-                    return;
-                }
-            }
-
-            const qty = Math.max(1, parseInt(quantityInput.value, 10) || 1);
-            const total = selectedProductData.price * qty;
-
-            const customerName = currentUser.displayName || currentUser.email.split('@')[0];
-            const customerEmail = currentUser.email || '';
-
-            setLoading(true, 'Submitting order details...');
-
+            setLoading(true, 'Saving order...');
             try {
-                const orderRef = ref(db, 'orders');
                 const orderData = {
-                    customerName: customerName,
-                    customerEmail: customerEmail,
-                    customerUid: currentUser.uid,
-                    deliveryMethod: deliveryInfo.method,
-                    buildingRoom: deliveryInfo.buildingRoom,
-                    knownDeliverer: deliveryInfo.knownDeliverer,
+                    customerName: currentUser.displayName || currentUser.email.split('@')[0],
+                    customerEmail: currentUser.email,
                     product: selectedProductData.name,
-                    basePrice: selectedProductData.price,
-                    hasBackImage: selectedProductData.twoSided,
-                    quantity: qty,
-                    totalPricePHP: total,
+                    quantity: parseInt(quantityInput.value, 10),
+                    totalPricePHP: selectedProductData.price * parseInt(quantityInput.value, 10),
                     frontImageDropboxLink: uploadedFrontLink,
-                    backImageDropboxLink: selectedProductData.twoSided ? uploadedBackLink : null,
-                    status: 'pending',
+                    backImageDropboxLink: uploadedBackLink || null,
                     timestamp: Date.now()
                 };
-                await push(orderRef, orderData);
-
-                const formData = new FormData();
-                formData.append('_subject', 'New Keychain Order - ' + customerName);
-                formData.append('_template', 'table');
-                formData.append('_captcha', 'false');
-                formData.append('Customer Name', customerName);
-                formData.append('Customer Email', customerEmail);
-                formData.append('Delivery Method', deliveryInfo.method);
-                if (deliveryInfo.buildingRoom) {
-                    formData.append('Building & Room Number', deliveryInfo.buildingRoom);
-                }
-                if (deliveryInfo.knownDeliverer) {
-                    formData.append('Known Deliverer', deliveryInfo.knownDeliverer);
-                }
-                formData.append('Product', selectedProductData.name);
-                formData.append('Quantity', qty);
-                formData.append('Base Price (PHP)', selectedProductData.price);
-                formData.append('Total Price (PHP)', total.toFixed(2));
-                formData.append('Front Image (Download Link)', uploadedFrontLink);
-                if (selectedProductData.twoSided && uploadedBackLink) {
-                    formData.append('Back Image (Download Link)', uploadedBackLink);
-                }
-                formData.append('Order Timestamp', new Date().toLocaleString());
-
-                try {
-                    await fetch('https://formsubmit.co/ajax/a1e63f151d76e68502b50191e9ef4195', {
-                        method: 'POST',
-                        headers: { 'Accept': 'application/json' },
-                        body: formData
-                    });
-                } catch (formErr) {
-                    console.warn('FormSubmit network error:', formErr);
-                }
-
+                await push(ref(db, 'orders'), orderData);
                 setLoading(false);
-                showStatus('Order successfully placed, we will contact you to the email provided.', 'success');
-
-                // Reset Form state
+                showStatus('Order placed successfully!', 'success');
                 orderForm.reset();
                 fillUserInfo(currentUser);
-                resetDeliverySection();
-                
-                selectedProductData = null;
                 customizationSection.style.display = 'none';
-
-                uploadedFrontLink = null;
-                uploadedBackLink = null;
-                
-                frontPreview.classList.remove('show');
-                frontPreviewImg.src = '';
-                frontFileText.textContent = 'Click to choose your front photo';
-                frontUploadStatus.className = 'file-upload-status';
-                frontUploadStatus.innerHTML = '';
-                
-                backPreview.classList.remove('show');
-                backPreviewImg.src = '';
-                backFileText.textContent = 'Click to choose your back photo';
-                backUploadStatus.className = 'file-upload-status';
-                backUploadStatus.innerHTML = '';
-                
-                backImageFields.classList.remove('show');
-                backImageInput.removeAttribute('required');
-                
-                quantityInput.value = 1;
-                totalAmountEl.textContent = 'P0.00';
             } catch (error) {
-                console.error('Order submission error:', error);
                 setLoading(false);
-                showStatus('There was an error placing your order. Please try again.', 'error');
+                showStatus('Submission error, retry.', 'error');
             }
         });
 
         function setLoading(loading, message) {
-            if (loading) {
-                submitBtn.disabled = true;
-                submitStatus.className = 'submit-status loading';
-                submitStatus.innerHTML = '<span class="spinner"></span>' + (message || 'Processing...');
-            } else {
-                submitBtn.disabled = false;
-                submitStatus.className = 'submit-status';
-                submitStatus.innerHTML = '';
-            }
+            submitBtn.disabled = loading;
+            submitStatus.className = 'submit-status' + (loading ? ' loading' : '');
+            submitStatus.innerHTML = loading ? `<span class="spinner"></span>${message}` : '';
         }
 
         function showStatus(message, type) {
-            // Clear any existing auto-close timer
-            if (statusAutoCloseTimer) {
-                clearTimeout(statusAutoCloseTimer);
-                statusAutoCloseTimer = null;
-            }
-
-            // Set modal content based on type
             statusModal.className = 'status-modal ' + type;
             statusModalIcon.innerHTML = type === 'success' ? '&#10003;' : '&#10005;';
             statusModalMessage.textContent = message;
-
-            // Show the pop-up modal
             statusModalOverlay.classList.add('show');
-
-            // Auto-dismiss success pop-ups after 8 seconds
-            if (type === 'success') {
-                statusAutoCloseTimer = setTimeout(() => {
-                    closeStatusModal();
-                }, 8000);
-            }
         }
 
-        function closeStatusModal() {
-            statusModalOverlay.classList.remove('show');
-            statusModal.className = 'status-modal';
-            if (statusAutoCloseTimer) {
-                clearTimeout(statusAutoCloseTimer);
-                statusAutoCloseTimer = null;
-            }
-        }
-
-        // Close pop-up when the Close button is clicked
-        statusModalClose.addEventListener('click', closeStatusModal);
-
-        // Close pop-up when clicking on the overlay background (outside the modal)
-        statusModalOverlay.addEventListener('click', function (e) {
-            if (e.target === statusModalOverlay) {
-                closeStatusModal();
-            }
-        });
-
-        // Close pop-up when the Escape key is pressed
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && statusModalOverlay.classList.contains('show')) {
-                closeStatusModal();
-            }
-        });
-
+        statusModalClose.addEventListener('click', () => statusModalOverlay.classList.remove('show'));
     </script>
 </body>
 </html>

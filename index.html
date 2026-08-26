@@ -17,8 +17,6 @@
     
     <link rel="stylesheet" href="styles/styles.css">
     <title>KeePics - Home</title>
-
-    
 </head>
 <body class="home-page">
 
@@ -41,13 +39,14 @@
         </ul>
     </nav>
 
+    <!-- Fixed Service Alert -->
     <div class="window-notice-fixed hidden" id="service-notice-window">
         <div class="window-notice-header">
             <div class="window-notice-title">Service Time Alert</div>
             <button class="minimize-notice-btn" id="minimize-notice-btn" title="Minimize Window">×</button>
         </div>
         <div class="window-notice-body">
-            Our Services are open from <strong>5:00 AM to 9:00 PM Mon, Tue, Wed (Thursday is delivering items only) (Ordering in Thursday, will result your item delivery will be next week Monday)</strong>. Order your customized items within this timeline window to receive your product tomorrow! Exceeding 9:00 PM will delay your order execution step to the next next day.
+            Our Services are open from <strong>5:00 AM to 9:00 PM Mon, Tue, Wed (Thursday is delivering items only) (Ordering on Thursday, will result in delivery next week Monday)</strong>. Order within this timeline to receive your product tomorrow!
         </div>
     </div>
 
@@ -55,6 +54,7 @@
          Open Hours Hint
     </div>
 
+    <!-- PWA Install & Update Banner -->
     <div class="pwa-install-banner" id="pwa-banner">
         <div class="pwa-header">
             <div class="pwa-title">KeePics App Manager</div>
@@ -64,7 +64,14 @@
             Install our free app on your PC or Mobile device for fast tracking, offline access, and a better viewing experience!
         </div>
         <div class="pwa-actions">
-            <button class="pwa-btn-install" id="pwa-install-btn">Install App</button>
+            <button class="pwa-btn-install" id="pwa-install-btn">
+                <svg class="pwa-icon-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Install App
+            </button>
             <button class="pwa-btn-check" id="pwa-check-update-btn">Check for Updates</button>
             <button class="pwa-btn-optout" id="pwa-optout-btn">Don't show again</button>
         </div>
@@ -84,12 +91,12 @@
     </div>
 
     <div class="pwa-settings-hint" id="pwa-settings-hint" title="App Settings">
-        
-    </div>
+    <img src="assets/image/website/logo.png" alt="KeePics Logo" class="pwa-hint-logo">
+</div>
 
     <div class="cinematic-update-overlay" id="cinematic-update-screen">
         <div class="cinematic-update-card">
-            <div class="cinematic-icon-wrapper" id="cinematic-icon"></div>
+            <div class="cinematic-icon-wrapper" id="cinematic-icon">✨</div>
             <h3 id="cinematic-title">KeePics Admin is building</h3>
             <p id="cinematic-desc">Thinking aesthetics...</p>   
             <div class="dramatic-progress-container">
@@ -99,96 +106,51 @@
         </div>
     </div>
 
-    <div class="rewards-popup-overlay" id="rewards-popup">
-        <div class="rewards-popup-box">
-            <button class="close-popup-btn" id="close-popup">×</button>
-            <h3> Daily Rewards Ready!</h3>
-            <p>You haven't finished all your scratch card attempts today! Claim free tokens and reward shop points inside the arcade center.</p>
-            <a href="scratch.html" class="claim-btn">
-                <span class="noti-dot"></span> Claim Your Scratch Card
-            </a>
-            <div>
-                <button class="dismiss-today-link" id="dismiss-today-btn">Don't show this again today</button>
+    <!-- NON-MODAL REWARDS NOTIFICATION TOAST -->
+    <div class="rewards-toast" id="rewards-popup">
+        <button class="close-popup-btn" id="close-popup">×</button>
+        <div class="toast-content">
+            <div class="toast-title">
+                <span class="noti-dot"></span> Daily Rewards Ready!
+            </div>
+            <p class="toast-text">You have unused scratch attempts today. Claim free tokens and points now!</p>
+            <div class="toast-actions">
+                <a href="scratch.html" class="toast-claim-btn">Claim Scratch Card</a>
+                <button class="toast-dismiss-btn" id="dismiss-today-btn">Dismiss Today</button>
             </div>
         </div>
     </div>
 
     <main class="home-main">
-
         <section class="hp-hero">
             <div class="hp-hero-inner">
-                <span class="hp-eyebrow hp-eyebrow-light">Customized Memory Keychains</span>
                 <h1 class="hp-hero-title">Hold Your <span>Story</span></h1>
                 <p class="hp-hero-sub">
                     Preserve your favorite pictures, memories, and express your unique individuality —
                     in a beautifully crafted keychain made just for you.
                 </p>
                 <div class="hp-hero-actions">
-                    <a href="order.html" class="hp-btn hp-btn-light">Preorder Now</a>
-                    <a href="features.html" class="hp-btn hp-btn-outline-light">Explore Features</a>
-                </div>
-                <div class="hp-hero-stats">
-                    <div class="hp-stat">
-                        <strong>₱30</strong>
-                        <span>Custom Keychains</span>
-                    </div>
-                    <div class="hp-stat">
-                        <strong>₱40</strong>
-                        <span>Photobooth Strips</span>
-                    </div>
-                    <div class="hp-stat">
-                        <strong>100%</strong>
-                        <span>Handcrafted</span>
-                    </div>
-                </div>
+                    <a href="order.html" class="hp-btn hp-btn-light">Order Now</a>
+                </div>  
             </div>
             <div class="hp-hero-blob hp-hero-blob-1"></div>
             <div class="hp-hero-blob hp-hero-blob-2"></div>
             <div class="hp-hero-blob hp-hero-blob-3"></div>
         </section>
 
-        <div class="hp-trustbar">
-            <span>Custom Keychains</span>
-            <span>Photobooth Strips</span>
-            <span>Memory Keeping</span>
-            <span>Freebies & Rewards</span>
-            <span>Student-Made</span>
-        </div>
-
         <section class="hp-section hp-about" id="hp-story">
             <div class="hp-section-head">
-                <span class="hp-eyebrow">Our Story</span>
                 <h2>More Than an Accessory —<br>A Memory in Your Pocket</h2>
                 <p>KeePics is a student-run business passionate about making personal memory-keeping affordable, creative, and beautifully yours.</p>
-            </div>
-            <div class="hp-about-grid">
-                <article class="hp-about-card">
-                    <div class="hp-card-icon">✦</div>
-                    <h3>Our Vision</h3>
-                    <p>To expand our business and become a leading provider of customized keychains — offering affordable, creative products that help people express themselves, with customer satisfaction through quality and excellent service.</p>
-                </article>
-                <article class="hp-about-card">
-                    <div class="hp-card-icon">♥</div>
-                    <h3>Our Mission</h3>
-                    <p>To create unique, high-quality products that help customers express their individuality in a creative way — while providing affordable products and excellent service, continuously improving because we value our customers.</p>
-                </article>
-                <article class="hp-about-card">
-                    <div class="hp-card-icon">❋</div>
-                    <h3>Why KeePics?</h3>
-                    <p>Our keychains are stylish, lightweight, and easy to blend with your daily outfit. Each piece is made with care, packaged presentably, and ready to keep your story close.</p>
-                </article>
             </div>
         </section>
 
         <section class="hp-section hp-products" id="hp-products">
             <div class="hp-section-head">
-                <span class="hp-eyebrow">Our Products</span>
                 <h2>Made to Keep Your Memories</h2>
-                <p>Beautiful, customizable keychains and photobooth strips that preserve what matters most to you.</p>
             </div>
             <div class="hp-products-grid">
                 <article class="hp-product-card hp-product-featured">
-                    <span class="hp-product-tag">Best Seller</span>
                     <h3>Custom Keychain</h3>
                     <p class="hp-product-desc">Your photo, your design, your story — printed and sealed in a premium keychain case.</p>
                     <ul class="hp-product-list">
@@ -198,55 +160,46 @@
                     <a href="order.html" class="hp-btn hp-btn-light">Order Yours</a>
                 </article>
                 <article class="hp-product-card">
-                    <span class="hp-product-tag hp-tag-blue">Memory Strip</span>
                     <h3>2x6 Photobooth Strips</h3>
                     <p class="hp-product-desc">Classic photobooth strips — perfect for gifts, souvenirs, and memory keeping.</p>
                     <ul class="hp-product-list">
                         <li><strong>On-site</strong><span>₱50.00</span></li>
                         <li><strong>Website Order</strong><span>₱40.00</span></li>
                     </ul>
-                    <a href="order.html" class="hp-btn hp-btn-outline">Order Yours</a>
+                    <a href="photobooth.html" class="hp-btn hp-btn-outline">Take a booth</a>
                 </article>
             </div>
-            <p class="hp-note">Use one (1) voucher per keychain or photobooth product. The ₱3, ₱4, ₱5, and ₱6 vouchers are strictly for Membership Card holders — keep your card handy as a souvenir, and with purpose.</p>
         </section>
 
         <section class="hp-section hp-features" id="hp-features">
             <div class="hp-section-head">
                 <span class="hp-eyebrow">Fully Customized</span>
                 <h2>Your Preference Is Our Product</h2>
-                <p>Go beyond photos — personalize your keychain with content that means something to you. Their preference is our product.</p>
             </div>
             <div class="hp-features-grid">
                 <article class="hp-feature-item">
                     <div class="hp-feature-icon">♪</div>
                     <h3>Spotify Songs</h3>
-                    <p>Your favorite track, frozen in time and sealed on your keychain.</p>
                 </article>
                 <article class="hp-feature-item">
                     <div class="hp-feature-icon">▶</div>
                     <h3>YouTube Songs & Videos</h3>
-                    <p>Memorable music and moments from the videos you love.</p>
                 </article>
                 <article class="hp-feature-item">
                     <div class="hp-feature-icon">◎</div>
                     <h3>Social Media Platforms</h3>
-                    <p>Showcase your handles and favorite platforms in style.</p>
                 </article>
                 <article class="hp-feature-item">
                     <div class="hp-feature-icon">✦</div>
                     <h3>In-Game Names</h3>
-                    <p>Your gamer tag and usernames, fully customized just for you.</p>
                 </article>
                 <article class="hp-feature-item">
                     <div class="hp-feature-icon">♡</div>
                     <h3>Photo Memories</h3>
-                    <p>Preserve favorite pictures and memories close to your heart.</p>
                 </article>
                 <article class="hp-feature-item">
                     <div class="hp-feature-icon">☆</div>
                     <h3>Freebies Stickers</h3>
-                    <p>Every order comes with cute freebie stickers in every package.</p>
                 </article>
             </div>
         </section>
@@ -254,7 +207,6 @@
         <section class="hp-section hp-engage" id="hp-rewards">
             <div class="hp-engage-inner">
                 <div class="hp-engage-text">
-                    <span class="hp-eyebrow hp-eyebrow-light">Rewards & Engagement</span>
                     <h2>More Reasons to<br>Keep Your Story</h2>
                     <p>We keep things exciting with daily rewards, points, and exclusive perks — every purchase brings you closer to your next freebie.</p>
                     <a href="scratch.html" class="hp-btn hp-btn-light">Play Daily Scratch</a>
@@ -286,7 +238,6 @@
 
         <section class="hp-section hp-team" id="hp-team">
             <div class="hp-section-head">
-                <span class="hp-eyebrow">The Team Behind KeePics</span>
                 <h2>Meet Our Leaders</h2>
                 <p>HUMSS students from Citi Global College Santa Rosa, working together to bring your memories to life.</p>
             </div>
@@ -354,8 +305,8 @@
                 <span>Made with ♥ by the KeePics Team</span>
             </div>
         </footer>
-
     </main>
+    <script src='https://www.noupe.com/embed/null.js'></script>
 
     <script>
         document.getElementById('hp-year').textContent = new Date().getFullYear();
@@ -400,7 +351,6 @@
                 navigator.serviceWorker.register('/sw.js')
                 .then(reg => {
                     console.log('Service Worker registered successfully!', reg.scope);
-                    
                     if (navigator.serviceWorker.controller && assertNetworkOnline() && isRunningAsApp()) {
                         navigator.serviceWorker.controller.postMessage({ action: 'CHECK_UPDATE' });
                     }
@@ -410,7 +360,6 @@
 
             navigator.serviceWorker.addEventListener('message', (event) => {
                 const data = event.data;
-                
                 if (data.action === 'UPDATE_STATUS') {
                     if (!assertNetworkOnline()) {
                         isManualCheck = false;
@@ -451,17 +400,17 @@
                     dramaticText.innerText = `${data.progress}%`;
 
                     if (data.progress > 80) {
-                        cinematicDesc.innerText = "Polishing visual elements and applying custom layout wrappers...";
+                        cinematicDesc.innerText = "Eating sushi and ramen...";
                     } else if (data.progress > 40) {
-                        cinematicDesc.innerText = "Injecting updated feature frames and cleaning legacy components...";
+                        cinematicDesc.innerText = "Wait, I feel like it's fine? Wait more...";
                     }
                 } 
                 else if (data.action === 'UPDATE_COMPLETE') {
                     if (!assertNetworkOnline()) return;
                     
                     cinematicIcon.innerText = "";
-                    cinematicTitle.innerText = "Configuration Absolute!";
-                    cinematicDesc.innerText = "Re-aligning aesthetic matrix lines. Re-opening KeePics now...";
+                    cinematicTitle.innerText = "Measuring each element...";
+                    cinematicDesc.innerText = "Looking for cute styles...";
                     dramaticBar.style.width = '100%';
                     dramaticText.innerText = '100%';
 
@@ -481,8 +430,6 @@
 
                 if (assetsToUpdate.length > 0 && navigator.serviceWorker.controller) {
                     appUpdateBtn.disabled = true;
-                    
-                    // Trigger the dramatic overlay sequences
                     updateBanner.style.display = 'none';
                     cinematicScreen.classList.add('show');
                     
@@ -550,7 +497,6 @@
                 pwaSettingsHint.style.display = 'flex';
             }
         });
-
 
         pwaCheckUpdateBtn.addEventListener('click', () => {
             if (!navigator.onLine) {

@@ -33,7 +33,6 @@
         
         <div class="page-header">
             <h1>Announcement / Offers</h1>
-            <p>Stay updated to latest video, announcement and promos.</p>
         </div>
 
         <div class="admin-controls-panel" id="admin-panel">
@@ -45,93 +44,72 @@
             <p class="isx-71" >Loading announcements...</p>
         </div>
 
-        <div class="features-section">
-            <div class="features-title">Why Choose KeePics?</div>
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="feature-icon">🎀</div>
-                    <h4>Premium Quality</h4>
-                    <p>Every keychain is good quality, and designed to look premium indefinitely.</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">🎀</div>
-                    <h4>Fully Custom Tailored</h4>
-                    <p>Simply supply your graphic asset or picture, and our tools print them in stellar pixel fidelity.</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">🎀</div>
-                    <h4>Interactive Community</h4>
-                    <p>Connect with other collectors on our Chat boards or evaluate real thoughts on the Rating Wall.</p>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <div class="modal-overlay" id="deal-modal-overlay">
+<div class="modal-overlay" id="deal-modal-overlay">
         <div class="deal-modal">
-            <h3 id="modal-heading-title">Post New Announcement Block</h3>
+            <h3 id="modal-heading-title">Create Announcement</h3>
             <input type="hidden" id="edit-target-id" value="">
             
             <div class="form-group">
-                <label for="deal-type">Entry Archetype Type</label>
+                <label for="deal-type">Type</label>
                 <select id="deal-type">
-                    <option value="promo">Promo Card (Spin, Point Trades, Direct link)</option>
-                    <option value="update">Official Announcement Update (Full Width Text / Cover)</option>
-                    <option value="youtube">YouTube Interactive Video Embed</option>
+                    <option value="promo">Promo Card</option>
+                    <option value="update">Announcement</option>
+                    <option value="youtube">YouTube Video</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label id="label-title" for="deal-title">Offer or Header Title</label>
+                <label id="label-title" for="deal-title">Title</label>
                 <input type="text" id="deal-title">
             </div>
 
             <div class="form-group">
-                <label id="label-desc" for="deal-desc">Description Content Text</label>
+                <label id="label-desc" for="deal-desc">Description</label>
                 <textarea id="deal-desc"></textarea>
             </div>
 
             <div id="promo-fields-group">
                 <div class="form-group">
-                    <label for="deal-count">Items left</label>
+                    <label for="deal-count">Quantity</label>
                     <input type="text" id="deal-count">
                 </div>
                 <div class="form-group">
-                    <label for="deal-action-type">Redirecting Function</label>
+                    <label for="deal-action-type">Action</label>
                     <select id="deal-action-type">
-                        <option value="spin">Redirect to Spin Wheel (game.html)</option>
-                        <option value="order">Link to Shopping Cart Order (order.html)</option>
-                        <option value="points">Points Wallet Trade Buy</option>
+                        <option value="spin">Spin Wheel</option>
+                        <option value="order">Shopping Cart</option>
+                        <option value="points">Points Store</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="deal-price-tag">Pricing</label>
+                    <label for="deal-price-tag">Price</label>
                     <input type="text" id="deal-price-tag">
                 </div>
             </div>
 
             <div id="youtube-fields-group" style="display: none;">
                 <div class="form-group">
-                    <label for="deal-youtube-id">Youtube link</label>
+                    <label for="deal-youtube-id">YouTube URL</label>
                     <input type="text" id="deal-youtube-id">
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="deal-accent-color">Top border</label>
+                <label for="deal-accent-color">Accent Color</label>
                 <input type="color" id="deal-accent-color" value="#3b82f6">
             </div>
 
             <div class="form-group" id="image-upload-wrapper">
-                <label for="deal-file">Banner</label>
+                <label for="deal-file">Banner Image</label>
                 <input type="file" id="deal-file" accept="image/*">
-                <div class="isx-72" id="file-upload-status" ></div>
+                <div class="isx-72" id="file-upload-status"></div>
             </div>
 
             <div class="modal-footer-btns">
                 <button class="cancel-btn" id="close-modal-btn">Cancel</button>
-                <button class="submit-deal-btn" id="submit-deal-btn">Save Entry</button>
+                <button class="submit-deal-btn" id="submit-deal-btn">Save</button>
             </div>
         </div>
     </div>

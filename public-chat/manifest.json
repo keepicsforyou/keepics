@@ -1,0 +1,21 @@
+{
+  "name": "KeePics Messenger",
+  "short_name": "Messenger",
+  "description": "Secure Real-Time Messaging App",
+  "start_url": "./public-chat.html",
+  "display": "standalone",  
+  "background_color": "#0f172a",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "../assets/image/website/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "../assets/image/website/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
