@@ -90,7 +90,7 @@
       padding: 0;
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-font-smoothing: antialiased;
-      -webkit-tap-highlight-color: transparent; /* Fixes mobile delay */
+      -webkit-tap-highlight-color: transparent;
     }
 
     body, html {
@@ -105,7 +105,6 @@
       touch-action: manipulation;
     }
 
-    /* Force all clickables to trigger touch events on mobile WebKit */
     button, .chat-item, .user-profile, .action-btn, .hamburger, .reaction-emoji-btn, .reaction-badge {
       cursor: pointer;
       touch-action: manipulation;
@@ -860,7 +859,7 @@
       font-size: 13px;
       padding: 6px;
       border-radius: var(--radius-full);
-      opacity: 0.7; /* Always visible for touch screens */
+      opacity: 0.7;
       transition: all 0.2s;
     }
 
@@ -994,7 +993,7 @@
       font-size: 13px;
       padding: 6px;
       border-radius: var(--radius-full);
-      opacity: 0.7; /* Always visible on mobile screens */
+      opacity: 0.7;
       transition: all 0.2s;
     }
 
@@ -1063,11 +1062,30 @@
       margin-bottom: 2px;
     }
 
+    .message-time-status-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+      padding: 0 6px;
+    }
+
     .message-time {
       font-size: 10px;
       color: var(--text-subtle);
-      margin-top: 4px;
-      padding: 0 6px;
+    }
+
+    .message-status-text {
+      font-size: 10px;
+      color: var(--text-subtle);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .message-status-text.seen-badge {
+      color: var(--primary);
+      font-weight: 600;
     }
 
     .preview-image-container {
@@ -1223,7 +1241,7 @@
       border-left: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
-      transition: margin-right 0.3s ease;
+      transition: margin-right 0.3s ease, transform 0.3s ease;
       margin-right: calc(-1 * var(--drawer-width));
     }
 
@@ -1321,7 +1339,6 @@
       color: #ffffff;
     }
 
-    /* Mute Overlay */
     .mute-overlay-card {
       background: var(--bg-sidebar);
       border: 2px solid var(--danger);
@@ -1391,9 +1408,15 @@
       .members-drawer {
         position: absolute;
         right: 0;
+        width: 100%;
         height: calc(100% - 60px);
         top: 60px;
         z-index: 40;
+        margin-right: 0;
+        transform: translateX(100%);
+      }
+      .members-drawer.open {
+        transform: translateX(0);
       }
       .message-container-row {
         max-width: 85%;
@@ -1506,7 +1529,6 @@
         <input type="text" id="edit-profile-nickname" class="input-field" placeholder="Enter a custom nickname..." autocomplete="off" />
       </div>
 
-      <!-- Privacy Setting: Public List Visibility -->
       <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-input); padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 14px;">
         <div style="text-align: left;">
           <div style="font-size: 13px; font-weight: 700; color: var(--text-main);">Show in Public User List</div>
@@ -1604,7 +1626,6 @@
 
       <div class="chats-list" id="chats-list"></div>
 
-      <!-- Install App PWA Section -->
       <div class="sidebar-footer">
         <button id="install-app-btn" class="install-pwa-btn hidden">
           <i class="fa-solid fa-download"></i> Install App
@@ -1684,7 +1705,6 @@
     </aside>
   </div>
 
-  <!-- Service Worker Registration & Installation Event Listener -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -1778,6 +1798,7 @@
       ref, 
       push, 
       onValue, 
+      off,
       set, 
       get, 
       update,
@@ -1788,7 +1809,6 @@
       onDisconnect
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // ADMIN UIDS ARRAY FOR RESTRICTED SECTIONS & DELETION PRIVILEGES
     const ADMIN_UIDS = [
       "hCys7QbIUrbSdVwZm1eDGY3KBrP2",
       "4yioSetM3kVo2hTC0aie0xaPguJ2"
@@ -1798,7 +1818,6 @@
       return !!uid && ADMIN_UIDS.includes(uid);
     }
 
-    // --- ENCRYPTION HELPERS (AES-GCM Web Crypto) ---
     const ENCRYPTION_SECRET = "KeePicsSecureSecretKey2026";
 
     async function getCryptoKey(secret) {
@@ -2036,9 +2055,47 @@
     let isLoadingChats = true;
     let activeReplyMessage = null;
     let pendingUnsendMessageKey = null;
+    let activeMessagesQuery = null;
+    let currentRenderToken = 0;
 
     let targetMuteUid = null;
     let muteTimerInterval = null;
+
+    // Anti-spam configuration tracking
+    let lastMessageTimestamp = 0;
+    let lastSentMessageText = "";
+    const messageRateTimestamps = [];
+    const MAX_BURST_COUNT = 4;
+    const BURST_WINDOW_MS = 5000;
+    const MIN_INTERVAL_MS = 1000;
+
+    function isSpamming(text) {
+      const now = Date.now();
+
+      if (now - lastMessageTimestamp < MIN_INTERVAL_MS) {
+        alert("Slow down! Please wait a second before sending another message.");
+        return true;
+      }
+
+      if (text.toLowerCase() === lastSentMessageText.toLowerCase() && (now - lastMessageTimestamp < 5000)) {
+        alert("Duplicate message detected. Please wait before re-sending identical text.");
+        return true;
+      }
+
+      messageRateTimestamps.push(now);
+      while (messageRateTimestamps.length > 0 && messageRateTimestamps[0] < now - BURST_WINDOW_MS) {
+        messageRateTimestamps.shift();
+      }
+
+      if (messageRateTimestamps.length > MAX_BURST_COUNT) {
+        alert("Anti-Spam limit reached! Please wait a few seconds before sending more messages.");
+        return true;
+      }
+
+      lastMessageTimestamp = now;
+      lastSentMessageText = text;
+      return false;
+    }
 
     const defaultChannels = [
       { id: "general", name: "General Lounge", icon: "G", type: "channel" },
@@ -2133,6 +2190,16 @@
       "linear-gradient(135deg, #ec4899, #be185d)"
     ];
 
+    function escapeHTML(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     function renderSkeletonLoading() {
       chatsListEl.innerHTML = "";
       for (let i = 0; i < 5; i++) {
@@ -2162,6 +2229,20 @@
     function getUserDisplayName(userObj) {
       if (!userObj) return "User";
       return userObj.nickname || userObj.name || "User";
+    }
+
+    // Render User Profile across components
+    function renderProfile(userObj) {
+      if (!userObj) return;
+      const displayName = getUserDisplayName(userObj);
+      
+      if (currentUser && userObj.uid === currentUser.uid) {
+        currentUserNameEl.textContent = displayName;
+        renderAvatarElement(currentUserAvatarEl, currentUserBadgeEl, userObj);
+        editProfileRealName.value = userObj.name || "";
+        editProfileNickname.value = userObj.nickname || "";
+        profileVisibilityToggle.checked = userObj.showInPublicList !== false;
+      }
     }
 
     function renderAvatarElement(avatarEl, badgeEl, userObj, defaultLetter = "?") {
@@ -2449,7 +2530,7 @@
     }
 
     function initializeMessenger() {
-      updateCurrentUserUI();
+      renderProfile(currentUser);
       updateChatInputState();
 
       listenToAllUsers();
@@ -2462,12 +2543,6 @@
           updateHeaderStatus();
         }
       }, 30000);
-    }
-
-    function updateCurrentUserUI() {
-      const displayName = getUserDisplayName(currentUser);
-      currentUserNameEl.textContent = displayName;
-      renderAvatarElement(currentUserAvatarEl, currentUserBadgeEl, currentUser);
     }
 
     openProfileBtn.addEventListener("click", openProfileModal);
@@ -2517,7 +2592,7 @@
           lastSeen: serverTimestamp()
         });
 
-        updateCurrentUserUI();
+        renderProfile(currentUser);
         resetCropper();
         profileModal.classList.add("hidden");
         renderSidebarList();
@@ -2629,6 +2704,11 @@
         return;
       }
 
+      if (isSpamming("media_upload")) {
+        resetChatFileInput();
+        return;
+      }
+
       const isVideo = selectedFileType === "video";
       const isHD = !isVideo && hdToggle.checked;
       const captionText = imageCaptionInput.value.trim();
@@ -2655,6 +2735,7 @@
         type: targetFileType,
         isHD: isHD,
         isPending: true,
+        status: 'sending',
         timestamp: serverTimestamp()
       };
 
@@ -2681,7 +2762,8 @@
 
         await update(ref(db, `chats/${targetChatId}/messages/${messageKey}`), {
           mediaUrl: remoteMediaUrl,
-          isPending: false
+          isPending: false,
+          status: 'sent'
         });
       } catch (err) {
         console.error("Failed to process background media upload:", err);
@@ -2714,7 +2796,7 @@
             currentUser.nickname = allUsers[currentUser.uid].nickname;
             currentUser.photoURL = allUsers[currentUser.uid].photoURL;
             currentUser.showInPublicList = allUsers[currentUser.uid].showInPublicList;
-            updateCurrentUserUI();
+            renderProfile(currentUser);
           }
         }
         isLoadingChats = false;
@@ -2926,13 +3008,37 @@
       updateDrawerMembers();
     }
 
-    function attachMessageListener(chatId) {
-      const messagesRef = query(ref(db, `chats/${chatId}/messages`), limitToLast(100));
+    function markMessagesAsSeen(chatId) {
+      if (!currentUser || !chatId) return;
+      const messagesRef = ref(db, `chats/${chatId}/messages`);
+      get(query(messagesRef, limitToLast(20))).then((snapshot) => {
+        if (snapshot.exists()) {
+          const updates = {};
+          snapshot.forEach((childSnap) => {
+            const msg = childSnap.val();
+            if (msg.senderId !== currentUser.uid && (!msg.seenBy || !msg.seenBy[currentUser.uid])) {
+              updates[`${childSnap.key}/seenBy/${currentUser.uid}`] = true;
+            }
+          });
+          if (Object.keys(updates).length > 0) {
+            update(messagesRef, updates);
+          }
+        }
+      });
+    }
 
-      onValue(messagesRef, async (snapshot) => {
-        messagesContainer.innerHTML = '';
+    function attachMessageListener(chatId) {
+      if (activeMessagesQuery) {
+        off(activeMessagesQuery);
+      }
+
+      activeMessagesQuery = query(ref(db, `chats/${chatId}/messages`), limitToLast(100));
+
+      onValue(activeMessagesQuery, async (snapshot) => {
+        const renderToken = ++currentRenderToken;
 
         if (!snapshot.exists()) {
+          if (renderToken !== currentRenderToken) return;
           messagesContainer.innerHTML = `
             <div class="empty-state">
               <i class="fa-regular fa-paper-plane"></i>
@@ -2942,22 +3048,37 @@
           return;
         }
 
-        const messages = snapshot.val();
-        for (const msgKey in messages) {
-          const msg = { ...messages[msgKey] };
+        const rawMessages = snapshot.val();
+        const messageKeys = Object.keys(rawMessages);
+
+        // Batch decrypt all messages in parallel before touching DOM
+        const processedMessages = await Promise.all(
+          messageKeys.map(async (key) => {
+            const msg = { ...rawMessages[key], key };
+            if (msg.text) {
+              msg.text = await decryptText(msg.text);
+            }
+            if (msg.replyTo && msg.replyTo.text) {
+              msg.replyTo.text = await decryptText(msg.replyTo.text);
+            }
+            return msg;
+          })
+        );
+
+        if (renderToken !== currentRenderToken) return;
+
+        messagesContainer.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+
+        for (const msg of processedMessages) {
           const senderObj = allUsers[msg.senderId] || { name: "User" };
           const senderName = getUserDisplayName(senderObj);
-
-          if (msg.text) {
-            msg.text = await decryptText(msg.text);
-          }
-          if (msg.replyTo && msg.replyTo.text) {
-            msg.replyTo.text = await decryptText(msg.replyTo.text);
-          }
-
-          renderMessageItem(msgKey, msg, senderName, senderObj);
+          const row = renderMessageRowElement(msg.key, msg, senderName, senderObj);
+          fragment.appendChild(row);
         }
 
+        messagesContainer.appendChild(fragment);
+        markMessagesAsSeen(chatId);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
       });
     }
@@ -2997,7 +3118,7 @@
       }
     }
 
-    function renderMessageItem(msgKey, msg, senderName, senderObj) {
+    function renderMessageRowElement(msgKey, msg, senderName, senderObj) {
       const isSent = msg.senderId === currentUser.uid;
       const userIsAdmin = isAdmin(currentUser ? currentUser.uid : null);
       
@@ -3098,6 +3219,23 @@
         reactionsHTML += '</div>';
       }
 
+      let statusHTML = '';
+      if (isSent) {
+        let isSeenByOthers = false;
+        if (msg.seenBy) {
+          const seens = Object.keys(msg.seenBy).filter(uid => uid !== currentUser.uid);
+          if (seens.length > 0) isSeenByOthers = true;
+        }
+
+        if (msg.isPending || msg.status === 'sending') {
+          statusHTML = `<span class="message-status-text"><i class="fa-solid fa-circle-notch fa-spin"></i> Sending...</span>`;
+        } else if (isSeenByOthers) {
+          statusHTML = `<span class="message-status-text seen-badge"><i class="fa-solid fa-check-double"></i> Seen</span>`;
+        } else {
+          statusHTML = `<span class="message-status-text"><i class="fa-solid fa-check"></i> Sent</span>`;
+        }
+      }
+
       wrapper.innerHTML = `
         ${!isSent ? `<div class="message-sender">${escapeHTML(senderName)}</div>` : ''}
         <div class="message-body-row">
@@ -3110,7 +3248,10 @@
           ${replyButtonHTML}
           ${deleteButtonHTML}
         </div>
-        <div class="message-time">${timeString}</div>
+        <div class="message-time-status-row">
+          <div class="message-time">${timeString}</div>
+          ${statusHTML}
+        </div>
       `;
 
       const reactBtn = wrapper.querySelector(".reaction-trigger-btn");
@@ -3184,7 +3325,7 @@
       }
       containerRow.appendChild(wrapper);
 
-      messagesContainer.appendChild(containerRow);
+      return containerRow;
     }
 
     document.addEventListener("click", () => {
@@ -3215,36 +3356,45 @@
     });
 
     async function sendMessage() {
+      if (!currentUser || !currentChatId) return;
       if (currentChatId === "developers" && !isAdmin(currentUser.uid)) {
-        alert("Only Admins can send messages in the Developer section.");
+        alert("Only ADMINs can post in the Developer section.");
         return;
       }
 
-      const text = messageInput.value.trim();
-      if (!text || !currentUser) return;
+      const rawText = messageInput.value.trim();
+      if (!rawText) return;
 
-      const encryptedText = await encryptText(text);
+      if (isSpamming(rawText)) return;
 
-      const messageData = {
-        senderId: currentUser.uid,
-        text: encryptedText,
-        timestamp: serverTimestamp()
-      };
-
-      if (activeReplyMessage) {
-        messageData.replyTo = {
-          ...activeReplyMessage,
-          text: await encryptText(activeReplyMessage.text)
-        };
-      }
-
-      const messagesRef = ref(db, `chats/${currentChatId}/messages`);
-      const newMsgRef = push(messagesRef);
-      await set(newMsgRef, messageData);
-
+      const replyData = activeReplyMessage ? { ...activeReplyMessage } : null;
       messageInput.value = "";
       messageInput.style.height = "auto";
       clearReplyContext();
+
+      try {
+        const encryptedText = await encryptText(rawText);
+        const messagesRef = ref(db, `chats/${currentChatId}/messages`);
+
+        const payload = {
+          senderId: currentUser.uid,
+          text: encryptedText,
+          timestamp: serverTimestamp(),
+          status: "sent"
+        };
+
+        if (replyData) {
+          payload.replyTo = {
+            ...replyData,
+            text: await encryptText(replyData.text)
+          };
+        }
+
+        await push(messagesRef, payload);
+      } catch (err) {
+        console.error("Error sending message:", err);
+        alert("Failed to send message: " + err.message);
+      }
     }
 
     sendBtn.addEventListener("click", sendMessage);
@@ -3262,22 +3412,32 @@
     });
 
     function updateDrawerMembers() {
+      if (!drawerMembersList) return;
       drawerMembersList.innerHTML = "";
 
-      let membersToDisplay = [];
+      const userList = Object.values(allUsers).filter(u => u.showInPublicList !== false);
 
-      if (isDirectMessage && targetDMUser) {
-        membersToDisplay = [
-          allUsers[currentUser.uid] || currentUser,
-          allUsers[targetDMUser.uid] || targetDMUser
-        ];
-      } else {
-        membersToDisplay = Object.values(allUsers).filter(u => u.showInPublicList !== false || isAdmin(currentUser ? currentUser.uid : null));
+      if (userList.length === 0) {
+        drawerMembersList.innerHTML = `<div style="font-size:13px; color:var(--text-muted); text-align:center; padding:12px;">No active members found.</div>`;
+        return;
       }
 
-      membersToDisplay.forEach(u => {
-        const item = document.createElement("div");
-        item.className = "member-item";
+      userList.sort((a, b) => {
+        const aOnline = isUserOnline(a);
+        const bOnline = isUserOnline(b);
+        if (aOnline && !bOnline) return -1;
+        if (!aOnline && bOnline) return 1;
+        return getUserDisplayName(a).localeCompare(getUserDisplayName(b));
+      });
+
+      userList.forEach((user) => {
+        const displayName = getUserDisplayName(user);
+        const online = isUserOnline(user);
+        const userIsAdmin = isAdmin(user.uid);
+        const currentUserIsAdmin = isAdmin(currentUser ? currentUser.uid : null);
+
+        const memberItem = document.createElement("div");
+        memberItem.className = "member-item";
 
         const infoDiv = document.createElement("div");
         infoDiv.className = "member-item-info";
@@ -3287,87 +3447,61 @@
         avatarWrap.style.width = "36px";
         avatarWrap.style.height = "36px";
 
-        const avatarDiv = document.createElement("div");
-        avatarDiv.className = "avatar";
-        avatarDiv.style.fontSize = "12px";
+        const avatarEl = document.createElement("div");
+        avatarEl.className = "avatar";
 
-        const badgeSpan = document.createElement("span");
-        badgeSpan.className = "status-badge";
+        const badgeEl = document.createElement("span");
+        badgeEl.className = `status-badge ${online ? "online" : "offline"}`;
 
-        renderAvatarElement(avatarDiv, badgeSpan, u);
+        renderAvatarElement(avatarEl, badgeEl, user);
 
-        avatarWrap.appendChild(avatarDiv);
-        avatarWrap.appendChild(badgeSpan);
+        avatarWrap.appendChild(avatarEl);
+        avatarWrap.appendChild(badgeEl);
 
-        const detailsDiv = document.createElement("div");
-        const displayName = getUserDisplayName(u) + (u.uid === currentUser.uid ? " (You)" : "");
-        const online = isUserOnline(u);
-        const statusText = online ? "Online" : formatLastSeen(u.lastSeen);
-        const userIsAdmin = isAdmin(u.uid);
-
-        detailsDiv.innerHTML = `
+        const textDiv = document.createElement("div");
+        textDiv.innerHTML = `
           <div class="member-name">
             ${escapeHTML(displayName)}
-            ${userIsAdmin ? `<span class="admin-badge">ADMIN</span>` : ''}
+            ${userIsAdmin ? `<span class="admin-badge">ADMIN</span>` : ""}
           </div>
-          <div class="member-status">${escapeHTML(statusText)}</div>
+          <div class="member-status">${online ? "Online" : formatLastSeen(user.lastSeen)}</div>
         `;
 
         infoDiv.appendChild(avatarWrap);
-        infoDiv.appendChild(detailsDiv);
-        item.appendChild(infoDiv);
+        infoDiv.appendChild(textDiv);
+        memberItem.appendChild(infoDiv);
 
-        if (isAdmin(currentUser.uid) && u.uid !== currentUser.uid) {
-          const actionWrap = document.createElement("div");
-          const isUserMuted = u.muteState && u.muteState.until && u.muteState.until > Date.now();
+        if (currentUserIsAdmin && user.uid !== currentUser.uid) {
+          const isMuted = user.muteState && user.muteState.until && user.muteState.until > Date.now();
+          const actionBtn = document.createElement("button");
 
-          if (isUserMuted) {
-            const unmuteBtn = document.createElement("button");
-            unmuteBtn.className = "admin-action-btn unmute-btn";
-            unmuteBtn.textContent = "Unmute";
-            unmuteBtn.addEventListener("click", () => unmuteUser(u.uid));
-            actionWrap.appendChild(unmuteBtn);
+          if (isMuted) {
+            actionBtn.className = "admin-action-btn unmute-btn";
+            actionBtn.textContent = "Unmute";
+            actionBtn.addEventListener("click", () => unmuteUser(user.uid));
           } else {
-            const muteBtn = document.createElement("button");
-            muteBtn.className = "admin-action-btn";
-            muteBtn.textContent = "Mute";
-            muteBtn.addEventListener("click", () => openAdminMuteModal(u.uid, getUserDisplayName(u)));
-            actionWrap.appendChild(muteBtn);
+            actionBtn.className = "admin-action-btn";
+            actionBtn.textContent = "Mute";
+            actionBtn.addEventListener("click", () => openAdminMuteModal(user.uid, displayName));
           }
-
-          item.appendChild(actionWrap);
+          memberItem.appendChild(actionBtn);
         }
 
-        drawerMembersList.appendChild(item);
+        drawerMembersList.appendChild(memberItem);
       });
     }
 
     toggleInfoBtn.addEventListener("click", () => {
       membersDrawer.classList.toggle("open");
-      toggleInfoBtn.classList.toggle("active");
     });
 
     closeDrawerBtn.addEventListener("click", () => {
       membersDrawer.classList.remove("open");
-      toggleInfoBtn.classList.remove("active");
     });
 
     mobileBackBtn.addEventListener("click", () => {
       sidebar.classList.remove("mobile-hidden");
     });
-
-    function escapeHTML(str) {
-      if (!str) return "";
-      return str.replace(/[&<>'"]/g, 
-        tag => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          "'": '&#39;',
-          '"': '&quot;'
-        }[tag] || tag)
-      );
-    }
   </script>
 </body>
 </html>
