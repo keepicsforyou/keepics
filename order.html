@@ -150,7 +150,6 @@
             cursor: not-allowed;
         }
 
-        /* --- Option Cards --- */
         .product-options,
         .delivery-options {
             display: flex;
@@ -229,7 +228,6 @@
             margin-left: 6px;
         }
 
-        /* Dynamic Subsections */
         #customization-section {
             display: none;
             margin-top: 10px;
@@ -358,8 +356,6 @@
             text-align: center;
         }
 
-        .submit-status.error { display: block; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-        .submit-status.success { display: block; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
         .submit-status.loading { display: flex; align-items: center; justify-content: center; gap: 8px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
 
         .spinner {
@@ -435,7 +431,6 @@
         .knowsomeone-name-field { display: none; margin-top: 10px; }
         .knowsomeone-name-field.show { display: block; animation: fadeIn 0.3s ease forwards; }
 
-        /* Modal Overlays */
         .status-modal-overlay {
             display: none;
             position: fixed;
@@ -542,23 +537,32 @@
                 <a href="login.html" class="login-link-btn">Login / Sign up</a>
             </div>
 
-            <form id="order-form" class="order-form" autocomplete="off" novalidate style="display:none;">
+            <!-- FormSubmit AJAX Action Endpoint -->
+            <form id="order-form" class="order-form" action="https://formsubmit.co/ajax/a1e63f151d76e68502b50191e9ef4195" method="POST" autocomplete="off" style="display:none;">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_subject" value="🛍️ New Keychain Order Received - KeePics">
+                
+                <input type="hidden" name="Product Ordered" id="hidden-product-name">
+                <input type="hidden" name="Total Amount" id="hidden-total-amount">
+                <input type="hidden" name="Front Image Link" id="hidden-front-url">
+                <input type="hidden" name="Back Image Link" id="hidden-back-url">
+
                 <div class="form-group">
                     <label class="form-label" for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="Customer Name" required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required readonly>
+                    <input type="email" id="email" name="Customer Email" required readonly>
                 </div>
 
-                <!-- Delivery Option -->
                 <div class="form-group">
                     <label class="form-label">Delivery Option</label>
                     <div class="delivery-options">
                         <label class="delivery-card">
-                            <input type="radio" id="cgcian-yes" name="cgcian" value="cgcian" required>
+                            <input type="radio" id="cgcian-yes" name="Delivery Option" value="CGCian Campus Delivery" required>
                             <div class="card-content">
                                 <div class="delivery-info">
                                     <h3>I am a CGCian</h3>
@@ -569,12 +573,12 @@
 
                         <div id="cgcian-fields" class="delivery-subfields">
                             <label class="form-label" for="classroom">Building & Room Number <span style="color:var(--primary);">*</span></label>
-                            <input type="text" id="classroom" name="classroom" placeholder="e.g. BE Building, Room 204">
+                            <input type="text" id="classroom" name="Campus Location" placeholder="e.g. BE Building, Room 204">
                             <small>Specify your exact location on campus.</small>
                         </div>
 
                         <label class="delivery-card">
-                            <input type="radio" id="cgcian-no" name="cgcian" value="not_cgcian">
+                            <input type="radio" id="cgcian-no" name="Delivery Option" value="Non-CGCian / Meetup Delivery">
                             <div class="card-content">
                                 <div class="delivery-info">
                                     <h3>Not a CGCian</h3>
@@ -586,17 +590,16 @@
 
                     <div id="regular-fields" class="delivery-subfields">
                         <label class="knowsome-row">
-                            <input type="checkbox" id="knowsomeone-check" name="know_someone">
+                            <input type="checkbox" id="knowsomeone-check" name="Has Org Contact" value="Yes">
                             <span>I know someone in the org who can deliver my item.</span>
                         </label>
                         <div id="knowsomeone-name-field" class="knowsomeone-name-field">
                             <label class="form-label" for="knowsomeone-name">Full Name of Contact</label>
-                            <input type="text" id="knowsomeone-name" name="know_someone_name" placeholder="Enter full name">
+                            <input type="text" id="knowsomeone-name" name="Org Contact Person" placeholder="Enter full name">
                         </div>
                     </div>
                 </div>
 
-                <!-- Product Selection Area -->
                 <div class="form-group">
                     <label class="form-label">Select Product Type</label>
                     <div class="product-options">
@@ -627,7 +630,7 @@
                             <div class="card-content">
                                 <div class="product-info">
                                     <h3>Premium Keychain (One Side) <span class="premium-badge">Resin</span></h3>
-                                    <p>Scratch-proof clear resin protection.</p>
+                                    <p>Scratch-proof clear resin protection for the sides of your keychain.</p>
                                 </div>
                                 <div class="product-price">₱35.00</div>
                             </div>
@@ -638,7 +641,7 @@
                             <div class="card-content">
                                 <div class="product-info">
                                     <h3>Premium Keychain (Two Sided) <span class="premium-badge">Resin</span></h3>
-                                    <p>Double-sided durable resin coating.</p>
+                                    <p>Double-sided picture with durable resin coating on the sides.</p>
                                 </div>
                                 <div class="product-price">₱37.00</div>
                             </div>
@@ -646,7 +649,6 @@
                     </div>
                 </div>
 
-                <!-- Customization Section -->
                 <div id="customization-section">
                     <div class="form-group">
                         <label class="form-label" for="quantity">Quantity</label>
@@ -658,7 +660,7 @@
                         <div class="file-upload-area" id="front-upload-area">
                             <span class="upload-text" id="front-file-text">Click or drop front photo here</span>
                             <div class="file-upload-status" id="front-upload-status"></div>
-                            <input type="file" id="front-image" name="Front_Image" accept="image/jpeg,image/png,image/webp" required>
+                            <input type="file" id="front-image" accept="image/jpeg,image/png,image/webp" required>
                         </div>
                         <div class="upload-preview" id="front-preview">
                             <img id="front-preview-img" alt="Front image preview">
@@ -670,7 +672,7 @@
                         <div class="file-upload-area" id="back-upload-area">
                             <span class="upload-text" id="back-file-text">Click or drop back photo here</span>
                             <div class="file-upload-status" id="back-upload-status"></div>
-                            <input type="file" id="back-image" name="Back_Image" accept="image/jpeg,image/png,image/webp">
+                            <input type="file" id="back-image" accept="image/jpeg,image/png,image/webp">
                         </div>
                         <div class="upload-preview" id="back-preview">
                             <img id="back-preview-img" alt="Back image preview">
@@ -689,7 +691,6 @@
         </div>
     </div>
 
-    <!-- Status Modal -->
     <div class="status-modal-overlay" id="status-modal-overlay">
         <div class="status-modal" id="status-modal" role="dialog" aria-modal="true">
             <div class="status-modal-icon" id="status-modal-icon"></div>
@@ -709,9 +710,8 @@
     </script>
 
     <script type="module">
-        import { auth, db, handleNavbarAuth } from './assets/database/firebase-config.js';
+        import { auth, handleNavbarAuth } from './assets/database/firebase-config.js';
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
         handleNavbarAuth('auth-status');
 
@@ -733,8 +733,6 @@
 
         let uploadedFrontLink = null;
         let uploadedBackLink = null;
-        let isFrontUploading = false;
-        let isBackUploading = false;
 
         function getCachedAccessToken() {
             try {
@@ -926,7 +924,6 @@
                     backFileText.textContent = 'Click or drop back photo here';
                     backPreview.classList.remove('show');
                     uploadedBackLink = null;
-                    isBackUploading = false;
                     backUploadStatus.className = 'file-upload-status';
                     backUploadStatus.innerHTML = '';
                 }
@@ -965,8 +962,8 @@
             const safeName = customerName.replace(/[^a-zA-Z0-9_-]/g, '_');
             const timestamp = Date.now();
 
-            if (type === 'front') { isFrontUploading = true; uploadedFrontLink = null; }
-            else { isBackUploading = true; uploadedBackLink = null; }
+            if (type === 'front') uploadedFrontLink = null;
+            else uploadedBackLink = null;
 
             statusEl.className = 'file-upload-status uploading';
             statusEl.innerHTML = '<span class="spinner"></span>Uploading...';
@@ -977,14 +974,12 @@
                 const uploadRes = await uploadToDropbox(file, filename);
                 const link = await createDropboxSharedLink(uploadRes.path_display);
 
-                if (type === 'front') { uploadedFrontLink = link; isFrontUploading = false; }
-                else { uploadedBackLink = link; isBackUploading = false; }
+                if (type === 'front') uploadedFrontLink = link;
+                else uploadedBackLink = link;
 
                 statusEl.className = 'file-upload-status success';
                 statusEl.innerHTML = '&#10004; Ready';
             } catch (err) {
-                if (type === 'front') isFrontUploading = false;
-                else isBackUploading = false;
                 statusEl.className = 'file-upload-status error';
                 statusEl.innerHTML = '&#10060; Upload failed. Retry.';
             }
@@ -1009,35 +1004,54 @@
         setupImagePreview(frontImageInput, frontFileText, frontPreview, frontPreviewImg, 'front');
         setupImagePreview(backImageInput, backFileText, backPreview, backPreviewImg, 'back');
 
+        /* Updated Form Submission using AJAX Fetch */
         orderForm.addEventListener('submit', async function (e) {
             e.preventDefault();
+
             if (!currentUser) return showStatus('Please log in.', 'error');
             if (!cgcianYesRadio.checked && !cgcianNoRadio.checked) return showStatus('Select a delivery option.', 'error');
             if (cgcianYesRadio.checked && !classroomInput.value.trim()) return showStatus('Room location missing.', 'error');
             if (!selectedProductData) return showStatus('Select a product.', 'error');
             if (!uploadedFrontLink || (selectedProductData.twoSided && !uploadedBackLink)) return showStatus('Please await photo upload finish.', 'error');
 
-            setLoading(true, 'Saving order...');
+            setLoading(true, 'Submitting order...');
+
+            document.getElementById('hidden-product-name').value = selectedProductData.name;
+            document.getElementById('hidden-total-amount').value = totalAmountEl.textContent;
+            document.getElementById('hidden-front-url').value = uploadedFrontLink;
+            document.getElementById('hidden-back-url').value = uploadedBackLink || 'N/A';
+
             try {
-                const orderData = {
-                    customerName: currentUser.displayName || currentUser.email.split('@')[0],
-                    customerEmail: currentUser.email,
-                    product: selectedProductData.name,
-                    quantity: parseInt(quantityInput.value, 10),
-                    totalPricePHP: selectedProductData.price * parseInt(quantityInput.value, 10),
-                    frontImageDropboxLink: uploadedFrontLink,
-                    backImageDropboxLink: uploadedBackLink || null,
-                    timestamp: Date.now()
-                };
-                await push(ref(db, 'orders'), orderData);
-                setLoading(false);
-                showStatus('Order placed successfully!', 'success');
-                orderForm.reset();
-                fillUserInfo(currentUser);
-                customizationSection.style.display = 'none';
-            } catch (error) {
-                setLoading(false);
-                showStatus('Submission error, retry.', 'error');
+                const formData = new FormData(orderForm);
+                const response = await fetch(orderForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    setLoading(false, '');
+                    showStatus('Order placed successfully! We will contact you soon.', 'success');
+                    
+                    // Reset form and UI elements
+                    orderForm.reset();
+                    if (currentUser) fillUserInfo(currentUser);
+                    frontPreview.classList.remove('show');
+                    backPreview.classList.remove('show');
+                    customizationSection.style.display = 'none';
+                    cgcianFields.classList.remove('show');
+                    regularFields.classList.remove('show');
+                    frontUploadStatus.className = 'file-upload-status';
+                    backUploadStatus.className = 'file-upload-status';
+                    uploadedFrontLink = null;
+                    uploadedBackLink = null;
+                } else {
+                    setLoading(false, '');
+                    showStatus('Order submission failed. Please try again.', 'error');
+                }
+            } catch (err) {
+                setLoading(false, '');
+                showStatus('Network error. Please check your connection.', 'error');
             }
         });
 
