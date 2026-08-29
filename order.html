@@ -725,11 +725,10 @@
         let selectedProductData = null;
         const DROPBOX_TOKEN_CACHE_KEY = 'keepicsDropboxAccessToken';
         const DROPBOX_FOLDER = '/Keychain_Orders_KeePics';
-        const DROPBOX_CONFIG = {
-            appKey: 'qbtzc6t2n9yadxe',
-            appSecret: 'fcpvodv3em504gf',
-            refreshToken: 'elKx910CMv4AAAAAAAAAAVgl9M4nTzl9SP2LSm4fbYKWP1WV_fLFi0fWTFhI0Mfe'
-        };
+
+        // Integrate secure backend from photobooth.html
+        const SUPABASE_FUNCTION_BASE_URL = 'https://zyaqsvvmtxcgpkjhjiqf.supabase.co/functions/v1';
+        const DROPBOX_TOKEN_ENDPOINT = SUPABASE_FUNCTION_BASE_URL + '/dropbox-token';
 
         let uploadedFrontLink = null;
         let uploadedBackLink = null;
@@ -750,30 +749,27 @@
             } catch(e) {}
         }
 
+        // Updated token refresh function hitting the secure Supabase Edge Function
         async function refreshDropboxAccessToken() {
-            const doRefresh = async (includeSecret) => {
-                const body = new URLSearchParams();
-                body.append('grant_type', 'refresh_token');
-                body.append('refresh_token', DROPBOX_CONFIG.refreshToken);
-                body.append('client_id', DROPBOX_CONFIG.appKey);
-                if (includeSecret && DROPBOX_CONFIG.appSecret) body.append('client_secret', DROPBOX_CONFIG.appSecret);
+            const res = await fetch(DROPBOX_TOKEN_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            });
 
-                const res = await fetch('https://api.dropboxapi.com/oauth2/token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: body.toString()
-                });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) return { ok: false, err: data.error_description || data.error || ('HTTP ' + res.status) };
-                return { ok: true, data };
-            };
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`Edge function token fetch failed: ${res.status} ${text}`);
+            }
 
-            let attempt = await doRefresh(true);
-            if (!attempt.ok && /secret|client/i.test(attempt.err || '')) attempt = await doRefresh(false);
-            if (!attempt.ok) throw new Error('Dropbox token refresh failed: ' + attempt.err);
-
-            cacheAccessToken(attempt.data.access_token, attempt.data.expires_in);
-            return attempt.data.access_token;
+            const data = await res.json();
+            
+            if (!data.access_token) {
+                throw new Error('No access_token returned from Edge Function');
+            }
+            
+            cacheAccessToken(data.access_token, data.expires_in);
+            return data.access_token;
         }
 
         async function getDropboxAccessToken() {
@@ -791,11 +787,14 @@
                 return await fetch('https://content.dropboxapi.com/2/files/upload', {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + token,
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/octet-stream',
                         'Dropbox-API-Arg': JSON.stringify({
-                            path: DROPBOX_FOLDER + '/' + filename,
-                            mode: 'add', autorename: true, mute: false
+                            path: `${DROPBOX_FOLDER}/${filename}`,
+                            mode: 'add', 
+                            autorename: true, 
+                            mute: false,
+                            strict_conflict: false
                         })
                     },
                     body: file
@@ -804,40 +803,58 @@
 
             let token = await getDropboxAccessToken();
             let res = await doUpload(token);
+
             if (res.status === 401) {
-                await refreshDropboxAccessToken();
-                token = await getDropboxAccessToken();
+                token = await refreshDropboxAccessToken();
                 res = await doUpload(token);
             }
 
-            if (!res.ok) throw new Error('Dropbox upload failed.');
-            return res.json();
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`Upload to Dropbox failed (${res.status}): ${text}`);
+            }
+            return await res.json();
         }
 
-        async function createDropboxSharedLink(path) {
-            try {
-                const req = async (token) => {
-                    return await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ path: path, settings: { requested_visibility: 'public', allow_download: true } })
-                    });
-                };
+        async function createDropboxSharedLink(filePath) {
+            const doCreate = async (token) => {
+                return await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: filePath, settings: { requested_visibility: 'public', allow_download: true } })
+                });
+            };
 
-                let res = await req(await getDropboxAccessToken());
+            try {
+                let token = await getDropboxAccessToken();
+                let res = await doCreate(token);
+
                 if (res.status === 401) {
-                    await refreshDropboxAccessToken();
-                    res = await req(await getDropboxAccessToken());
+                    token = await refreshDropboxAccessToken();
+                    res = await doCreate(token);
                 }
 
+                if (res.status === 409) {
+                    const data = await res.json();
+                    if (data.error && data.error['.tag'] === 'shared_link_already_exists') {
+                        return data.error.shared_link_already_exists.metadata.url.replace('dl=0', 'dl=1');
+                    }
+                }
+                
                 if (res.ok) {
                     const data = await res.json();
                     return data.url.replace('dl=0', 'dl=1');
+                } else {
+                    const text = await res.text().catch(() => '');
+                    throw new Error(`Create link failed (${res.status}): ${text}`);
                 }
             } catch (e) {
                 console.error('Dropbox link error:', e);
+                return null;
             }
-            return null;
         }
 
         const orderForm = document.getElementById('order-form');

@@ -116,7 +116,7 @@
         @media(max-width:780px){ body.photobooth-page .pb-preview-wrap{position:static;} }
         body.photobooth-page .pb-preview-frame { position:relative;background:#fff;border-radius:14px;box-shadow:0 18px 40px rgba(30,58,138,0.2);overflow:hidden;touch-action:none;max-width:100%; }
         body.photobooth-page #previewCanvas { display:block;width:100%;height:auto; }
-        body.photobooth-page #previewCanvasStyle { display:block;width:100%;height:auto; }
+        body.photobooth-page #previewCanvasStyle { display:block;width:100%;height:auto; touch-action: none; }
         body.photobooth-page .pb-custom-controls { display:flex;flex-direction:column;gap:14px;min-width:0; }
         body.photobooth-page .pb-ctrl-group { background:#fff9fb;border:1.5px solid #ffe4e6;border-radius:16px;padding:14px; }
         body.photobooth-page .pb-ctrl-group h4 { font-size:0.74rem;text-transform:uppercase;letter-spacing:1.3px;color:#94a3b8;margin-bottom:10px; }
@@ -419,17 +419,12 @@
         const DIGICAM_FILTER = 'saturate(1.18) contrast(1.1) brightness(1.03)';
 
         // UPDATED DROPBOX CREDENTIALS
-        const DROPBOX_APP_KEY = 'qbtzc6t2n9yadxe';
-        const DROPBOX_APP_SECRET = 'fcpvodv3em504gf';
-        const DROPBOX_REFRESH_TOKEN = 'elKx910CMv4AAAAAAAAAAVgl9M4nTzl9SP2LSm4fbYKWP1WV_fLFi0fWTFhI0Mfe';
-
         const DROPBOX_FOLDER = '/Photobooth KeePics';
         const DROPBOX_TOKEN_CACHE_KEY = 'keepicsDropboxAccessToken';
 
-        function getDropboxRefreshToken() {
-            // Simplified logic: explicitly use the provided refresh token.
-            return DROPBOX_REFRESH_TOKEN;
-        }
+        // Your deployed Supabase Edge Function URL:
+        const SUPABASE_FUNCTION_BASE_URL = 'https://zyaqsvvmtxcgpkjhjiqf.supabase.co/functions/v1';
+        const DROPBOX_TOKEN_ENDPOINT = SUPABASE_FUNCTION_BASE_URL + '/dropbox-token';
 
         function getCachedAccessToken() {
             try {
@@ -437,7 +432,7 @@
                 if (cached && cached.token && cached.expiresAt > Date.now() + 5 * 60 * 1000) {
                     return cached.token;
                 }
-            } catch(e) {}
+            } catch (e) {}
             return null;
         }
 
@@ -447,28 +442,27 @@
                     token,
                     expiresAt: Date.now() + (expiresInSeconds || 14400) * 1000
                 }));
-            } catch(e) {}
+            } catch (e) {}
         }
 
         async function refreshDropboxAccessToken() {
-            const body = new URLSearchParams();
-            body.append('grant_type', 'refresh_token');
-            body.append('refresh_token', getDropboxRefreshToken());
-            body.append('client_id', DROPBOX_APP_KEY);
-            body.append('client_secret', DROPBOX_APP_SECRET);
-
-            const res = await fetch('https://api.dropboxapi.com/oauth2/token', {
+            const res = await fetch(DROPBOX_TOKEN_ENDPOINT, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: body.toString()
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
             });
 
             if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                throw new Error('Dropbox token refresh failed: ' + (errData.error_description || errData.error || res.status));
+                const text = await res.text().catch(() => '');
+                throw new Error(`Edge function token fetch failed: ${res.status} ${text}`);
             }
 
             const data = await res.json();
+            
+            if (!data.access_token) {
+                throw new Error('No access_token returned from Edge Function');
+            }
+            
             cacheAccessToken(data.access_token, data.expires_in);
             return data.access_token;
         }
@@ -484,9 +478,15 @@
                 return await fetch('https://content.dropboxapi.com/2/files/upload', {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/octet-stream',
-                        'Dropbox-API-Arg': JSON.stringify({ path: DROPBOX_FOLDER + '/' + filename, mode: 'add', autorename: true, mute: false })
+                        'Authorization': `Bearer ${token}`,
+                        'Dropbox-API-Arg': JSON.stringify({
+                            path: `${DROPBOX_FOLDER}/${filename}`,
+                            mode: 'add',
+                            autorename: true,
+                            mute: false,
+                            strict_conflict: false
+                        }),
+                        'Content-Type': 'application/octet-stream'
                     },
                     body: blob
                 });
@@ -494,850 +494,569 @@
 
             let token = await getDropboxAccessToken();
             let res = await doUpload(token);
-            
+
             if (res.status === 401) {
-                console.log('Dropbox: 401 received, refreshing token...');
-                await refreshDropboxAccessToken();
-                token = await getDropboxAccessToken();
+                token = await refreshDropboxAccessToken();
                 res = await doUpload(token);
             }
 
             if (!res.ok) {
-                const errText = await res.text().catch(() => '');
-                let errMsg = res.status + ' ' + res.statusText;
-                try {
-                    const errData = JSON.parse(errText);
-                    errMsg = errData.error_summary || errData.error || errMsg;
-                } catch(e) {
-                    errMsg = errText || errMsg;
-                }
-                console.error('Dropbox upload failed:', errMsg, 'Status:', res.status);
-                throw new Error('Dropbox upload failed: ' + errMsg);
+                const text = await res.text().catch(() => '');
+                throw new Error(`Upload to Dropbox failed (${res.status}): ${text}`);
             }
-            return res.json();
+            return await res.json();
         }
 
-        async function createDropboxSharedLink(path) {
-            try {
-                const req = async (token) => {
-                    return await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ path: path, settings: { requested_visibility: 'public', allow_download: true } })
-                    });
-                };
+        async function createDropboxSharedLink(filePath) {
+            const doCreate = async (token) => {
+                return await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: filePath })
+                });
+            };
+            let token = await getDropboxAccessToken();
+            let res = await doCreate(token);
 
-                let res = await req(await getDropboxAccessToken());
-                if (res.status === 401) {
-                    console.log('Dropbox: 401 on create_shared_link, refreshing token...');
-                    await refreshDropboxAccessToken();
-                    res = await req(await getDropboxAccessToken());
-                }
-
-                if (res.ok) {
-                    const data = await res.json();
-                    console.log('Dropbox: Shared link created successfully');
-                    return data.url.replace('dl=0', 'dl=1');
-                }
-
-                const errText = await res.text().catch(() => '');
-                console.warn('Dropbox: create_shared_link failed, trying list_shared_links:', errText || res.status);
-
-                const listReq = async (token) => {
-                    return await fetch('https://api.dropboxapi.com/2/sharing/list_shared_links', {
-                        method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ path: path, direct_only: true })
-                    });
-                };
-
-                let listRes = await listReq(await getDropboxAccessToken());
-                if (listRes.status === 401) {
-                    await refreshDropboxAccessToken();
-                    listRes = await listReq(await getDropboxAccessToken());
-                }
-
-                if (listRes.ok) {
-                    const listData = await listRes.json();
-                    if (listData.links && listData.links.length > 0) {
-                        console.log('Dropbox: Found existing shared link');
-                        return listData.links[0].url.replace('dl=0', 'dl=1');
-                    }
-                }
-            } catch (e) {
-                console.error('Dropbox shared link error:', e);
+            if (res.status === 401) {
+                token = await refreshDropboxAccessToken();
+                res = await doCreate(token);
             }
-            return null;
+
+            if (res.status === 409) {
+                const data = await res.json();
+                if (data.error && data.error['.tag'] === 'shared_link_already_exists') {
+                    return data.error.shared_link_already_exists.metadata.url.replace('?dl=0', '?raw=1');
+                }
+            }
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`Create link failed (${res.status}): ${text}`);
+            }
+            const data = await res.json();
+            return data.url.replace('?dl=0', '?raw=1');
         }
 
-        let currentAuthUser = null;
-        let stream = null;
-        let videoReady = false;
-        let capturedFrames = []; 
-        let selectedIndices = []; 
-        let autoTimerId = null;  
-        let autoCountdown = 0;
-        let autoRunning = false;
-        let crop = null;
-        let capturing = false;
-        let lastUploadedStripPath = null;
-        let lastSharedLink = null;
-        let audioCtx = null;  
 
-        let state = {
-            layout: '1x4', theme: '#ff8fa3', film: 'classic',
-            caption: '', captionStyle: 'hand', stickers: []
+        let draft = {
+            shots: [], selected: [],
+            opts: { layout: '1x4', film: 'classic', color: '#fff', capText: '', capStyle: 'hand', stickers: [] },
+            qrGenerated: false,
+            dlLinkPhoto: null
         };
-
-        const THEMES = [
-            { name: 'Blush Pink', color: '#ff8fa3' }, { name: 'Baby Blue', color: '#7fb8e6' },
-            { name: 'Mint', color: '#6ee7b7' }, { name: 'Lavender', color: '#c4b5fd' },
-            { name: 'Sunshine', color: '#fcd34d' }, { name: 'Peach', color: '#fdba74' },
-            { name: 'Navy', color: '#1e3a8a' }, { name: 'Black', color: '#1f2937' }
+        const PRESETS = {
+            classic: { gap: 14, out: 24, fontColor: '#1e293b' },
+            polaroid: { gap: 18, out: 24, fontColor: '#1e293b' },
+            black: { gap: 12, out: 24, fontColor: '#fff', color: '#111827' }
+        };
+        const SWATCHES = [
+            '#ffffff', '#f8fafc', '#111827', '#fecdd3', '#bae6fd', '#bbf7d0', '#fef08a', '#e9d5ff', '#94a3b8'
         ];
-        const STICKERS = ['💖','⭐','✨','🌸','🧸','💫','🍒','🎀','☁️','🌈','🦋','🐰','💗','😎','🥰','🎉','🥳','💌','🍭','🧁','💍','🔥'];
-        const CAP_STYLES = {
-            hand:   { font: 'italic 700 36px "Segoe Script","Comic Sans MS",cursive', color: '#8f1d2c' },
-            modern: { font: '800 40px "Segoe UI",Arial,sans-serif', color: '#1e3a8a' },
-            mono:   { font: '700 34px "Courier New",monospace', color: '#334155' }
-        };
+        const STICKERS = ['✨','💖','🎉','🌸','🔥','📷','🎀','✌️','⭐','😊','👑','☁️','💕','🌻','🧸','🦋'];
 
-        const steps = { welcome: $('stepWelcome'), shoot: $('stepShoot'), pick: $('stepPick'), frame: $('stepFrame'), style: $('stepStyle'), save: $('stepSave'), success: $('stepSuccess') };
-        
-        function showStep(name) {
-            Object.values(steps).forEach(s => s.classList.add('pb-hidden'));
-            steps[name].classList.remove('pb-hidden');
-            const activeMap = { shoot:1, pick:2, frame:3, style:4, save:5, success:5 };
+        let camStream = null;
+        let isShooting = false;
+        let shotIndex = 0;
+
+        function updateSteps(cur) {
             [1,2,3,4,5].forEach(i => {
-                const d = $('pbStep'+i);
-                d.classList.remove('active','done');
-                if (activeMap[name] === undefined || i < activeMap[name]) d.classList.add('done');
-                if (i === activeMap[name]) d.classList.add('active');
+                const s = $(`pbStep${i}`);
+                if(!s) return;
+                s.classList.remove('active','done');
+                if (i < cur) s.classList.add('done');
+                else if (i === cur) s.classList.add('active');
             });
-            if (name === 'shoot') { renderThumbs(); updateShootUI(); }
-            if (name === 'frame' || name === 'style' || name === 'save') { setTimeout(renderPreview, 60); syncCustomControls(); }
-            if (name === 'pick') { renderPickGrid(); updatePickUI(); }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function navTo(curId, toId, stepNum) {
+            $(curId).classList.add('pb-hidden');
+            $(toId).classList.remove('pb-hidden');
+            if (stepNum) updateSteps(stepNum);
+            window.scrollTo({ top:0, behavior:'smooth' });
         }
 
-
-        function applyLiveFilter() { $('cameraFeed').style.filter = DIGICAM_FILTER; }
-
-        async function startCamera(keepFrames = false) {
-            $('camError').classList.add('pb-hidden');
+        async function initCamera() {
             try {
-                stopCamera();
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false });
-                const video = $('cameraFeed');
-                video.srcObject = stream;
-                await video.play();
-                videoReady = true;
-                applyLiveFilter();
-                computeCrop();
+                if (camStream) return;
+                camStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal:1280 }, height: { ideal:960 } }
+                });
+                $('cameraFeed').srcObject = camStream;
+                $('camError').classList.add('pb-hidden');
                 $('shutterBtn').disabled = false;
-                if (!keepFrames) { capturedFrames = []; selectedIndices = []; }
-                renderThumbs();
-                updateShootUI();
             } catch (err) {
-                console.error('Camera error:', err);
                 $('camError').classList.remove('pb-hidden');
-                $('camErrorText').textContent = err?.name === 'NotAllowedError'
-                    ? 'Camera permission was denied. Allow camera access and try again.'
-                    : 'Could not start your camera. Try again or use a different browser.';
                 $('shutterBtn').disabled = true;
             }
         }
-
         function stopCamera() {
-            if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-            videoReady = false;
-        }
-
-        $('retryCamBtn').addEventListener('click', startCamera);
-
-        function computeCrop() {
-            const v = $('cameraFeed');
-            const vw = v.videoWidth, vh = v.videoHeight;
-            if (!vw || !vh) return;
-            const target = 4/3;
-            let sw, sh;
-            if (vw/vh > target) { sh = vh; sw = vh * target; } else { sw = vw; sh = vw / target; }
-            crop = { sw, sh, sx: (vw - sw)/2, sy: (vh - sh)/2 };
-        }
-
-
-        function getAudioCtx() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            return audioCtx;
-        }
-
-        function playBeep(freq, duration, volume = 0.3) {
-            try {
-                const ctx = getAudioCtx();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.value = freq;
-                gain.gain.setValueAtTime(volume, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + duration);
-            } catch (e) {}
-        }
-
-        function playCountdownBeep() { playBeep(660, 0.15, 0.25); } 
-        function playShootBeep()    { playBeep(880, 0.25, 0.35); }  
-
-        function showMiniCountdown(num, label) {
-            const el = $('miniCountdown');
-            $('mcdNum').textContent = num;
-            $('mcdLabel').textContent = label || 'Get ready';
-            el.classList.add('show');
-            $('mcdNum').classList.add('flash');
-            setTimeout(() => $('mcdNum').classList.remove('flash'), 300);
-        }
-
-        function hideMiniCountdown() {
-            $('miniCountdown').classList.remove('show');
-        }
-
-        function captureFrame() {
-            const video = $('cameraFeed');
-            const c = document.createElement('canvas');
-            c.width = 640;
-            c.height = 480;
-            const ctx = c.getContext('2d');
-            ctx.save();
-            ctx.translate(c.width, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(video, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, c.width, c.height);
-            ctx.restore();
-            return c;
-        }
-
-        function flashStage() {
-            const stage = $('boothStage');
-            const flash = document.createElement('div');
-            flash.style.cssText = 'position:absolute;inset:0;background:#fff;z-index:10;pointer-events:none;transition:opacity 0.25s ease-out;opacity:0.6;';
-            stage.appendChild(flash);
-            requestAnimationFrame(() => { requestAnimationFrame(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 250); }); });
-        }
-
-        async function runShotSequence() {
-            if (!autoRunning || capturedFrames.length >= TOTAL_SHOTS) {
-                autoRunning = false;
-                hideMiniCountdown();
-                updateShootUI();
-                return;
+            if (camStream) {
+                camStream.getTracks().forEach(t => t.stop());
+                camStream = null;
+                $('cameraFeed').srcObject = null;
             }
+        }
 
-            const shotNum = capturedFrames.length + 1;
-            for (let i = 6; i >= 1; i--) {
-                if (!autoRunning) return;
-                showMiniCountdown(i, `Shot ${shotNum}`);
-                if (i <= 3) playCountdownBeep(); 
-                await sleep(1000);
-            }
-
-            if (!autoRunning || !videoReady || !crop) return;
-            showMiniCountdown('📸', 'Snap!');
-            playShootBeep();
-            flashStage();
-
-            const frame = captureFrame();
-            capturedFrames.push(frame);
+        $('startBtn').onclick = () => {
+            initCamera();
             renderThumbs();
-            updateShootUI();
+            $('restartShotsBtn').disabled = (draft.shots.length === 0);
+            navTo('stepWelcome', 'stepShoot', 1);
+        };
+        $('retryCamBtn').onclick = initCamera;
 
-            await sleep(500);
-            hideMiniCountdown();
-
-            if (capturedFrames.length >= TOTAL_SHOTS) {
-                autoRunning = false;
-                updateShootUI();
-            } else {
-                await sleep(800);
-                runShotSequence();
-            }
-        }
-
-        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-        function startAutoCapture() {
-            if (autoRunning) return;
-            autoRunning = true;
+        async function captureSequence() {
+            if (isShooting) return;
+            isShooting = true;
             $('shutterBtn').disabled = true;
-            runShotSequence();
+            $('restartShotsBtn').disabled = true;
+            shotIndex = draft.shots.length;
+
+            const v = $('cameraFeed');
+            const c = document.createElement('canvas');
+            const ctx = c.getContext('2d');
+
+            while (shotIndex < TOTAL_SHOTS) {
+                await countdown(3);
+                $('miniCountdown').classList.remove('show');
+                
+                c.width = v.videoWidth; c.height = v.videoHeight;
+                ctx.translate(c.width, 0); ctx.scale(-1, 1);
+                ctx.filter = DIGICAM_FILTER;
+                ctx.drawImage(v, 0, 0, c.width, c.height);
+                
+                draft.shots.push(c.toDataURL('image/jpeg', 0.92));
+                renderThumbs();
+                shotIndex++;
+                if (shotIndex < TOTAL_SHOTS) await new Promise(r => setTimeout(r, 600));
+            }
+            isShooting = false;
+            $('shutterBtn').disabled = true;
+            $('restartShotsBtn').disabled = false;
+            $('shootNextBtn').disabled = false;
         }
 
-        function stopAutoCapture() {
-            autoRunning = false;
-            if (autoTimerId) { clearTimeout(autoTimerId); autoTimerId = null; }
-            hideMiniCountdown();
+        function countdown(sec) {
+            return new Promise(res => {
+                let s = sec;
+                const mcd = $('miniCountdown');
+                const mcdL = $('mcdLabel');
+                const mcdN = $('mcdNum');
+                mcd.classList.add('show');
+                
+                const t = setInterval(() => {
+                    if (s > 0) {
+                        mcdN.textContent = s;
+                        mcdN.classList.remove('flash');
+                        void mcdN.offsetWidth;
+                        mcdN.classList.add('flash');
+                        mcdL.textContent = s === sec ? 'Ready' : 'Smile';
+                        s--;
+                    } else {
+                        clearInterval(t);
+                        res();
+                    }
+                }, 1000);
+            });
         }
 
-        /* ---------- Shutter / controls ---------- */
-        $('shutterBtn').addEventListener('click', () => {
-            if (autoRunning) return;
-            if (capturedFrames.length < TOTAL_SHOTS) startAutoCapture();
-        });
-
-        $('restartShotsBtn').addEventListener('click', () => {
-            stopAutoCapture();
-            capturedFrames = []; selectedIndices = [];
-            renderThumbs(); updateShootUI();
-        });
-
-        $('shootNextBtn').addEventListener('click', () => {
-            if (capturedFrames.length !== TOTAL_SHOTS) return;
-            stopAutoCapture();
-            showStep('pick');
-            persistDraft();
-        });
+        $('shutterBtn').onclick = captureSequence;
+        $('restartShotsBtn').onclick = () => {
+            if (confirm('Clear all shots and restart?')) {
+                draft.shots = [];
+                $('shootNextBtn').disabled = true;
+                $('shutterBtn').disabled = false;
+                $('restartShotsBtn').disabled = true;
+                renderThumbs();
+            }
+        };
 
         function renderThumbs() {
-            const grid = $('thumbGrid');
-            grid.innerHTML = '';
-            for (let i = 0; i < TOTAL_SHOTS; i++) {
-                const div = document.createElement('div');
-                div.className = 'pb-thumb' + (capturedFrames[i] ? ' filled' : '');
-                div.innerHTML = `<span class="pb-thumb-num">${i+1}</span>`;
-                if (capturedFrames[i]) div.appendChild(capturedFrames[i]);
-                grid.appendChild(div);
-            }
-        }
-
-        function updateShootUI() {
-            $('shootNextBtn').disabled = capturedFrames.length !== TOTAL_SHOTS;
-            $('restartShotsBtn').disabled = capturedFrames.length === 0;
-            if (!autoRunning) $('shutterBtn').disabled = !videoReady || capturedFrames.length >= TOTAL_SHOTS;
-        }
-
-        function renderPickGrid() {
-            const grid = $('pickGrid');
-            grid.innerHTML = '';
-            capturedFrames.forEach((frame, i) => {
-                const card = document.createElement('div');
-                card.className = 'pb-pick-card' + (selectedIndices.includes(i) ? ' selected' : '');
-                card.innerHTML = `<span class="pb-pick-num">${i+1}</span><span class="pb-pick-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>`;
-                card.prepend(frame);
-                card.addEventListener('click', () => togglePick(i));
-                grid.appendChild(card);
-            });
-        }
-
-        function togglePick(index) {
-            const pos = selectedIndices.indexOf(index);
-            if (pos !== -1) { selectedIndices.splice(pos, 1); }
-            else { if (selectedIndices.length >= PICK_COUNT) { selectedIndices.pop(); selectedIndices.push(index); } else { selectedIndices.push(index); } }
-            renderPickGrid(); updatePickUI(); persistDraft();
-        }
-
-        function updatePickUI() {
-            const c = $('pickCounter');
-            c.textContent = `Selected ${selectedIndices.length} / ${PICK_COUNT}`;
-            c.classList.toggle('ok', selectedIndices.length === PICK_COUNT);
-            $('pickNextBtn').disabled = selectedIndices.length !== PICK_COUNT;
-            $('clearPickBtn').disabled = selectedIndices.length === 0;
-        }
-
-        $('clearPickBtn').addEventListener('click', () => { selectedIndices = []; renderPickGrid(); updatePickUI(); persistDraft(); });
-        $('backToShootBtn').addEventListener('click', () => showStep('shoot'));
-        $('backToPickBtn').addEventListener('click', () => { showStep('pick'); renderPickGrid(); updatePickUI(); });
-        $('backToFrameBtn').addEventListener('click', () => { showStep('frame'); setTimeout(renderPreview, 60); });
-        $('backToStyleBtn').addEventListener('click', () => { showStep('style'); setTimeout(renderPreview, 60); });
-        $('pickNextBtn').addEventListener('click', () => { if (selectedIndices.length !== PICK_COUNT) return; showStep('frame'); persistDraft(); });
-
-        function syncCustomControls() {
-            document.querySelectorAll('#layoutChips .pb-chip').forEach(c => c.classList.toggle('selected', c.dataset.layout === state.layout));
-            document.querySelectorAll('#filmChips .pb-chip').forEach(c => c.classList.toggle('selected', c.dataset.film === state.film));
-            document.querySelectorAll('#captionStyleChips .pb-chip').forEach(c => c.classList.toggle('selected', c.dataset.capstyle === state.captionStyle));
-            document.querySelectorAll('#themeSwatches .pb-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === state.theme));
-            $('captionInput').value = state.caption;
-        }
-
-        function buildThemeSwatches() {
-            const wrap = $('themeSwatches');
-            wrap.innerHTML = '';
-            THEMES.forEach(t => {
-                const sw = document.createElement('button');
-                sw.type = 'button';
-                sw.className = 'pb-swatch' + (state.theme === t.color ? ' selected' : '');
-                sw.dataset.color = t.color;
-                sw.style.background = t.color;
-                sw.title = t.name;
-                sw.addEventListener('click', () => { state.theme = t.color; syncCustomControls(); renderPreview(); });
-                wrap.appendChild(sw);
-            });
-        }
-
-        function buildStickerGrid() {
-            const wrap = $('stickerGrid');
-            wrap.innerHTML = '';
-            STICKERS.forEach(emoji => {
-                const b = document.createElement('button');
-                b.type = 'button';
-                b.className = 'pb-sticker-btn';
-                b.textContent = emoji;
-                b.addEventListener('click', () => addSticker(emoji));
-                wrap.appendChild(b);
-            });
-        }
-
-        function addSticker(emoji) {
-            const geo = getStripGeometry();
-            const s = geo.slots[0];
-            state.stickers.push({ emoji, x: Math.round(s.imgX + s.imgW / 2), y: Math.round(s.imgY + s.imgH / 2), size: 52, rotation: Math.random()*20-10 });
-            renderPreview();
-        }
-
-        $('clearStickersBtn').addEventListener('click', () => { state.stickers = []; renderPreview(); });
-        document.querySelectorAll('#layoutChips .pb-chip').forEach(c => c.addEventListener('click', () => { state.layout = c.dataset.layout; syncCustomControls(); renderPreview(); }));
-        document.querySelectorAll('#filmChips .pb-chip').forEach(c => c.addEventListener('click', () => { state.film = c.dataset.film; syncCustomControls(); renderPreview(); }));
-        document.querySelectorAll('#captionStyleChips .pb-chip').forEach(c => c.addEventListener('click', () => { state.captionStyle = c.dataset.capstyle; syncCustomControls(); renderPreview(); }));
-        $('captionInput').addEventListener('input', () => { state.caption = $('captionInput').value; renderPreview(); });
-
-        $('frameNextBtn').addEventListener('click', () => { showStep('style'); persistDraft(); });
-        $('styleNextBtn').addEventListener('click', () => {
-            const canvas = composeCanvas();
-            $('savePreviewImg').src = canvas.toDataURL('image/png');
-            $('uploadStatusText').textContent = 'Processing Photobooth... please wait...';
-            showStep('save');
-            persistDraft();
-            setTimeout(uploadAndFinish, 300);
-        });
-
-        const previewCanvas = $('previewCanvasStyle');
-        let dragTarget = null, dragOffset = { x:0, y:0 };
-
-        function previewPoint(e) {
-            const r = previewCanvas.getBoundingClientRect();
-            const cx = e.touches ? e.touches[0].clientX : e.clientX;
-            const cy = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: (cx-r.left)/r.width*previewCanvas.width, y: (cy-r.top)/r.height*previewCanvas.height };
-        }
-
-        previewCanvas.addEventListener('mousedown', (e) => {
-            const p = previewPoint(e);
-            for (let i = state.stickers.length-1; i >= 0; i--) {
-                const s = state.stickers[i];
-                if (Math.abs(p.x-s.x) < s.size*0.6 && Math.abs(p.y-s.y) < s.size*0.6) { dragTarget = s; dragOffset = { x: p.x-s.x, y: p.y-s.y }; break; }
-            }
-        });
-        window.addEventListener('mousemove', (e) => { if (!dragTarget) return; const p = previewPoint(e); dragTarget.x = p.x-dragOffset.x; dragTarget.y = p.y-dragOffset.y; renderPreview(); });
-        window.addEventListener('mouseup', () => { dragTarget = null; });
-        previewCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); const p = previewPoint(e); for (let i = state.stickers.length-1; i >= 0; i--) { const s = state.stickers[i]; if (Math.abs(p.x-s.x)<s.size*0.6&&Math.abs(p.y-s.y)<s.size*0.6){dragTarget=s;dragOffset={x:p.x-s.x,y:p.y-s.y};break;} } }, {passive:false});
-        window.addEventListener('touchmove', (e) => { if(!dragTarget)return;e.preventDefault();const p=previewPoint(e);dragTarget.x=p.x-dragOffset.x;dragTarget.y=p.y-dragOffset.y;renderPreview(); }, {passive:false});
-        window.addEventListener('touchend', () => { dragTarget = null; });
-        previewCanvas.addEventListener('dblclick', (e) => {
-            const p = previewPoint(e);
-            for (let i = state.stickers.length-1; i >= 0; i--) {
-                const s = state.stickers[i];
-                if (Math.abs(p.x-s.x)<s.size*0.6&&Math.abs(p.y-s.y)<s.size*0.6){state.stickers.splice(i,1);renderPreview();persistDraft();break;}
-            }
-        });
-
-        let qrImageCache = {};
-
-        function qrServerUrl(data, size) {
-            return 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(data);
-        }
-
-        function loadQRImage(dataUrl, size) {
-            return new Promise((resolve) => {
-                const key = dataUrl;
-                if (qrImageCache[key]) { resolve(qrImageCache[key]); return; }
-                const img = new Image();
-                img.crossOrigin = 'anonymous';
-                img.onload = () => { qrImageCache[key] = img; resolve(img); };
-                img.onerror = () => resolve(null);
-                img.src = qrServerUrl(dataUrl, size);
-            });
-        }
-
-        function getQRCanvas(dataUrl, size) {
-            return loadQRImage(dataUrl, size).then(img => {
-                const c = document.createElement('canvas');
-                c.width = size;
-                c.height = size;
-                const ctx = c.getContext('2d');
-                drawLocalQR(ctx, dataUrl, size);
-                if (img) {
-                    ctx.clearRect(0, 0, size, size);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, size, size);
-                    ctx.drawImage(img, 0, 0, size, size);
+            const g = $('thumbGrid');
+            g.innerHTML = '';
+            for(let i=0; i<TOTAL_SHOTS; i++){
+                const d = document.createElement('div');
+                d.className = 'pb-thumb ' + (draft.shots[i] ? 'filled' : '');
+                d.innerHTML = `<span class="pb-thumb-num">${i+1}</span>`;
+                if(draft.shots[i]) {
+                    const im = new Image(); im.src = draft.shots[i];
+                    d.appendChild(im);
                 }
-                return c;
-            });
-        }
-
-        function drawLocalQR(ctx, dataUrl, size) {
-            let ok = false;
-            if (typeof QRCode !== 'undefined' && typeof QRCode.create === 'function') {
-                try {
-                    const qr = QRCode.create(dataUrl, { errorCorrectionLevel: 'M' });
-                    const modules = qr.modules;
-                    const n = modules.size;
-                    const margin = 2;
-                    const grid = n + margin * 2;
-                    const cellSize = Math.max(1, Math.floor(size / grid));
-                    const offset = Math.floor((size - cellSize * grid) / 2);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                    ctx.fillStyle = '#1f2937';
-                    for (let row = 0; row < n; row++) {
-                        for (let col = 0; col < n; col++) {
-                            if (modules.get(row, col)) {
-                                ctx.fillRect(offset + (col + margin) * cellSize, offset + (row + margin) * cellSize, cellSize, cellSize);
-                            }
-                        }
-                    }
-                    ok = true;
-                } catch(e) { ok = false; }
-            }
-            return ok;
-        }
-
-        function generateQRCode(canvas, dataUrl, size) {
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const renderedLocal = drawLocalQR(ctx, dataUrl, size);
-
-            loadQRImage(dataUrl, size).then(img => {
-                if (!img) {
-                    if (!renderedLocal) {
-                        ctx.fillStyle = '#f1f5f9';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        ctx.fillStyle = '#94a3b8';
-                        ctx.font = '700 14px Segoe UI';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText('QR', canvas.width/2, canvas.height/2);
-                    }
-                    return;
-                }
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            });
-        }
-
-        const STRIP_W = 600;
-
-        function getStripGeometry() {
-            const vertical = state.layout === '1x4';
-            const gap = 18;
-            const padX = 24, padTop = 30;
-            const footerH = 70;
-            const gutter = 16;
-            const slots = [];
-            let canvasW = STRIP_W, canvasH;
-
-            if (vertical) {
-                const cellW = STRIP_W;
-                const cellH = Math.round(cellW * 3 / 4);
-                canvasH = padTop + 4 * cellH + 3 * gap + footerH;
-                for (let slot = 0; slot < 4; slot++) {
-                    const cy = padTop + slot * (cellH + gap);
-                    const innerW = cellW - padX * 2;
-                    const innerH = Math.round(innerW * 3 / 4);
-                    const innerX = padX;
-                    const innerY = cy + Math.floor((cellH - innerH) / 2);
-                    slots.push({ x: innerX - 4, y: innerY - 4, w: innerW + 8, h: innerH + 8, imgX: innerX, imgY: innerY, imgW: innerW, imgH: innerH });
-                }
-            } else {
-                const imgW = Math.floor((STRIP_W - padX * 2 - gutter) / 2);
-                const imgH = Math.floor(imgW * 3 / 4);
-                canvasH = padTop + imgH * 2 + gutter + footerH;
-                for (let slot = 0; slot < 4; slot++) {
-                    const col = slot % 2, row = Math.floor(slot / 2);
-                    const imgX = padX + col * (imgW + gutter);
-                    const imgY = padTop + row * (imgH + gutter);
-                    slots.push({ x: imgX - 4, y: imgY - 4, w: imgW + 8, h: imgH + 8, imgX, imgY, imgW, imgH });
-                }
-            }
-
-            return { canvasW, canvasH, slots };
-        }
-
-        function composeCanvas(linkUrl) {
-            const canvas = document.createElement('canvas');
-            const geo = getStripGeometry();
-            const padX = 24;
-            canvas.width = geo.canvasW;
-            canvas.height = geo.canvasH;
-
-            const ctx = canvas.getContext('2d');
-
-            ctx.fillStyle = state.film === 'black' ? '#111827' : (state.film === 'classic' ? '#ffffff' : '#fdf8f1');
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = state.theme;
-            ctx.lineWidth = 6;
-            ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
-
-            selectedIndices.forEach((fi, slot) => {
-                const frame = capturedFrames[fi];
-                if (!frame) return;
-                const s = geo.slots[slot];
-                if (!s) return;
-                const r = 14;
-
-                ctx.save();
-                ctx.shadowColor = 'rgba(0,0,0,0.18)';
-                ctx.shadowBlur = 12;
-                ctx.shadowOffsetY = 4;
-                ctx.fillStyle = '#fff';
-                roundRect(ctx, s.x, s.y, s.w, s.h, r + 2);
-                ctx.fill();
-                ctx.restore();
-
-                ctx.save();
-                ctx.filter = DIGICAM_FILTER;
-                roundRect(ctx, s.imgX, s.imgY, s.imgW, s.imgH, r);
-                ctx.clip();
-                ctx.drawImage(frame, s.imgX, s.imgY, s.imgW, s.imgH);
-                ctx.restore();
-            });
-
-            if (state.caption.trim()) {
-                const cs = CAP_STYLES[state.captionStyle] || CAP_STYLES.hand;
-                ctx.save();
-                ctx.font = cs.font;
-                ctx.fillStyle = cs.color;
-                ctx.textAlign = 'left';
-                ctx.textBaseline = 'bottom';
-                ctx.fillText(state.caption.trim(), padX, canvas.height - 16, STRIP_W - 120);
-                ctx.restore();
-            } else {
-                ctx.save();
-                ctx.font = 'italic 700 28px "Segoe Script","Comic Sans MS",cursive';
-                ctx.fillStyle = '#ffb6c1';
-                ctx.textAlign = 'left';
-                ctx.textBaseline = 'bottom';
-                ctx.fillText('KeePics Booth', padX, canvas.height - 16);
-                ctx.restore();
-            }
-
-            state.stickers.forEach(s => {
-                ctx.save();
-                ctx.translate(s.x, s.y);
-                ctx.rotate(s.rotation * Math.PI / 180);
-                ctx.font = `${s.size}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.shadowColor = 'rgba(0,0,0,0.15)';
-                ctx.shadowBlur = 5;
-                ctx.fillText(s.emoji, 0, 0);
-                ctx.restore();
-            });
-
-            const qrSize = 56;
-            const qrX = STRIP_W - padX - qrSize;
-            const qrY = canvas.height - 16 - qrSize;
-            const qrCanvas = document.createElement('canvas');
-            qrCanvas.width = qrSize;
-            qrCanvas.height = qrSize;
-            const qrUrl = linkUrl || 'https://www.keepics.com';
-            generateQRCode(qrCanvas, qrUrl, qrSize);
-            ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
-
-            return canvas;
-        }
-
-        async function composeCanvasWithQR(linkUrl) {
-            const canvas = composeCanvas(linkUrl);
-            const qrSize = 56;
-            const qrCanvas = await getQRCanvas(linkUrl || 'https://www.keepics.com', qrSize);
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(qrCanvas, STRIP_W - 24 - qrSize, canvas.height - 16 - qrSize, qrSize, qrSize);
-            return canvas;
-        }
-
-        function roundRect(ctx, x, y, w, h, r) {
-            ctx.beginPath();
-            ctx.moveTo(x + r, y);
-            ctx.lineTo(x + w - r, y);
-            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-            ctx.lineTo(x + w, y + h - r);
-            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-            ctx.lineTo(x + r, y + h);
-            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-            ctx.lineTo(x, y + r);
-            ctx.quadraticCurveTo(x, y, x + r, y);
-            ctx.closePath();
-        }
-
-        function renderPreview() {
-            if (selectedIndices.length !== PICK_COUNT) return;
-            const canvas = composeCanvas(lastSharedLink);
-            [$('previewCanvas'), $('previewCanvasStyle')].forEach(el => {
-                el.width = canvas.width;
-                el.height = canvas.height;
-                const pctx = el.getContext('2d');
-                pctx.clearRect(0, 0, canvas.width, canvas.height);
-                pctx.drawImage(canvas, 0, 0);
-            });
-        }
-
-        $('downloadBtn').addEventListener('click', () => {
-            const canvas = composeCanvas(lastSharedLink);
-            const a = document.createElement('a');
-            a.download = `keepics-strip-${Date.now()}.png`;
-            a.href = canvas.toDataURL('image/png');
-            a.click();
-        });
-
-
-        async function uploadAndFinish() {
-            const timestamp = Date.now();
-            const stripFilename = `keepics-strip-${timestamp}.png`;
-
-            try {
-                $('uploadStatusText').textContent = 'Processing Photobooth... please wait...';
-
-                const canvas = await composeCanvasWithQR(lastSharedLink);
-                const stripBlob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-                const stripRes = await uploadToDropbox(stripBlob, stripFilename);
-                lastUploadedStripPath = stripRes.path_display;
-
-                $('uploadStatusText').textContent = 'Creating download link…';
-                lastSharedLink = lastUploadedStripPath ? await createDropboxSharedLink(lastUploadedStripPath) : null;
-                if (!lastSharedLink) throw new Error('Could not create a shared link for the picture.');
-
-                const finalCanvas = await composeCanvasWithQR(lastSharedLink);
-                const finalBlob = await new Promise(r => finalCanvas.toBlob(r, 'image/png'));
-                try { await uploadToDropbox(finalBlob, stripFilename.replace('.png', '-final.png')); } catch(e) { console.error("Final upload issue", e); }
-                $('savePreviewImg').src = finalCanvas.toDataURL('image/png');
-
-                enableDownloadButtons();
-
-                $('generateQrBtn').disabled = !lastSharedLink;
-
-                clearDraft();
-                showStep('success');
-            } catch(err) {
-                console.error('Save failed:', err);
-                $('uploadStatusText').textContent = 'Upload failed. Go back and try again.';
-                alert('Something went wrong while saving. Please try again.');
-                showStep('style');
+                g.appendChild(d);
             }
         }
 
-        function enableDownloadButtons() {
-            $('dlPhotoBtn').disabled = false;
-        }
-
-        function resetDownloadButtons() {
-            $('dlPhotoBtn').disabled = true;
-        }
-
-        function resetQrSection() {
-            $('generateQrBtn').disabled = true;
-            const section = $('qrResultSection');
-            section.classList.add('pb-hidden');
-            let qrImg = $('qrResultImg');
-            if (!qrImg) {
-                qrImg = document.createElement('img');
-                qrImg.id = 'qrResultImg';
-                qrImg.alt = 'QR code — scan to download';
-                qrImg.width = 200;
-                qrImg.height = 200;
-                qrImg.style.cssText = 'border-radius:12px;border:2px solid #e2e8f0;background:#fff;display:block;margin:0 auto;';
-                section.prepend(qrImg);
-            }
-            qrImg.removeAttribute('src');
-        }
-
-        function generateQrSuccess() {
-            if (!lastSharedLink) return;
-            $('qrResultSection').classList.remove('pb-hidden');
-            $('generateQrBtn').disabled = true;
-            const qrResult = $('qrResultImg');
-            qrResult.onerror = () => {
-                getQRCanvas(lastSharedLink, 300).then(c => {
-                    qrResult.replaceWith(c);
-                    c.width = 300; c.height = 300;
-                    c.style.cssText = 'border-radius:12px;border:2px solid #e2e8f0;background:#fff;display:block;margin:0 auto;';
-                });
-            };
-            qrResult.src = qrServerUrl(lastSharedLink, 300);
-        }
-
-        $('generateQrBtn').addEventListener('click', generateQrSuccess);
-
-        $('dlPhotoBtn').addEventListener('click', () => {
-            const canvas = composeCanvas(lastSharedLink);
-            const a = document.createElement('a');
-            a.download = `keepics-strip-${Date.now()}.png`;
-            a.href = canvas.toDataURL('image/png');
-            a.click();
-        });
-
-        $('newSessionBtn').addEventListener('click', () => {
-            resetDownloadButtons();
-            stopAutoCapture();
+        $('shootNextBtn').onclick = () => {
             stopCamera();
-            capturedFrames = []; selectedIndices = [];
-            lastUploadedStripPath = null; lastSharedLink = null;
-            state = { layout:'1x4', theme:'#ff8fa3', film:'classic', caption:'', captionStyle:'hand', stickers:[] };
-            $('captionInput').value = '';
-            resetQrSection();
-            clearDraft();
-            renderThumbs(); updateShootUI(); syncCustomControls();
-            showStep('shoot');
-            startCamera();
-        });
+            renderPicks();
+            navTo('stepShoot', 'stepPick', 2);
+        };
+        $('backToShootBtn').onclick = () => {
+            initCamera();
+            navTo('stepPick', 'stepShoot', 1);
+        };
 
-        function persistDraft() {
-            try {
-                const frames = capturedFrames.map(c => c.toDataURL('image/png'));
-                localStorage.setItem(LS_DRAFT, JSON.stringify({ state, frames, selectedIndices }));
-            } catch(e) {}
+        function renderPicks() {
+            const g = $('pickGrid');
+            g.innerHTML = '';
+            draft.shots.forEach((src, i) => {
+                const d = document.createElement('div');
+                d.className = 'pb-pick-card ' + (draft.selected.includes(i) ? 'selected' : '');
+                d.onclick = () => togglePick(i, d);
+                d.innerHTML = `<span class="pb-pick-num">${i+1}</span><div class="pb-pick-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>`;
+                const im = new Image(); im.src = src; d.appendChild(im);
+                g.appendChild(d);
+            });
+            updatePickCount();
         }
-        function clearDraft() { try { localStorage.removeItem(LS_DRAFT); } catch(e) {} }
-        function loadDraft() {
-            let loaded = false;
-            try {
-                const raw = localStorage.getItem(LS_DRAFT);
-                if (!raw) return false;
-                const draft = JSON.parse(raw);
-                if (draft.state) { Object.assign(state, draft.state); if (!Array.isArray(state.stickers)) state.stickers = []; loaded = true; }
-                if (Array.isArray(draft.selectedIndices)) selectedIndices = draft.selectedIndices.filter(i => i >= 0 && i < TOTAL_SHOTS).slice(0, PICK_COUNT);
-                if (draft.frames?.length > 0) {
-                    let pending = draft.frames.length;
-                    capturedFrames = draft.frames.map(dataUrl => {
-                        const img = new Image(); img.src = dataUrl;
-                        const c = document.createElement('canvas'); c.width = 640; c.height = 480;
-                        const ctx = c.getContext('2d');
-                        img.onload = () => { ctx.drawImage(img, 0, 0, 640, 480); pending--; if (pending === 0) renderPreview(); };
-                        return c;
-                    });
-                    loaded = true;
+        function togglePick(idx, el) {
+            const p = draft.selected.indexOf(idx);
+            if(p > -1) { draft.selected.splice(p, 1); el.classList.remove('selected'); }
+            else {
+                if(draft.selected.length >= PICK_COUNT) {
+                    const first = draft.selected.shift();
+                    $('pickGrid').children[first].classList.remove('selected');
                 }
-            } catch(e) {}
-            return loaded;
+                draft.selected.push(idx);
+                el.classList.add('selected');
+            }
+            updatePickCount();
+        }
+        function updatePickCount() {
+            const l = draft.selected.length;
+            const c = $('pickCounter');
+            c.textContent = `Selected ${l} / ${PICK_COUNT}`;
+            if(l === PICK_COUNT) c.classList.add('ok'); else c.classList.remove('ok');
+            $('pickNextBtn').disabled = (l !== PICK_COUNT);
+        }
+        $('clearPickBtn').onclick = () => { draft.selected = []; renderPicks(); };
+        
+        $('pickNextBtn').onclick = () => {
+            initSwatches();
+            updatePreview('previewCanvas');
+            navTo('stepPick', 'stepFrame', 3);
+        };
+        $('backToPickBtn').onclick = () => {
+            navTo('stepFrame', 'stepPick', 2);
+        };
+
+        const canvasDim = { w: 600, h: 1800 }; 
+        async function drawStrip(canvasId, withStickers = false) {
+            const c = $(canvasId);
+            const ctx = c.getContext('2d');
+            const o = draft.opts;
+            const p = PRESETS[o.film] || PRESETS.classic;
+            const gap = p.gap;
+            const out = p.out;
+            const bgColor = o.film === 'black' ? '#111827' : (o.color || '#ffffff');
+            
+            let cols = 1, rows = 4, cw, ch;
+            if (o.layout === '2x2') { cols = 2; rows = 2; }
+            
+            const cellW = 552; 
+            const cellH = Math.round(cellW * 0.75); 
+            
+            cw = out*2 + cols*cellW + (cols-1)*gap;
+            
+            let btm = out + 120; 
+            if(o.film === 'polaroid') btm += 60;
+            
+            ch = out + rows*cellH + (rows-1)*gap + btm;
+
+            c.width = cw; c.height = ch;
+            c.style.maxWidth = "100%";
+            c.style.height = "auto";
+
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0,0,cw,ch);
+
+            const imgs = await Promise.all(draft.selected.map(i => {
+                return new Promise(r => { const im = new Image(); im.onload = () => r(im); im.src = draft.shots[i]; });
+            }));
+
+            let ptr = 0;
+            for(let r=0; r<rows; r++){
+                for(let cl=0; cl<cols; cl++){
+                    if(ptr >= 4) break;
+                    const x = out + cl*(cellW + gap);
+                    const y = out + r*(cellH + gap);
+                    
+                    if(o.film !== 'black'){
+                        ctx.shadowColor = 'rgba(0,0,0,0.15)';
+                        ctx.shadowBlur = 10; ctx.shadowOffsetY = 4;
+                    }
+                    ctx.drawImage(imgs[ptr], x, y, cellW, cellH);
+                    
+                    if(o.film !== 'black'){
+                        ctx.shadowColor = 'transparent';
+                        ctx.strokeStyle = 'rgba(0,0,0,0.05)';
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(x,y,cellW,cellH);
+                    }
+                    ptr++;
+                }
+            }
+
+            if(withStickers && o.capText.trim()){
+                ctx.fillStyle = p.fontColor || '#1e293b';
+                ctx.textBaseline = 'bottom';
+                
+                let font = 'bold 36px sans-serif';
+                if(o.capStyle === 'hand') font = 'italic bold 42px "Comic Sans MS", cursive';
+                else if(o.capStyle === 'mono') font = 'bold 34px "Courier New", monospace';
+                
+                ctx.font = font;
+                const tx = out;
+                const ty = ch - out - 10;
+                ctx.fillText(o.capText.trim(), tx, ty);
+            }
+
+            if(withStickers && o.stickers.length > 0){
+                o.stickers.forEach(st => {
+                    ctx.font = `${Math.round(48 * st.scale)}px sans-serif`;
+                    ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+                    
+                    ctx.translate(st.x * cw, st.y * ch);
+                    ctx.rotate(st.rot * Math.PI / 180);
+                    ctx.fillText(st.char, 0, 0);
+                    ctx.rotate(-st.rot * Math.PI / 180);
+                    ctx.translate(-st.x * cw, -st.y * ch);
+                });
+            }
+            
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'alphabetic';
         }
 
-        onAuthStateChanged(auth, (user) => {
-            currentAuthUser = user;
+        async function updatePreview(cid, wSticks=false) { await drawStrip(cid, wSticks); }
+
+        ['layout','film'].forEach(t => {
+            $(`${t}Chips`).addEventListener('click', e => {
+                const b = e.target.closest('.pb-chip');
+                if(!b) return;
+                $(`${t}Chips`).querySelectorAll('.pb-chip').forEach(c=>c.classList.remove('selected'));
+                b.classList.add('selected');
+                draft.opts[t] = b.dataset[t];
+                if(t==='film') {
+                    if(draft.opts.film==='black') { draft.opts.color = '#111827'; }
+                    else { draft.opts.color = SWATCHES[0]; }
+                    initSwatches();
+                }
+                updatePreview('previewCanvas');
+            });
+        });
+        function initSwatches() {
+            const w = $('themeSwatches');
+            w.innerHTML = '';
+            if(draft.opts.film === 'black') {
+                w.innerHTML = '<span style="font-size:0.8rem;color:#94a3b8;font-style:italic;">Not available for black frame</span>';
+                return;
+            }
+            SWATCHES.forEach(c => {
+                const d = document.createElement('div');
+                d.className = 'pb-swatch ' + (draft.opts.color===c?'selected':'');
+                d.style.backgroundColor = c;
+                if(c==='#ffffff'||c==='#f8fafc') d.style.border = '1px solid #e2e8f0';
+                d.onclick = () => {
+                    w.querySelectorAll('.pb-swatch').forEach(x=>x.classList.remove('selected'));
+                    d.classList.add('selected');
+                    draft.opts.color = c;
+                    updatePreview('previewCanvas');
+                };
+                w.appendChild(d);
+            });
+        }
+
+        $('frameNextBtn').onclick = () => {
+            initStickers();
+            updatePreview('previewCanvasStyle', true);
+            navTo('stepFrame', 'stepStyle', 4);
+        };
+        $('backToFrameBtn').onclick = () => {
+            navTo('stepStyle', 'stepFrame', 3);
+            updatePreview('previewCanvas');
+        };
+
+        function initStickers() {
+            const g = $('stickerGrid');
+            if(g.innerHTML) return; 
+            STICKERS.forEach(s => {
+                const b = document.createElement('button');
+                b.className = 'pb-sticker-btn'; b.type='button'; b.textContent = s;
+                b.onclick = () => addSticker(s);
+                g.appendChild(b);
+            });
+        }
+
+        function addSticker(char) {
+            draft.opts.stickers.push({
+                char, x: 0.5 + (Math.random()*0.2-0.1), y: 0.5 + (Math.random()*0.2-0.1),
+                scale: 1 + Math.random()*0.5, rot: Math.random()*40-20
+            });
+            updatePreview('previewCanvasStyle', true);
+        }
+
+        // Pointer Events for Dragging and Resizing Stickers
+        const styleCanvas = $('previewCanvasStyle');
+        let dragStickerIdx = -1;
+        let isDragging = false;
+
+        function getCanvasPos(e) {
+            const rect = styleCanvas.getBoundingClientRect();
+            return {
+                x: (e.clientX - rect.left) / rect.width,
+                y: (e.clientY - rect.top) / rect.height
+            };
+        }
+
+        styleCanvas.addEventListener('pointerdown', (e) => {
+            const pos = getCanvasPos(e);
+            dragStickerIdx = draft.opts.stickers.findLastIndex(s => {
+                const dx = s.x - pos.x;
+                const dy = (s.y - pos.y) * (styleCanvas.height / styleCanvas.width); 
+                return Math.sqrt(dx*dx + dy*dy) < 0.1 * s.scale;
+            });
+            
+            if (dragStickerIdx !== -1) {
+                isDragging = true;
+                styleCanvas.setPointerCapture(e.pointerId);
+            }
         });
 
-        buildThemeSwatches(); buildStickerGrid();
-
-        $('startBtn').addEventListener('click', () => {
-            showStep('shoot');
-            startCamera();
+        styleCanvas.addEventListener('pointermove', (e) => {
+            if (!isDragging || dragStickerIdx === -1) return;
+            const pos = getCanvasPos(e);
+            draft.opts.stickers[dragStickerIdx].x = pos.x;
+            draft.opts.stickers[dragStickerIdx].y = pos.y;
+            updatePreview('previewCanvasStyle', true);
         });
 
-        window.addEventListener('beforeunload', () => { if (capturedFrames.length > 0) persistDraft(); stopAutoCapture(); stopCamera(); });
+        styleCanvas.addEventListener('pointerup', (e) => {
+            isDragging = false;
+            dragStickerIdx = -1;
+            styleCanvas.releasePointerCapture(e.pointerId);
+        });
 
-        if (loadDraft()) { $('startBtnLabel').textContent = 'Continue Session'; }
+        styleCanvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const pos = getCanvasPos(e);
+            const hoverIdx = draft.opts.stickers.findLastIndex(s => {
+                const dx = s.x - pos.x;
+                const dy = (s.y - pos.y) * (styleCanvas.height / styleCanvas.width);
+                return Math.sqrt(dx*dx + dy*dy) < 0.1 * s.scale;
+            });
+            
+            if (hoverIdx !== -1) {
+                const scaleChange = e.deltaY > 0 ? -0.1 : 0.1;
+                draft.opts.stickers[hoverIdx].scale = Math.max(0.4, draft.opts.stickers[hoverIdx].scale + scaleChange); 
+                updatePreview('previewCanvasStyle', true);
+            }
+        }, { passive: false });
+
+        $('clearStickersBtn').onclick = () => { draft.opts.stickers=[]; updatePreview('previewCanvasStyle', true); };
+        
+        $('captionInput').addEventListener('input', e => {
+            draft.opts.capText = e.target.value;
+            updatePreview('previewCanvasStyle', true);
+        });
+        $('captionStyleChips').addEventListener('click', e => {
+            const b = e.target.closest('.pb-chip');
+            if(!b) return;
+            $('captionStyleChips').querySelectorAll('.pb-chip').forEach(c=>c.classList.remove('selected'));
+            b.classList.add('selected');
+            draft.opts.capStyle = b.dataset.capstyle;
+            updatePreview('previewCanvasStyle', true);
+        });
+
+        $('styleNextBtn').onclick = async () => {
+            navTo('stepStyle', 'stepSave', 5);
+            await finalizeStrip();
+        };
+        $('backToStyleBtn').onclick = () => {
+            navTo('stepSave', 'stepStyle', 4);
+        };
+
+        async function finalizeStrip() {
+            const sTxt = $('uploadStatusText');
+            try {
+                sTxt.textContent = "Generating final image...";
+                const cc = document.createElement('canvas');
+                cc.id = 'finalRenderCanvas';
+                cc.style.display = 'none';
+                document.body.appendChild(cc);
+                await drawStrip('finalRenderCanvas', true);
+                
+                const finalDataUrl = cc.toDataURL('image/jpeg', 0.95);
+                $('savePreviewImg').src = finalDataUrl;
+                document.body.removeChild(cc);
+
+                sTxt.textContent = "Uploading to server...";
+                
+                const res = await fetch(finalDataUrl);
+                const blob = await res.blob();
+                
+                const filename = `KeePics_Strip_${Date.now()}.jpg`;
+                
+                await uploadToDropbox(blob, filename);
+                
+                sTxt.textContent = "Creating share link...";
+                const rawLink = await createDropboxSharedLink(`${DROPBOX_FOLDER}/${filename}`);
+                
+                draft.dlLinkPhoto = rawLink;
+                
+                $('generateQrBtn').disabled = false;
+                $('dlPhotoBtn').disabled = false;
+                
+                navTo('stepSave', 'stepSuccess', 5);
+                
+            } catch (err) {
+                console.error("Upload Error:", err);
+                sTxt.textContent = "Upload failed. " + err.message;
+                sTxt.style.color = "#b73b49";
+            }
+        }
+
+        // Updated QR Generation Logic
+        $('generateQrBtn').onclick = () => {
+            if(!draft.dlLinkPhoto) return;
+            const link = encodeURI(draft.dlLinkPhoto); 
+            
+            QRCode.toDataURL(link, { 
+                width: 300, 
+                margin: 2, 
+                color: { dark: '#111827', light: '#ffffff' } 
+            })
+            .then(url => {
+                $('qrResultImg').src = url;
+                $('qrResultSection').classList.remove('pb-hidden');
+                $('generateQrBtn').style.display = 'none';
+                draft.qrGenerated = true;
+            })
+            .catch(err => {
+                console.error("QR Generation failed:", err);
+                alert("Failed to generate QR code. You can still use the download button.");
+            });
+        };
+
+        $('dlPhotoBtn').onclick = () => {
+            if(!draft.dlLinkPhoto) return;
+            const a = document.createElement('a');
+            a.href = draft.dlLinkPhoto;
+            a.target = '_blank'; 
+            a.download = `KeePics_Strip_${Date.now()}.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+
+        $('newSessionBtn').onclick = () => {
+            if(confirm('Start a new session? This will clear current progress.')) {
+                window.location.reload();
+            }
+        };
+
     </script>
 </body>
 </html>
