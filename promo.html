@@ -93,6 +93,11 @@
         claimBtn.addEventListener('click', async () => {
             const typedCode = promoInput.value.trim();
 
+            if (typedCode === "090125") {
+                window.location.href = "letter.html";
+                return;
+            }
+
             if (!activeUser) {
                 showAppPopup("Claim Denied", "Please log in to your account first.", "", "theme-alert");
                 return;

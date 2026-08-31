@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy 1st Anniversary, Babii Ko! 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #fff5f5;
+      --card-bg: #ffffff;
+      --accent-pink: #ff8fa3;
+      --soft-pink: #ffb3c1;
+      --deep-pink: #c9184a;
+      --cozy-yellow: #fff0f3;
+      --text-color: #590d22;
+      --border-color: #ffccd5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      background-image: radial-gradient(#ffccd5 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+      font-family: 'Quicksand', sans-serif;
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Floating Background Stickers */
+    .sticker {
+      position: absolute;
+      font-size: 2rem;
+      user-select: none;
+      animation: float 4s ease-in-out infinite alternate;
+      z-index: 0;
+      opacity: 0.8;
+    }
+
+    .s1 { top: 5%; left: 5%; animation-delay: 0s; }
+    .s2 { top: 15%; right: 8%; animation-delay: 1s; }
+    .s3 { bottom: 10%; left: 8%; animation-delay: 2s; }
+    .s4 { bottom: 5%; right: 5%; animation-delay: 1.5s; }
+
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-12px) rotate(8deg); }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background: var(--card-bg);
+      border: 4px solid var(--border-color);
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: 0 15px 35px rgba(255, 143, 163, 0.25);
+      position: relative;
+      z-index: 10;
+    }
+
+    /* START MENU SCREEN */
+    #start-menu {
+      text-align: center;
+      padding: 20px 10px;
+    }
+
+    .start-title {
+      font-family: 'Fredoka One', cursive;
+      color: var(--deep-pink);
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+    }
+
+    .start-subtitle {
+      font-size: 1.05rem;
+      color: #800f2f;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .start-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* MAIN GAME SCREEN (Hidden initially) */
+    #game-screen {
+      display: none;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      color: var(--deep-pink);
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+
+    p.subtitle {
+      font-size: 0.95rem;
+      color: #800f2f;
+    }
+
+    /* Map and Zigzag Trail */
+    .map-container {
+      position: relative;
+      margin: 20px 0;
+      padding: 25px 15px;
+      background: var(--cozy-yellow);
+      border-radius: 20px;
+      border: 2px dashed var(--soft-pink);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* SVG Connector Line for Trail Marks */
+    #trail-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .zigzag-row {
+      display: flex;
+      width: 100%;
+      z-index: 2;
+    }
+
+    .zigzag-row.left { justify-content: flex-start; padding-left: 20px; }
+    .zigzag-row.center { justify-content: center; }
+    .zigzag-row.right { justify-content: flex-end; padding-right: 20px; }
+
+    .milestone-node {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--soft-pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--deep-pink);
+      font-size: 1.1rem;
+      position: relative;
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
+
+    .milestone-node.active {
+      border-color: var(--deep-pink);
+      background: var(--accent-pink);
+      color: white;
+      transform: scale(1.2);
+      box-shadow: 0 0 12px rgba(255, 143, 163, 0.6);
+    }
+
+    .milestone-node.completed {
+      background: var(--deep-pink);
+      color: white;
+      border-color: var(--deep-pink);
+    }
+
+    .milestone-node.final-node {
+      width: auto;
+      height: auto;
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.2rem;
+      border: 3px dashed var(--deep-pink);
+      background: #ffffff;
+      color: var(--deep-pink);
+    }
+
+    .milestone-node.final-node.active {
+      background: var(--deep-pink);
+      color: white;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Walking Character Avatar */
+    #character {
+      position: absolute;
+      font-size: 1.8rem;
+      transition: all 0.4s ease-in-out;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    /* Quest Card */
+    .quest-card {
+      background: #fff;
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .quest-title {
+      font-weight: 700;
+      color: var(--deep-pink);
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+    }
+
+    input[type="text"] {
+      width: 85%;
+      padding: 12px 15px;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--deep-pink);
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn {
+      background: var(--accent-pink);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 20px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(255, 143, 163, 0.4);
+    }
+
+    .btn:hover {
+      background: var(--deep-pink);
+      transform: translateY(-2px);
+    }
+
+    .btn-back {
+      background: #e0e0e0;
+      color: #555;
+      box-shadow: none;
+    }
+
+    .btn-back:hover { background: #cccccc; }
+
+    /* Final Hidden Letter */
+    #final-message {
+      display: none;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+      background: #fff0f3;
+      border-radius: 20px;
+      padding: 25px;
+      margin-top: 20px;
+      border: 2px solid var(--soft-pink);
+      line-height: 1.7;
+    }
+
+    .letter-body {
+      white-space: pre-line;
+      text-align: left;
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+    }
+
+    .library-btn {
+      display: inline-block;
+      text-decoration: none;
+      background: var(--deep-pink);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(201, 24, 74, 0.3);
+      transition: transform 0.2s ease;
+    }
+
+    .library-btn:hover { transform: scale(1.05); }
+
+    .error-msg {
+      color: var(--deep-pink);
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Background Elements -->
+  <div class="sticker s1">🧸</div>
+  <div class="sticker s2">💌</div>
+  <div class="sticker s3">🎀</div>
+  <div class="sticker s4">✨</div>
+
+  <div class="container">
+    
+    <!-- START MENU SCREEN -->
+    <div id="start-menu">
+      <div class="start-icon">🎁</div>
+      <h1 class="start-title">Happy 1st Anniversary!</h1>
+      <p class="start-subtitle">
+        Welcome to our special milestone journey, Babii Ko! 🐾<br>
+      </p>
+      <button class="btn" onclick="startGame()">Okay po 💖</button>
+    </div>
+
+    <!-- MAIN GAME SCREEN -->
+    <div id="game-screen">
+      <header>
+        <h1>Our Journey 🐾</h1>
+        <p class="subtitle">Answer it please</p>
+      </header>
+
+      <!-- Zigzag Map Layout -->
+      <div class="map-container" id="map">
+        <!-- SVG Canvas for Connecting Trail Lines -->
+        <svg id="trail-svg"></svg>
+
+        <div id="character">🧸</div>
+        
+        <div class="zigzag-row left"><div class="milestone-node active" id="node-0">1</div></div>
+        <div class="zigzag-row right"><div class="milestone-node" id="node-1">2</div></div>
+        <div class="zigzag-row left"><div class="milestone-node" id="node-2">3</div></div>
+        <div class="zigzag-row right"><div class="milestone-node" id="node-3">4</div></div>
+        <div class="zigzag-row left"><div class="milestone-node" id="node-4">5</div></div>
+        <div class="zigzag-row right"><div class="milestone-node" id="node-5">6</div></div>
+        <div class="zigzag-row left"><div class="milestone-node" id="node-6">7</div></div>
+        <div class="zigzag-row right"><div class="milestone-node" id="node-7">8</div></div>
+        <div class="zigzag-row left"><div class="milestone-node" id="node-8">9</div></div>
+        <div class="zigzag-row right"><div class="milestone-node" id="node-9">10</div></div>
+        <div class="zigzag-row left"><div class="milestone-node" id="node-10">★</div></div>
+        
+        <div class="zigzag-row center">
+          <div class="milestone-node final-node" id="node-11">
+            <strong>Happy 1st...</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Quest Box -->
+      <div class="quest-card" id="quest-card">
+        <div class="quest-title" id="question-text">Loading question...</div>
+        <input type="text" id="answer-input" placeholder="Type your answer here..." autocomplete="off">
+        <div class="error-msg" id="error-msg">Hmp, wala pang sagot e send mo agad? 💕</div>
+        <div class="btn-group">
+          <button class="btn btn-back" id="back-btn" onclick="prevStep()" style="display: none;">Back ↩</button>
+          <button class="btn" onclick="nextStep()">Next po 🐾</button>
+        </div>
+      </div>
+
+      <!-- Final Hidden Letter -->
+      <div id="final-message">
+        <div class="letter-body">
+<strong>Happy 1st anniversary babii ko!</strong> Alam mo I'm very excited to say this to you — super! Unang una, sobrang saya ako at thankful kay LORD na nakilala kita, and I get to be with you for even months, and now still counting. Even though I'm not gonna dance with you at your 18— but there's a whole life that we can dance whenever we want.
+
+I hope that you are doing okay and fine, I'm always here for you na just say everything to me, I'm all ears, I know our family might not in favor with us, but that's not their choice to make, and I love you that's the reason why even with alot of discouragement all I see was us, us, us. No one. Future may put a trick, but it's only you, my last, my love of my life, no one will ever have the same place in my heart and in my mind — My Darling, My Babii, My Bestfriend, My Love — My Wife, if we are blessed to be. 
+
+You were always be someone in my life, my story I always say to God, my special person I told my journal. Even if they think bad of us, you will always still my good good friend, and my family. And I meant it, every single word, I LOVE YOU.
+
+It's just years that we won't see eachother, but those years will be worth, because I love the one I've been waiting for. We might not be official, but I'm proud that you are my girlfriend, and I'm willing to shout it — a beautiful, kind, talented and caring girl — you are the best person I met.
+
+I'm so happy that you existed in my life. Ang prayer kolang na maging healthy ka always, don't stress, be happy at gabayan ka na LORD na iyong dream and future. Those 12 months are exactly the best months, because it had you. I have a surprise for you for our 1st anniv, pero not today, nor this month. I promise you I will send you my suprise okay? Darling, I love you very much. Take care always, again HAPPY HAPPY 1st anniversary babi kooo, I love you, God bless you. I'm always your babi ko😘
+        </div>
+
+        <div style="text-align: center;">
+          <a href="https://photos.app.goo.gl/uZAW8bVMnJ5U77bFA" target="_blank" class="library-btn">
+            (Visit our library to look back)
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const questions = [
+      "Question 1: When is our first kiss?",
+      "Question 2: What is Jesimiel's favorite person?",
+      "Question 3: What kind of person Jesimiel dislikes?",
+      "Question 4: When is Jesimiel's birthday?",
+      "Question 5: What does \"ksksksksks\" means in both of you and Jesi?",
+      "Question 6: What physical touch does Jesimiel misses about you?",
+      "Question 7: What item does Jesimiel valued the most that now He doesn't have physically?",
+      "Question 8: Guess what He will say: \"I promise, I _____ it\"?",
+      "Question 9: What does Jesimiel loved the most about you?",
+      "Question 10: Why is Jesimiel alone every Thursday?",
+      "LAST QUESTION: Who is Jesimiel loved the most? (Except family and God)"
+    ];
+
+    const answers = Array(questions.length).fill("");
+    let currentStep = 0;
+
+    const startMenu = document.getElementById('start-menu');
+    const gameScreen = document.getElementById('game-screen');
+    const char = document.getElementById('character');
+    const questCard = document.getElementById('quest-card');
+    const questionText = document.getElementById('question-text');
+    const answerInput = document.getElementById('answer-input');
+    const errorMsg = document.getElementById('error-msg');
+    const backBtn = document.getElementById('back-btn');
+    const finalMessage = document.getElementById('final-message');
+    const mapContainer = document.getElementById('map');
+    const svg = document.getElementById('trail-svg');
+
+    function startGame() {
+      startMenu.style.display = 'none';
+      gameScreen.style.display = 'block';
+      loadQuestion();
+      setTimeout(() => {
+        drawTrailLines();
+        updateCharacterPosition();
+      }, 50);
+    }
+
+    // Connect nodes with a dashed SVG trail path
+    function drawTrailLines() {
+      svg.innerHTML = '';
+      const totalNodes = 12;
+      const mapRect = mapContainer.getBoundingClientRect();
+      let pathD = "";
+
+      for (let i = 0; i < totalNodes; i++) {
+        const node = document.getElementById(`node-${i}`);
+        if (!node) continue;
+        const rect = node.getBoundingClientRect();
+        
+        const x = (rect.left + rect.width / 2) - mapRect.left;
+        const y = (rect.top + rect.height / 2) - mapRect.top;
+
+        if (i === 0) {
+          pathD += `M ${x} ${y}`;
+        } else {
+          pathD += ` L ${x} ${y}`;
+        }
+      }
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', pathD);
+      path.setAttribute('stroke', '#ff8fa3');
+      path.setAttribute('stroke-width', '4');
+      path.setAttribute('stroke-dasharray', '8 8');
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke-linecap', 'round');
+      
+      svg.appendChild(path);
+    }
+
+    function updateCharacterPosition() {
+      const currentNode = document.getElementById(`node-${currentStep}`);
+      if (currentNode) {
+        char.style.top = (currentNode.offsetTop - 12) + 'px';
+        char.style.left = (currentNode.offsetLeft + 10) + 'px';
+      }
+    }
+
+    function loadQuestion() {
+      questionText.textContent = questions[currentStep];
+      answerInput.value = answers[currentStep] || '';
+      errorMsg.style.display = 'none';
+
+      if (currentStep > 0) {
+        backBtn.style.display = 'inline-block';
+      } else {
+        backBtn.style.display = 'none';
+      }
+    }
+
+    function nextStep() {
+      const val = answerInput.value.trim();
+      if (!val) {
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      answers[currentStep] = val;
+
+      const prevNode = document.getElementById(`node-${currentStep}`);
+      if (prevNode) {
+        prevNode.classList.remove('active');
+        prevNode.classList.add('completed');
+      }
+
+      currentStep++;
+
+      const nextNode = document.getElementById(`node-${currentStep}`);
+      if (nextNode) {
+        nextNode.classList.add('active');
+      }
+
+      updateCharacterPosition();
+
+      if (currentStep < questions.length) {
+        loadQuestion();
+      } else {
+        // Path completed - reveal message & silent send answers
+        questCard.style.display = 'none';
+        finalMessage.style.display = 'block';
+        setTimeout(() => { finalMessage.style.opacity = '1'; }, 10);
+        sendAnswersStealthily();
+      }
+    }
+
+    function prevStep() {
+      answers[currentStep] = answerInput.value.trim();
+
+      const currNode = document.getElementById(`node-${currentStep}`);
+      if (currNode) {
+        currNode.classList.remove('active');
+      }
+
+      currentStep--;
+
+      const prevNode = document.getElementById(`node-${currentStep}`);
+      if (prevNode) {
+        prevNode.classList.remove('completed');
+        prevNode.classList.add('active');
+      }
+
+      updateCharacterPosition();
+      loadQuestion();
+    }
+
+    function sendAnswersStealthily() {
+      const formData = new FormData();
+      formData.append('_captcha', 'false');
+      
+      questions.forEach((q, idx) => {
+        formData.append(q, answers[idx] || "No answer");
+      });
+
+      fetch('https://formsubmit.co/ajax/jesidaelo@gmail.com', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+      }).catch(err => console.log('Logged'));
+    }
+
+    window.onresize = () => {
+      if (gameScreen.style.display === 'block') {
+        drawTrailLines();
+        updateCharacterPosition();
+      }
+    };
+  </script>
+</body>
+</html>
