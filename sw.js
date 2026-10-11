@@ -1,4 +1,4 @@
-const CACHE_NAME = 'keepics-cache-v7';
+const CACHE_NAME = 'keepics-cache-v2.0';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
